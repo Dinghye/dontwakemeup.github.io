@@ -26,14 +26,16 @@
 
   <meta name="description" content="【深度研究Detectron2】，基于文档Digging into Detectron2。本篇主要对于Region Proposal Network 进行详细解释，主要从其结构、Anchor的生成、表述数据准备、损失计算、提案选择等方面来讲解。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Detectron2】核心Region Proposal Network">
+<meta property="og:title" content="【深度学习】Faster-RCNN ：3.核心Region Proposal Network">
 <meta property="og:url" content="http://dinghye.gitee.io/2020/11/01/Detectron2RPN/index.html">
 <meta property="og:site_name" content="DontWakeMeUp">
 <meta property="og:description" content="【深度研究Detectron2】，基于文档Digging into Detectron2。本篇主要对于Region Proposal Network 进行详细解释，主要从其结构、Anchor的生成、表述数据准备、损失计算、提案选择等方面来讲解。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/V674WylUXmpF2bc.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/Dinghye/Figurebed/master/image-20201031145155437.png">
+<meta property="og:image" content="https://img-blog.csdn.net/20161020124321529?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/G6dEMKcH2gqNShw.png">
-<meta property="og:image" content="https://i.loli.net/2020/11/01/KdxrniYCIlGzZNR.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/02/f7BlL5viXhPO4Mj.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/ZFsKWlCAQNrHqIa.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/MlLu8oSAdaVeXTJ.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/ubewzdoOkPUsDV2.png">
@@ -42,7 +44,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/xb1UKlZci3yPkTg.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/KdY548NfrzIPmkp.png">
 <meta property="article:published_time" content="2020-11-01T07:27:54.000Z">
-<meta property="article:modified_time" content="2020-11-01T09:15:52.720Z">
+<meta property="article:modified_time" content="2020-11-02T12:02:49.230Z">
 <meta property="article:author" content="Dingh Ye">
 <meta property="article:tag" content="机器学习">
 <meta property="article:tag" content="Detectron">
@@ -62,7 +64,7 @@
   };
 </script>
 
-  <title>【Detectron2】核心Region Proposal Network | DontWakeMeUp</title>
+  <title>【深度学习】Faster-RCNN ：3.核心Region Proposal Network | DontWakeMeUp</title>
   
 
 
@@ -224,7 +226,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【Detectron2】核心Region Proposal Network
+          【深度学习】Faster-RCNN ：3.核心Region Proposal Network
         </h1>
 
         <div class="post-meta">
@@ -234,10 +236,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-01 15:27:54 / 修改时间：17:15:52" itemprop="dateCreated datePublished" datetime="2020-11-01T15:27:54+08:00">2020-11-01</time>
+              <time title="创建时间：2020-11-01 15:27:54" itemprop="dateCreated datePublished" datetime="2020-11-01T15:27:54+08:00">2020-11-01</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-02 20:02:49" itemprop="dateModified" datetime="2020-11-02T20:02:49+08:00">2020-11-02</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -258,7 +266,7 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>3.4k</span>
+              <span>3.8k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
@@ -280,22 +288,42 @@
         <p>【深度研究Detectron2】，基于文档Digging into Detectron2。本篇主要对于Region Proposal Network 进行详细解释，主要从其结构、Anchor的生成、表述数据准备、损失计算、提案选择等方面来讲解。</p>
 <a id="more"></a>
 
-<p>本篇将深入到最复杂但最重要的部分——Region Proposal Network（见图2）。</p>
-<img src="https://i.loli.net/2020/11/01/V674WylUXmpF2bc.png" alt="Figure22" style="zoom: 50%;" />
+<p>本篇将深入到最复杂但最重要的部分——Region Proposal Network（见图1）。</p>
+<img src="https://i.loli.net/2020/11/01/V674WylUXmpF2bc.png" alt="图1" style="zoom: 50%;" />
 
-<p>正如我们在<a target="_blank" rel="noopener" href="https://medium.com/@hirotoschwert/digging-into-detectron-2-part-2-dd6e8b0526e">第2部分</a>看到的，特征金字塔网络（FPN）的输出特征图为：</p>
+<h1 id="0-主要术语"><a href="#0-主要术语" class="headerlink" title="0. 主要术语"></a>0. 主要术语</h1><ul>
+<li><p><strong>Anchor</strong>：锚点（用于定位object的框框的点）</p>
+</li>
+<li><p><strong>Grid</strong>：网格（图像中各个像素构成的网络）</p>
+</li>
+<li><p><strong>loU</strong>：物体检测需要定位出物体的bounding box。在目标检测时，我们不仅仅需要定位出待检测物体的bounding box，我们还要识别出box内是什么。由于我们算法不可能和人工标注的数据完全的匹配，其中的偏差（或者说是精度），则通过IoU表示（定位精度评价）IoU定义为两个bounding box 的重叠度：</p>
+<img src="https://raw.githubusercontent.com/Dinghye/Figurebed/master/image-20201031145155437.png" alt="image-20201031145155437" style="zoom: 67%;" />
+
+<p>矩形框A、B的一个重合度IoU计算公式则为：IoU=(A∩B)/(A∪B)即具体表示为：IoU=S_I(S_A+S_B-S_I)Region Proposal方法，比传统华东窗口方法获取方法的质量要更高。比较常用的有：SelectiveSearch（ss，选择性搜索）、Edge Boxes（EB）基于RP目标检测算法的步骤如下：</p>
+<p><img src="https://img-blog.csdn.net/20161020124321529?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQv/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/Center" alt="img"></p>
+<p>边框回归（Bouding Box Regression）：是对RegionProposal进行纠正的线性回归算法，目的是为了让Region Proposal提取到的窗口与目标窗口（Ground Truth）更加吻合</p>
+</li>
+<li><p><strong>foreground</strong>：前景（相对于背景，即所需的目标）</p>
+</li>
+<li><p><strong>box</strong>：箱、盒</p>
+</li>
+<li><p><strong>ground-truth</strong> ：标注数据（确定为真实的标注数据）</p>
+</li>
+<li><p><strong>proposal</strong> ：提案（即可能的结果）</p>
+</li>
+</ul>
+<h1 id="1-RPN结构"><a href="#1-RPN结构" class="headerlink" title="1. RPN结构"></a>1. RPN结构</h1><p>正如我们在<a href="https://dinghye.gitee.io/2020/10/31/Detectron2FPN/">第2部分</a>看到的，特征金字塔网络（FPN）的输出特征图为：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">output[&quot;p2&quot;].shape -&gt; torch.Size([1, 256, 200, 320]) # stride = 4</span><br><span class="line">output[&quot;p3&quot;].shape -&gt; torch.Size([1, 256, 100, 160]) # stride = 8</span><br><span class="line">output[&quot;p4&quot;].shape -&gt; torch.Size([1, 256, 50, 80]) # stride = 16</span><br><span class="line">output[&quot;p5&quot;].shape -&gt; torch.Size([1, 256, 25, 40]) # stride = 32</span><br><span class="line">output[&quot;p6&quot;].shape -&gt; torch.Size([1, 256, 13, 20]) # stride = 64</span><br></pre></td></tr></table></figure>
 
 <p>同样的，这也是<strong>RPN的输入</strong>。每个张量尺寸代表（batch、通道、高度、宽度）。我们在整个博客部分都使用上面的特征尺寸。</p>
-<p>我们也有从数据集加载的标注框（见<a target="_blank" rel="noopener" href="https://medium.com/@hirotoschwert/digging-into-detectron-2-part-3-1ecc27efc0b2">第3部分</a>）：</p>
+<p>我们也有从数据集加载的标注框（见<a href="https://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/">第3部分</a>）：</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x27;gt_boxes&#x27;:Boxes(tensor([</span><br><span class="line">[100.58, 180.66, 214.78, 283.95],</span><br><span class="line">[<span class="number">180.58</span>, <span class="number">162.66</span>, <span class="number">204.78</span>, <span class="number">180.95</span>]</span><br><span class="line">])),</span><br><span class="line">&#x27;gt_classes&#x27;: tensor([9, 9]) # 在RPN中没有使用!</span><br></pre></td></tr></table></figure>
 
-<p>检测器如何连接特征图(feature map)和标注框(ground truth)的位置和大小？让我们来看看RPN--RCNN检测器的核心部件——是如何工作的。</p>
-<p>图3为RPN的详细示意图。RPN由神经网络（RPN Head）和非神经网络功能组成。RPN³中的所有计算都在Detectron 2的GPU上进行。</p>
-<img src="https://i.loli.net/2020/11/01/G6dEMKcH2gqNShw.png" alt="图3.区域提案网络示意图。区域提案网络示意图。蓝色和红色标签分别代表班级名称和章节名称。" style="zoom:50%;" />
+<p>检测器如何连接特征图(feature map)和标注框(ground truth)的位置和大小？让我们来看看RPN--RCNN检测器的核心部件——是如何工作的！图2为RPN的详细示意图。RPN由神经网络（RPN Head）和非神经网络功能组成。RPN³中的所有计算都在Detectron 2的GPU上进行。</p>
+<img src="https://i.loli.net/2020/11/01/G6dEMKcH2gqNShw.png" alt="图2.RPN示意图。蓝色和红色标签分别代表类名称和下面的章节名称。" style="zoom:50%;" />
 
 <p>首先，我们来看看处理FPN送来的特征图的RPN头。</p>
-<h2 id="1-RPN-Head"><a href="#1-RPN-Head" class="headerlink" title="1.RPN Head"></a>1.RPN Head</h2><p>RPN的神经网络部分很简单。它被称为RPN Head，由<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/detectron2/modeling/proposal_generator/rpn.py#L34-L85">标准RPNHead类中</a>定义的三个卷积层组成。</p>
+<h1 id="2-RPN-Head"><a href="#2-RPN-Head" class="headerlink" title="2. RPN Head"></a>2. RPN Head</h1><p>RPN的神经网络部分很简单。它被称为RPN Head，由<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/detectron2/modeling/proposal_generator/rpn.py#L34-L85">标准RPNHead类中</a>定义的三个卷积层组成。</p>
 <ol>
 <li><em>cov</em> (3×3，256-&gt;256通道)</li>
 <li><em>objectness logits conv</em>（1×1，256 -&gt; 3 ch）</li>
@@ -312,9 +340,10 @@
 </ol>
 <p>它们实际上是什么样子的呢？在图4中，将每一级的objectness logits map叠加在输入图像上。你可以发现，<strong>小的物体在P2和P3被检测到，大的物体在P4到P6</strong>。这正是特征金字塔网络的目标。<u>多尺度网络可以检测到单尺度检测器无法发现的微小物体。</u></p>
 <p>接下来，我们继续进行锚点生成，这对于将标注框与上面两个输出特征图关联起来是至关重要的。</p>
-<p><img src="https://i.loli.net/2020/11/01/KdxrniYCIlGzZNR.png" alt="图4.objectness maps 的可视化。Sigmoid函数已被应用到objectness\_logits map上。1:1 anchor的objectness maps 被调整为P2特征图大小，并覆盖在原始图像上。"></p>
-<h2 id="2-锚点生成-Anchor-Generation"><a href="#2-锚点生成-Anchor-Generation" class="headerlink" title="2. 锚点生成 Anchor Generation"></a>2. 锚点生成 Anchor Generation</h2><p>为了将objectness map和 anchor deltas map与标注框连接起来，需要称为&quot;锚（anchor）”的参考框。</p>
-<h3 id="2-1-生成cell-anchor"><a href="#2-1-生成cell-anchor" class="headerlink" title="2.1 生成cell anchor"></a>2.1 生成cell anchor</h3><p>在<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/configs/Base-RCNN-FPN.yaml#L9-L11">Detectron 2的Base-FPN-RCNN</a>中，Anchor的定义如下：</p>
+<img src="https://i.loli.net/2020/11/02/f7BlL5viXhPO4Mj.png" alt="图3.objectness maps 的可视化。Sigmoid函数已被应用到objectness_logits map上。1:1 anchor的objectness maps 被调整为P2特征图大小，并覆盖在原始图像上。" style="zoom: 80%;" />
+
+<h1 id="3-锚点生成-Anchor-Generation"><a href="#3-锚点生成-Anchor-Generation" class="headerlink" title="3. 锚点生成 Anchor Generation"></a>3. 锚点生成 Anchor Generation</h1><p>为了将objectness map和 anchor deltas map与标注框连接起来，需要称为&quot;锚（anchor）”的参考框。</p>
+<h3 id="3-1-生成cell-anchor"><a href="#3-1-生成cell-anchor" class="headerlink" title="3.1 生成cell anchor"></a>3.1 生成cell anchor</h3><p>在<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/configs/Base-RCNN-FPN.yaml#L9-L11">Detectron 2的Base-FPN-RCNN</a>中，Anchor的定义如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MODEL.ANCHOR_GENERATOR.SIZEES = [[<span class="number">32</span>], [<span class="number">64</span>], [<span class="number">128</span>], [<span class="number">256</span>], [<span class="number">512</span>]]</span><br><span class="line">MODEL.ANCHOR_GENERATOR.ASPECT_RATIOS = [[<span class="number">0.5</span>, <span class="number">1.0</span>, <span class="number">2.0</span>]] 。</span><br></pre></td></tr></table></figure>
 
 <blockquote>
@@ -322,29 +351,25 @@
 </blockquote>
 <p>ANCHOR_GENERATOR.SIZEES列表中的五个元素对应五个级别的特征图（P2到P6）。例如P2（stride=4）有一个anchor，其大小为32</p>
 <p>长宽比定义了锚的形状。在上面的例子中，有三种形状：0.5、1.0和2.0。让我们看看实际的锚点（图5）。P2特征图处的三个锚点的长宽比分别为1:2、1:1和2:1，面积与32×32相同。在P3级别的锚是P2锚的两倍。</p>
-<p><img src="https://i.loli.net/2020/11/01/ZFsKWlCAQNrHqIa.png" alt="图5. P2和P3特征图的单元锚。P2和P3特征图的单元锚。(左起：1:2、1:1和2:1纵横比)"></p>
-<p>这些锚在Detectron 2中称为&quot;单元锚(cell anchor)”。(锚生成的代码在<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/detectron2/modeling/anchor_generator.py#L140-L177">这里</a>) 结果我们得到了5个特征图级别的3×5=15个单元锚。</p>
+<p><img src="https://i.loli.net/2020/11/01/ZFsKWlCAQNrHqIa.png" alt="图4. P2和P3特征图的单元锚。P2和P3特征图的单元锚。(左起：1:2、1:1和2:1纵横比)"></p>
+<p>这些锚在Detectron 2中称为&quot;单元锚(cell anchor)”。(锚生成的代码在<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/detectron2/modeling/anchor_generator.py#L140-L177">这里</a>) 结果我们得到了5个特征图级别的3×5=15个cell锚。</p>
 <p>P2、P3、P4、P5和P6的cell anchor。(x1, y1, x2, y2)</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">tensor([[<span class="number">-22.6274</span>，<span class="number">-11.3137</span>，<span class="number">22.6274</span>，<span class="number">11.3137</span>],</span><br><span class="line">[<span class="number">-16.0000</span>, <span class="number">-16.0000</span>, <span class="number">16.0000</span>, <span class="number">16.0000</span>],</span><br><span class="line">[<span class="number">-11.3137</span>, <span class="number">-22.6274</span>, <span class="number">11.3137</span>, <span class="number">22.6274</span>]])</span><br><span class="line"></span><br><span class="line">tensor([[<span class="number">-45.2548</span>，<span class="number">-22.6274</span>，<span class="number">45.2548</span>，<span class="number">22.6274</span>],</span><br><span class="line">[<span class="number">-32.0000</span>, <span class="number">-32.0000</span>, <span class="number">32.0000</span>, <span class="number">32.0000</span>],</span><br><span class="line">[<span class="number">-22.6274</span>, <span class="number">-45.2548</span>, <span class="number">22.6274</span>, <span class="number">45.2548</span>]])</span><br><span class="line"></span><br><span class="line">tensor([[<span class="number">-90.5097</span>，<span class="number">-45.2548</span>，<span class="number">90.5097</span>，<span class="number">45.2548</span>],</span><br><span class="line">[<span class="number">-64.0000</span>, <span class="number">-64.0000</span>, <span class="number">64.0000</span>, <span class="number">64.0000</span>],</span><br><span class="line">[<span class="number">-45.2548</span>, <span class="number">-90.5097</span>, <span class="number">45.2548</span>, <span class="number">90.5097</span>]])</span><br><span class="line"></span><br><span class="line">tensor([[<span class="number">-181.0193</span>，<span class="number">-90.5097</span>，<span class="number">181.0193</span>，<span class="number">90.5097</span>]。</span><br><span class="line">[<span class="number">-128.0000</span>, <span class="number">-128.0000</span>, <span class="number">128.0000</span>, <span class="number">128.0000</span>],</span><br><span class="line">[ <span class="number">-90.5097</span>, <span class="number">-181.0193</span>, <span class="number">90.5097</span>, <span class="number">181.0193</span>]])</span><br><span class="line"></span><br><span class="line">tensor([[<span class="number">-362.0387</span>，<span class="number">-181.0193</span>，<span class="number">362.0387</span>，<span class="number">181.0193</span>]。</span><br><span class="line">[<span class="number">-256.0000</span>, <span class="number">-256.0000</span>, <span class="number">256.0000</span>, <span class="number">256.0000</span>],</span><br><span class="line">[<span class="number">-181.0193</span>, <span class="number">-362.0387</span>, <span class="number">181.0193</span>, <span class="number">362.0387</span>]])</span><br></pre></td></tr></table></figure>
 
-
-
-<h3 id="2-2-在网格上放置锚点"><a href="#2-2-在网格上放置锚点" class="headerlink" title="2.2 在网格上放置锚点"></a>2.2 在网格上放置锚点</h3><p>接下来我们将单元格锚放在网格上，其大小与预测的特征图相同。</p>
+<h3 id="3-2-在网格上放置锚点"><a href="#3-2-在网格上放置锚点" class="headerlink" title="3.2 在网格上放置锚点"></a>3.2 在网格上放置锚点</h3><p>接下来我们将单元格锚放在网格上，其大小与预测的特征图相同。</p>
 <p>例如我们预测的特征图&#39;P6&#39;的大小为（13，20），步幅为64。在图6中，P6网格的三个锚点放置在（5，5）。在输入图像分辨率中，(5，5)的坐标对应于(320，320)，方块锚的大小为(512，512)。锚被放置在每个网格点上，所以13×20×3=780个锚被生成在P6。<br>对其他网格进行同样的处理（见图6中P5网格的例子），总共生成255,780个锚。</p>
 <img src="https://i.loli.net/2020/11/01/MlLu8oSAdaVeXTJ.png" alt="图6.在网格上放置锚。在网格上放置锚点。每个网格的左上角对应于（0，0)" style="zoom:45%;" />
 
-
-
-<h2 id="3-标注数据准备"><a href="#3-标注数据准备" class="headerlink" title="3. 标注数据准备"></a>3. 标注数据准备</h2><p>在本章中，我们将标注框与生成的锚联系起来。</p>
-<h3 id="3-1-计算交叉点-单位（IoU）矩阵"><a href="#3-1-计算交叉点-单位（IoU）矩阵" class="headerlink" title="3.1 计算交叉点-单位（IoU）矩阵"></a>3.1 计算交叉点-单位（IoU）矩阵</h3><p>假设我们从一个数据集中加载了两个地面真相（GT）盒子。</p>
+<h1 id="4-标注数据准备"><a href="#4-标注数据准备" class="headerlink" title="4 标注数据准备"></a>4 标注数据准备</h1><p>在本章中，我们将标注框与生成的锚联系起来。</p>
+<h3 id="4-1-计算交叉点-单位（IoU）矩阵"><a href="#4-1-计算交叉点-单位（IoU）矩阵" class="headerlink" title="4.1 计算交叉点-单位（IoU）矩阵"></a>4.1 计算交叉点-单位（IoU）矩阵</h3><p>假设我们从一个数据集中加载了两个ground-truth（GT）box（已经标注出的数据框）。</p>
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x27;gt_boxes&#x27;：</span><br><span class="line">	Boxes(tensor([</span><br><span class="line">		[100.58, 180.66, 214.78, 283.95],</span><br><span class="line">		[<span class="number">180.58</span>, <span class="number">162.66</span>, <span class="number">204.78</span>, <span class="number">180.95</span>]</span><br><span class="line">	])),</span><br></pre></td></tr></table></figure>
 
-<p>我们现在试着从255780个anchor中找出与这两个标注盒子相似的盒子。如何判断一个盒子与另一个盒子是否相似呢？答案是交集大于联合（IoU）计算。在Detectron2中，<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/detectron2/structures/boxes.py#L299-L331">pairwise_iou</a>函数可以从<strong>两个盒子列表中计算出每一对盒子的IoU</strong>。在我们的例子中，pairwise_iou的结果是一个<strong>大小为(2(GT), 255780(anchors))的矩阵</strong>。</p>
+<p>我们现在试着从255780个anchor中找出与这两个标注盒子相似的盒子。如何判断一个盒子与另一个盒子是否相似呢？答案是<strong>进行IoU计算</strong>。（什么是IoU？见0.1）在Detectron2中，<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/detectron2/structures/boxes.py#L299-L331">pairwise_iou</a>函数可以从<strong>两个盒子列表中计算出每一对盒子的IoU</strong>。在我们的例子中，pairwise_iou的结果是一个<strong>大小为(2(GT), 255780(anchors))的矩阵</strong>。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># IoU矩阵例子，pairwise_iou的结果。</span></span><br><span class="line">tensor([[<span class="number">0.0000</span>, <span class="number">0.0000</span>, <span class="number">0.0000</span>, ..., <span class="number">0.0000</span>, <span class="number">0.0000</span>, <span class="number">0.0000</span>], <span class="comment">#GT 1</span></span><br><span class="line">[<span class="number">0.0000</span>, <span class="number">0.0000</span>, <span class="number">0.0000</span>, ..., <span class="number">0.0087</span>, <span class="number">0.0213</span>, <span class="number">0.0081</span>], <span class="comment">#GT 2</span></span><br></pre></td></tr></table></figure>
 
 
 
-<h3 id="3-2-用Matcher检查IoU矩阵"><a href="#3-2-用Matcher检查IoU矩阵" class="headerlink" title="3.2 用Matcher检查IoU矩阵"></a>3.2 用Matcher检查IoU矩阵</h3><p>Matcher对IoU矩阵进行检查，所有的锚都被标记为前景、背景或忽略。如图7所示，如果IoU大于<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/989f52d67d05445ccd030d8f13d6cc53e297fb91/detectron2/config/defaults.py#L199">预先定义的阈值</a>（通常为0.7），则锚被分配到GT框之一，并标记为前景（&#39;1&#39;）。如果IoU小于另一个阈值(通常为0.3)，则将锚标记为背景(&#39;0&#39;)，否则忽略(&#39;-1&#39;)。</p>
+<h3 id="4-2-用Matcher检查IoU矩阵"><a href="#4-2-用Matcher检查IoU矩阵" class="headerlink" title="4.2 用Matcher检查IoU矩阵"></a>4.2 用Matcher检查IoU矩阵</h3><p>Matcher对IoU矩阵进行检查，所有的锚都被标记为前景、背景或忽略。如图7所示，如果IoU大于<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/989f52d67d05445ccd030d8f13d6cc53e297fb91/detectron2/config/defaults.py#L199">预先定义的阈值</a>（通常为0.7），则锚被分配到GT框之一，并标记为前景（&#39;1&#39;）。如果IoU小于另一个阈值(通常为0.3)，则将锚标记为背景(&#39;0&#39;)，否则忽略(&#39;-1&#39;)。</p>
 <img src="https://i.loli.net/2020/11/01/ubewzdoOkPUsDV2.png" alt="图7.Matcher确定锚点对地真盒的分配。该表显示了IoU矩阵，其形状为（GT箱数，锚点数）。" style="zoom: 50%;" />
 
 
@@ -354,14 +379,14 @@
 
 
 
-<h3 id="3-3-计算锚点三角"><a href="#3-3-计算锚点三角" class="headerlink" title="3.3 计算锚点三角"></a>3.3 计算锚点三角</h3><p>被确定为前景的锚箱与GT箱的形状相似。然而，网络应该学习提出GT盒的确切位置和形状。为了实现这一目标，应该学习四个回归参数：Δx、Δy、Δw和Δh。这些&quot;deltas&quot;的计算方法如图9所示，使用<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/detectron2/modeling/box_regression.py#L38-L71">Box2BoxTransform.get_deltas</a>函数。该公式写在Faster-RNN论文中。</p>
+<h3 id="4-3-计算锚点三角"><a href="#4-3-计算锚点三角" class="headerlink" title="4.3 计算锚点三角"></a>4.3 计算锚点三角</h3><p>被确定为前景的锚箱与GT箱的形状相似。然而，网络应该学习提出GT盒的确切位置和形状。为了实现这一目标，应该学习四个回归参数：Δx、Δy、Δw和Δh。这些&quot;deltas&quot;的计算方法如图9所示，使用<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/detectron2/modeling/box_regression.py#L38-L71">Box2BoxTransform.get_deltas</a>函数。该公式写在Faster-RNN论文中。</p>
 <p><img src="https://i.loli.net/2020/11/01/28QfrJEYThX97zt.png" alt="图9. 锚点三角计算"></p>
 <p>结果，我们得到一个名为<em>gt_anchor_deltas</em>的张量，在我们的情况下，它的形状是（255,780，4）。</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 计算出的三角(dx, dy, dw, dh)</span></span><br><span class="line">tensor([[[<span class="number">9.9280</span>, <span class="number">24.6847</span>, <span class="number">0.8399</span>, <span class="number">2.8774</span>],</span><br><span class="line">[<span class="number">14.0403</span>, <span class="number">17.4548</span>, <span class="number">1.1865</span>, <span class="number">2.5308</span>],</span><br><span class="line">[<span class="number">19.8559</span>, <span class="number">12.3424</span>, <span class="number">1.5330</span>, <span class="number">2.1842</span>],</span><br><span class="line">...,</span><br></pre></td></tr></table></figure>
 
 
 
-<h3 id="3-4-重新取样计算损失的boxes"><a href="#3-4-重新取样计算损失的boxes" class="headerlink" title="3.4 重新取样计算损失的boxes"></a>3.4 重新取样计算损失的boxes</h3><p>现在我们在特征图的每个网格点上都有objectness_logits和anchor_deltas，我们可以将预测的特征图与之进行比较。</p>
+<h3 id="4-4-重新取样计算损失的boxes"><a href="#4-4-重新取样计算损失的boxes" class="headerlink" title="4.4 重新取样计算损失的boxes"></a>4.4 重新取样计算损失的boxes</h3><p>现在我们在特征图的每个网格点上都有objectness_logits和anchor_deltas，我们可以将预测的特征图与之进行比较。</p>
 <ul>
 <li><p>问题：</p>
 <p>图10(左)是每张图片的锚点数量和例子的分类。如你所见，大部分的锚都是背景锚。例如，通常在255,780个锚中，foreground 锚不到100个，被忽略的锚不到1000个，其余的都是背景锚。如果我们继续训练，由于标签不平衡，将会很难学会foreground（这里forground指的目标）。</p>
@@ -376,16 +401,14 @@
 <p>图10（中心）显示了重新采样框的分解。背景箱和前景箱是<strong>随机选择</strong>的，因此<em>N</em>和<em>F/N</em>成为上述参数定义的值。在前景数小于<em>F的</em>情况下，如图10(右)所示，背景框被采样来填充<em>N个</em>样本。</p>
 <img src="https://i.loli.net/2020/11/01/xb1UKlZci3yPkTg.png" alt="图10.对前景和背景框进行重新采样。重新对前景和背景框进行采样" style="zoom:50%;" />
 
-
-
-<h2 id="4-损失计算"><a href="#4-损失计算" class="headerlink" title="4. 损失计算"></a>4. 损失计算</h2><p>在<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/detectron2/modeling/proposal_generator/rpn_outputs.py#L159-L195">rpn_losses函数</a>处对预测图和ground-truth map应用了两个损失函数。</p>
-<h3 id="4-1-本地化损失-loss-rpn-loc"><a href="#4-1-本地化损失-loss-rpn-loc" class="headerlink" title="4.1 本地化损失 (loss_rpn_loc)"></a>4.1 本地化损失 (loss_rpn_loc)</h3><ul>
+<h1 id="5-损失计算"><a href="#5-损失计算" class="headerlink" title="5. 损失计算"></a>5. 损失计算</h1><p>在<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/5e2a1ecccd228227c5a605c0a98d58e1b2db3640/detectron2/modeling/proposal_generator/rpn_outputs.py#L159-L195">rpn_losses函数</a>处对预测图和ground-truth map应用了两个损失函数。</p>
+<h3 id="5-1-本地化损失-loss-rpn-loc"><a href="#5-1-本地化损失-loss-rpn-loc" class="headerlink" title="5.1 本地化损失 (loss_rpn_loc)"></a>5.1 本地化损失 (loss_rpn_loc)</h3><ul>
 <li><p>  l1损失</p>
 </li>
 <li><p>  <strong>只在ground-truth objectness=1（前景）的网格点上</strong>计算，也就是忽略所有背景网格来计算损失。</p>
 </li>
 </ul>
-<h3 id="4-2-客观性损失-损失-rpn-cls"><a href="#4-2-客观性损失-损失-rpn-cls" class="headerlink" title="4.2 客观性损失(损失_rpn_cls)"></a>4.2 客观性损失(损失_rpn_cls)</h3><ul>
+<h3 id="5-2-客观性损失-损失-rpn-cls"><a href="#5-2-客观性损失-损失-rpn-cls" class="headerlink" title="5.2 客观性损失(损失_rpn_cls)"></a>5.2 客观性损失(损失_rpn_cls)</h3><ul>
 <li><p>  二元交叉熵损失。</p>
 </li>
 <li><p>  <strong>只在ground-truth objectness=1（前景）或0（背景）的网格点上</strong>计算。</p>
@@ -394,9 +417,7 @@
 <p>实际损失结果如下：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">	<span class="string">&#x27;loss_rpn_cls&#x27;</span>: tensor(<span class="number">0.6913</span>, device=<span class="string">&#x27;cuda:0&#x27;</span>, grad_fn=&lt;MulBackward0&gt;)</span><br><span class="line">	<span class="string">&#x27;loss_rpn_loc&#x27;</span>: tensor(<span class="number">0.1644</span>, device=<span class="string">&#x27;cuda:0&#x27;</span>, grad_fn=&lt;MulBackward0&gt;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-
-
-<h2 id="5-提案选择"><a href="#5-提案选择" class="headerlink" title="5.提案选择"></a>5.提案选择</h2><p>最后，我们按照下面的四个步骤从预测框中选择1000个&quot;区域提案&quot;框。</p>
+<h1 id="6-提案选择"><a href="#6-提案选择" class="headerlink" title="6. 提案选择"></a>6. 提案选择</h1><p>最后，我们按照下面的四个步骤从预测框中选择1000个&quot;区域提案&quot;框。</p>
 <ol>
 <li><p> <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/e1356b1ee79ad2e7f9739ad533250e24d4278c30/detectron2/modeling/box_regression.py#L73-L110">将预测的anchor_deltas应用</a>到相应的锚中，这是3-3的反向过程。</p>
 </li>
@@ -415,15 +436,6 @@
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;proposal_boxes&#x27;: 1,000个盒子</span><br><span class="line">&#x27;objectness_logits&#x27;: 1,000个分数</span><br></pre></td></tr></table></figure>
 
 <p>这些分数将在下一阶段使用。</p>
-<h2 id="主要术语翻译和解释："><a href="#主要术语翻译和解释：" class="headerlink" title="主要术语翻译和解释："></a><em>主要术语翻译和解释：</em></h2><ul>
-<li>Anchor：锚点（用于定位object的框框的点）</li>
-<li>Grid：网格（图像中各个像素构成的网络）</li>
-<li>loU：详细见下篇（一个坑）</li>
-<li>foreground：前景（相对于背景，即所需的目标）</li>
-<li>box：箱、盒</li>
-<li>ground-truth ：标注数据（确定为真实的标注数据）</li>
-<li>proposal ：提案（即可能的结果）</li>
-</ul>
 
     </div>
 
@@ -439,7 +451,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://dinghye.gitee.io/2020/11/01/Detectron2RPN/" title="【Detectron2】核心Region Proposal Network">http://dinghye.gitee.io/2020/11/01/Detectron2RPN/</a>
+    <a href="http://dinghye.gitee.io/2020/11/01/Detectron2RPN/" title="【深度学习】Faster-RCNN ：3.核心Region Proposal Network">http://dinghye.gitee.io/2020/11/01/Detectron2RPN/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -466,12 +478,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/11/01/Detectron2DataLoader/" rel="prev" title="【Detectron2】数据加载注册原理">
-      <i class="fa fa-chevron-left"></i> 【Detectron2】数据加载注册原理
+    <a href="/2020/11/01/Detectron2DataLoader/" rel="prev" title="【Detectron2】Faster-RCNN：2.数据加载注册原理">
+      <i class="fa fa-chevron-left"></i> 【Detectron2】Faster-RCNN：2.数据加载注册原理
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/11/01/Detectron2ROI/" rel="next" title="【Detectron2】ROI(Box) Head">
-      【Detectron2】ROI(Box) Head <i class="fa fa-chevron-right"></i>
+    <a href="/2020/11/01/Detectron2ROI/" rel="next" title="【深度学习】Faster-RCNN：4.ROI(Box) Head">
+      【深度学习】Faster-RCNN：4.ROI(Box) Head <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -536,7 +548,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-RPN-Head"><span class="nav-text">1.RPN Head</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%94%9A%E7%82%B9%E7%94%9F%E6%88%90-Anchor-Generation"><span class="nav-text">2. 锚点生成 Anchor Generation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%94%9F%E6%88%90cell-anchor"><span class="nav-text">2.1 生成cell anchor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E5%9C%A8%E7%BD%91%E6%A0%BC%E4%B8%8A%E6%94%BE%E7%BD%AE%E9%94%9A%E7%82%B9"><span class="nav-text">2.2 在网格上放置锚点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E6%A0%87%E6%B3%A8%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87"><span class="nav-text">3. 标注数据准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E8%AE%A1%E7%AE%97%E4%BA%A4%E5%8F%89%E7%82%B9-%E5%8D%95%E4%BD%8D%EF%BC%88IoU%EF%BC%89%E7%9F%A9%E9%98%B5"><span class="nav-text">3.1 计算交叉点-单位（IoU）矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E7%94%A8Matcher%E6%A3%80%E6%9F%A5IoU%E7%9F%A9%E9%98%B5"><span class="nav-text">3.2 用Matcher检查IoU矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E8%AE%A1%E7%AE%97%E9%94%9A%E7%82%B9%E4%B8%89%E8%A7%92"><span class="nav-text">3.3 计算锚点三角</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-4-%E9%87%8D%E6%96%B0%E5%8F%96%E6%A0%B7%E8%AE%A1%E7%AE%97%E6%8D%9F%E5%A4%B1%E7%9A%84boxes"><span class="nav-text">3.4 重新取样计算损失的boxes</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%8D%9F%E5%A4%B1%E8%AE%A1%E7%AE%97"><span class="nav-text">4. 损失计算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E6%9C%AC%E5%9C%B0%E5%8C%96%E6%8D%9F%E5%A4%B1-loss-rpn-loc"><span class="nav-text">4.1 本地化损失 (loss_rpn_loc)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E5%AE%A2%E8%A7%82%E6%80%A7%E6%8D%9F%E5%A4%B1-%E6%8D%9F%E5%A4%B1-rpn-cls"><span class="nav-text">4.2 客观性损失(损失_rpn_cls)</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-%E6%8F%90%E6%A1%88%E9%80%89%E6%8B%A9"><span class="nav-text">5.提案选择</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BB%E8%A6%81%E6%9C%AF%E8%AF%AD%E7%BF%BB%E8%AF%91%E5%92%8C%E8%A7%A3%E9%87%8A%EF%BC%9A"><span class="nav-text">主要术语翻译和解释：</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0-%E4%B8%BB%E8%A6%81%E6%9C%AF%E8%AF%AD"><span class="nav-text">0. 主要术语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-RPN%E7%BB%93%E6%9E%84"><span class="nav-text">1. RPN结构</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-RPN-Head"><span class="nav-text">2. RPN Head</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E9%94%9A%E7%82%B9%E7%94%9F%E6%88%90-Anchor-Generation"><span class="nav-text">3. 锚点生成 Anchor Generation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E7%94%9F%E6%88%90cell-anchor"><span class="nav-text">3.1 生成cell anchor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%9C%A8%E7%BD%91%E6%A0%BC%E4%B8%8A%E6%94%BE%E7%BD%AE%E9%94%9A%E7%82%B9"><span class="nav-text">3.2 在网格上放置锚点</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E6%A0%87%E6%B3%A8%E6%95%B0%E6%8D%AE%E5%87%86%E5%A4%87"><span class="nav-text">4 标注数据准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-%E8%AE%A1%E7%AE%97%E4%BA%A4%E5%8F%89%E7%82%B9-%E5%8D%95%E4%BD%8D%EF%BC%88IoU%EF%BC%89%E7%9F%A9%E9%98%B5"><span class="nav-text">4.1 计算交叉点-单位（IoU）矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-%E7%94%A8Matcher%E6%A3%80%E6%9F%A5IoU%E7%9F%A9%E9%98%B5"><span class="nav-text">4.2 用Matcher检查IoU矩阵</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-%E8%AE%A1%E7%AE%97%E9%94%9A%E7%82%B9%E4%B8%89%E8%A7%92"><span class="nav-text">4.3 计算锚点三角</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-%E9%87%8D%E6%96%B0%E5%8F%96%E6%A0%B7%E8%AE%A1%E7%AE%97%E6%8D%9F%E5%A4%B1%E7%9A%84boxes"><span class="nav-text">4.4 重新取样计算损失的boxes</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-%E6%8D%9F%E5%A4%B1%E8%AE%A1%E7%AE%97"><span class="nav-text">5. 损失计算</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#5-1-%E6%9C%AC%E5%9C%B0%E5%8C%96%E6%8D%9F%E5%A4%B1-loss-rpn-loc"><span class="nav-text">5.1 本地化损失 (loss_rpn_loc)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-2-%E5%AE%A2%E8%A7%82%E6%80%A7%E6%8D%9F%E5%A4%B1-%E6%8D%9F%E5%A4%B1-rpn-cls"><span class="nav-text">5.2 客观性损失(损失_rpn_cls)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-%E6%8F%90%E6%A1%88%E9%80%89%E6%8B%A9"><span class="nav-text">6. 提案选择</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -552,20 +564,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -616,13 +628,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">37k</span>
+    <span title="站点总字数">41k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">34 分钟</span>
+    <span title="站点阅读时长">37 分钟</span>
 </div>
 <div class="powered-by">
 <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">

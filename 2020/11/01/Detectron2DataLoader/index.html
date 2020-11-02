@@ -26,7 +26,7 @@
 
   <meta name="description" content="【深度研究Detectron2】，基于文档Digging into Detectron2。Detectron2 的数据注册原理。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Detectron2】数据加载注册原理">
+<meta property="og:title" content="【Detectron2】Faster-RCNN：2.数据加载注册原理">
 <meta property="og:url" content="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/index.html">
 <meta property="og:site_name" content="DontWakeMeUp">
 <meta property="og:description" content="【深度研究Detectron2】，基于文档Digging into Detectron2。Detectron2 的数据注册原理。">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/01/neBpQ6UWrdN14kz.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/01/gZuVN3owjnSDfzO.png">
 <meta property="article:published_time" content="2020-11-01T01:53:51.000Z">
-<meta property="article:modified_time" content="2020-11-02T02:20:50.734Z">
+<meta property="article:modified_time" content="2020-11-02T11:59:02.161Z">
 <meta property="article:author" content="Dingh Ye">
 <meta property="article:tag" content="机器学习">
 <meta property="article:tag" content="Detectron2">
@@ -55,7 +55,7 @@
   };
 </script>
 
-  <title>【Detectron2】数据加载注册原理 | DontWakeMeUp</title>
+  <title>【Detectron2】Faster-RCNN：2.数据加载注册原理 | DontWakeMeUp</title>
   
 
 
@@ -217,7 +217,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【Detectron2】数据加载注册原理
+          【Detectron2】Faster-RCNN：2.数据加载注册原理
         </h1>
 
         <div class="post-meta">
@@ -235,7 +235,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-02 10:20:50" itemprop="dateModified" datetime="2020-11-02T10:20:50+08:00">2020-11-02</time>
+                <time title="修改时间：2020-11-02 19:59:02" itemprop="dateModified" datetime="2020-11-02T19:59:02+08:00">2020-11-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -279,11 +279,11 @@
         <p>【深度研究Detectron2】，基于文档Digging into Detectron2。Detectron2 的数据注册原理。</p>
 <a id="more"></a>
 
-<h2 id="1-网络中哪些地方使用了ground-truth-data？"><a href="#1-网络中哪些地方使用了ground-truth-data？" class="headerlink" title="1. 网络中哪些地方使用了ground truth data？"></a>1. 网络中哪些地方使用了ground truth data？</h2><p>为了训练检测模型，我们需要准备<strong>图像和标注。</strong><br>至于Base-RCNN-FPN(Faster R-CNN)，在区域建议网络(Region Proposal Network，RPN)和箱头(Box Head)中使用的是ground truth数据(见图2)。</p>
+<h2 id="1-网络中哪些地方使用了ground-truth-data？"><a href="#1-网络中哪些地方使用了ground-truth-data？" class="headerlink" title="1. 网络中哪些地方使用了ground truth data？"></a>1. 网络中哪些地方使用了ground truth data？</h2><p>为了训练检测模型，我们需要准备<strong>图像和标注</strong><br>至于Base-RCNN-FPN(Faster R-CNN)，在区域建议网络(Region Proposal Network，RPN)和箱头(Box Head)中使用的是ground truth数据(见图1)。</p>
 <blockquote>
 <p>在有监督学习中，数据是有标注的，以(x, t)的形式出现，其中x是输入数据，t是标注。<strong>正确的t标注是ground truth，</strong> 错误的标记则不是。（也有人将所有标注数据都叫做ground truth）</p>
 </blockquote>
-<img src="https://i.loli.net/2020/10/31/5AfveKbuG3sZQFq.png" alt="图2.ground-truth箱注释用于RPN和Box Head计算损失" style="zoom:50%;" />
+<img src="https://i.loli.net/2020/10/31/5AfveKbuG3sZQFq.png" alt="图1.ground-truth箱注释用于RPN和Box Head计算损失" style="zoom:50%;" />
 
 
 
@@ -292,8 +292,7 @@
 <li><strong>方框标签</strong>：对象的位置和大小(如[x，y，w，h])</li>
 <li><strong>类别标签</strong>：对象的类别id(如12：“parking meter”)</li>
 </ul>
-<p>需要注意的是，RPN<u>不会学习对对象类别进行分类</u>，所以类别标签只在<u>ROI Head</u>处使用。</p>
-<p>从指定数据集的注释文件中加载标注数据。我们来看一下数据加载的过程。</p>
+<p>需要注意的是，<a href="https://dinghye.gitee.io/2020/10/31/Detectron2FPN/">RPN</a><u>不会学习对对象类别进行分类</u>，所以类别标签只在<a href="https://dinghye.gitee.io/2020/11/01/Detectron2ROI/">ROI Head</a>处使用。从指定数据集的注释文件中加载标注数据。我们来看一下数据加载的过程。</p>
 <h2 id="2-数据加载器"><a href="#2-数据加载器" class="headerlink" title="2. 数据加载器"></a>2. 数据加载器</h2><p>Detectron 2的数据加载器是多级嵌套的。它是在开始训练³之前由<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/build.py#L255-L385">构建器</a>构建的。</p>
 <ul>
 <li>  *dataset_dicts (list)*是一个从数据集注册的注释数据的列表。</li>
@@ -315,7 +314,7 @@
 <figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line">	&#x27;file_name&#x27;: &#x27;imagedata_1.jpg&#x27;, # 图片文件名。</span><br><span class="line">	&#x27;height&#x27;: 640, # 图片高度</span><br><span class="line">	&#x27;width&#x27;: 640, # 图片宽度</span><br><span class="line">	&#x27;image_id&#x27;:12, # image id</span><br><span class="line">	&#x27;annotations&#x27;:[ # 注释列表</span><br><span class="line">		&#123;</span><br><span class="line">    		&#x27;iscrowd&#x27;:0, #人群标志</span><br><span class="line">			&#x27;bbox&#x27;:[180.58, 162.66, 24.20, 18.29], # 界线盒标签。</span><br><span class="line">			&#x27;category_id&#x27;: 9, # 类别标签</span><br><span class="line">			&#x27;bbox_mode&#x27;: &lt; BoxMode.XYWH_ABS: 1&gt;&#125;&#125;。 # 盒式坐标模式</span><br><span class="line">			,...</span><br><span class="line">		</span><br><span class="line">]&#125;,</span><br><span class="line">,...</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
 
 <p>对于<u>COCO数据集(Detectron 2的默认值)</u>，<em>load_coco_json</em><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/datasets/coco.py#L29-L194">函数</a>起到了作用。</p>
-<h2 id="4-映射数据"><a href="#4-映射数据" class="headerlink" title="4. 映射数据"></a>4. 映射数据</h2><p>在训练过程中，注册的标注记录会被逐一挑选出来。我们需要实际的图像数据（不是路径）和相应的注释。数据集映射器(<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/dataset_mapper.py#L19-L147"><em>DatasetMapper</em></a>)处理记录，为<em>数据集_dict</em>添加&#39;图像&#39;和&#39;实例&#39;。&#39;Instances&#39;是Detectron 2的地真结构对象。</p>
+<h2 id="4-映射数据"><a href="#4-映射数据" class="headerlink" title="4. 映射数据"></a>4. 映射数据</h2><p>在训练过程中，注册的标注记录会被逐一挑选出来。我们需要实际的图像数据（不是路径）和相应的注释。数据集映射器<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/dataset_mapper.py#L19-L147"><em>DatasetMapper</em></a>处理记录，为<em>数据集_dict</em>添加&#39;图像&#39;和&#39;实例&#39;。&#39;Instances&#39;是Detectron 2的地真结构对象。</p>
 <ol>
 <li><p>加载和转换图像通过<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/detection_utils.py#L36-L70">read_image</a>函数<br> 加载由&quot;文件名&quot;指定的图像。加载的图像<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/dataset_mapper.py#L78-L81">通过预定义的变换器}</a>（如左右翻转）进行变换，最后注册形状为（通道、高度、宽度）的图像张量。</p>
 </li>
@@ -344,7 +343,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/" title="【Detectron2】数据加载注册原理">http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/</a>
+    <a href="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/" title="【Detectron2】Faster-RCNN：2.数据加载注册原理">http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -371,12 +370,12 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/31/Detectron2FPN/" rel="prev" title="【Detectron2】特征金字塔网络Feature Pyramid Network">
-      <i class="fa fa-chevron-left"></i> 【Detectron2】特征金字塔网络Feature Pyramid Network
+    <a href="/2020/10/31/Detectron2FPN/" rel="prev" title="【深度学习】Faster-RCNN：1. 特征金字塔网络Feature Pyramid Network">
+      <i class="fa fa-chevron-left"></i> 【深度学习】Faster-RCNN：1. 特征金字塔网络Feature Pyramid Network
     </a></div>
       <div class="post-nav-item">
-    <a href="/2020/11/01/Detectron2RPN/" rel="next" title="【Detectron2】核心Region Proposal Network">
-      【Detectron2】核心Region Proposal Network <i class="fa fa-chevron-right"></i>
+    <a href="/2020/11/01/Detectron2RPN/" rel="next" title="【深度学习】Faster-RCNN ：3.核心Region Proposal Network">
+      【深度学习】Faster-RCNN ：3.核心Region Proposal Network <i class="fa fa-chevron-right"></i>
     </a></div>
     </div>
       </footer>
@@ -457,20 +456,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -521,13 +520,13 @@
       <i class="fa fa-chart-area"></i>
     </span>
       <span class="post-meta-item-text">站点总字数：</span>
-    <span title="站点总字数">37k</span>
+    <span title="站点总字数">41k</span>
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
       <i class="fa fa-coffee"></i>
     </span>
       <span class="post-meta-item-text">站点阅读时长 &asymp;</span>
-    <span title="站点阅读时长">34 分钟</span>
+    <span title="站点阅读时长">37 分钟</span>
 </div>
 <div class="powered-by">
 <i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
