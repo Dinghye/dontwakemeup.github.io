@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://dinghye.gitee.io/2020/10/24/AFundamentalIdea/</loc>
+    <lastmod>2020-11-16</lastmod>
+  </url>
+  <url>
     <loc>http://dinghye.gitee.io/2020/11/11/Heidegger/</loc>
     <lastmod>2020-11-11</lastmod>
   </url>
@@ -27,10 +31,6 @@
   <url>
     <loc>http://dinghye.gitee.io/2020/10/31/Detectron2Total/</loc>
     <lastmod>2020-11-04</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/10/24/AFundamentalIdea/</loc>
-    <lastmod>2020-11-03</lastmod>
   </url>
   <url>
     <loc>http://dinghye.gitee.io/2020/11/03/essay001/</loc>
