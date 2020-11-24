@@ -43,7 +43,7 @@
       </tags>
   </entry>
   <entry>
-    <title>【目标检测】提升检测结果的小方法</title>
+    <title>【深度学习】提升模型效果的小方法</title>
     <url>/2020/11/23/improveOfRemoteSensingDetection/</url>
     <content><![CDATA[<p>影响机器学习结果的因素有很多，包括模型设计、数据等等因素。本文总结了一些常见提高效果的方法</p>
 <a id="more"></a>
@@ -140,6 +140,13 @@
 <p><img src="https://i.loli.net/2020/11/24/EJ2TRFB7irM9c4n.jpg" alt="非极大值抑制"></p>
 <p>其方法为：目标边界框列表及其对应的置信度得分列表，设定阈值，阈值用来删除重叠较大的边界框。<strong>IoU</strong>：intersection-over-union，即两个边界框的交集部分除以它们的并集。</p>
 ]]></content>
+      <categories>
+        <category>机器学习</category>
+        <category>技巧</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+      </tags>
   </entry>
   <entry>
     <title>【存在论】海德格尔早期存在论思想：存在、存在者、此在</title>
