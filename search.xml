@@ -86,11 +86,6 @@
       </tags>
   </entry>
   <entry>
-    <title>centernet</title>
-    <url>/2020/11/24/centernet/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
     <title>【深度学习】提升模型效果的小方法</title>
     <url>/2020/11/23/improveOfRemoteSensingDetection/</url>
     <content><![CDATA[<p>影响机器学习结果的因素有很多，包括模型设计、数据等等因素。本文总结了一些常见提高效果的方法</p>
@@ -1731,8 +1726,8 @@
         <category>连续学习</category>
       </categories>
       <tags>
-        <tag>连续学习</tag>
         <tag>机器学习</tag>
+        <tag>连续学习</tag>
         <tag>Paper Reading</tag>
       </tags>
   </entry>
@@ -1822,8 +1817,8 @@
         <category>连续学习</category>
       </categories>
       <tags>
-        <tag>连续学习</tag>
         <tag>机器学习</tag>
+        <tag>连续学习</tag>
         <tag>Paper Reading</tag>
       </tags>
   </entry>
