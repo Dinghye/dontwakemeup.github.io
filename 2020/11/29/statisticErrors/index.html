@@ -25,25 +25,27 @@
     var CONFIG = {"hostname":"dinghye.gitee.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="【深度研究Detectron2】，基于文档Digging into Detectron2。Detectron2 的数据注册原理。">
+  <meta name="description" content="1. 第一类错误与第二类错误两者的概念都非常简单，可以通过下表理解     H0 True H0 False    Reject H0 Type One Error √   Fail to reject H0 √ Type Two Error   简单来说，第一类错误即抓错了好人，第二类错误即放走了坏人。 哈哈哈哈哈哈哈哈哈哈哈网上的沙雕例子很多啊，什么古董鉴定思聪选妃什么的。这里说一个比较好">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Detectron2】Faster-RCNN：2.数据加载注册原理">
-<meta property="og:url" content="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/index.html">
+<meta property="og:title" content="【统计学】统计学当中的第一类错误、第二类错误、P值危机">
+<meta property="og:url" content="http://dinghye.gitee.io/2020/11/29/statisticErrors/index.html">
 <meta property="og:site_name" content="DontWakeMeUp">
-<meta property="og:description" content="【深度研究Detectron2】，基于文档Digging into Detectron2。Detectron2 的数据注册原理。">
+<meta property="og:description" content="1. 第一类错误与第二类错误两者的概念都非常简单，可以通过下表理解     H0 True H0 False    Reject H0 Type One Error √   Fail to reject H0 √ Type Two Error   简单来说，第一类错误即抓错了好人，第二类错误即放走了坏人。 哈哈哈哈哈哈哈哈哈哈哈网上的沙雕例子很多啊，什么古董鉴定思聪选妃什么的。这里说一个比较好">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.loli.net/2020/10/31/5AfveKbuG3sZQFq.png">
-<meta property="og:image" content="https://i.loli.net/2020/11/01/neBpQ6UWrdN14kz.png">
-<meta property="og:image" content="https://i.loli.net/2020/11/01/gZuVN3owjnSDfzO.png">
-<meta property="article:published_time" content="2020-11-01T01:53:51.000Z">
-<meta property="article:modified_time" content="2020-11-02T11:59:02.161Z">
+<meta property="og:image" content="c:/Users/DELL/Desktop/两种错误.jpg">
+<meta property="og:image" content="https://n.sinaimg.cn/tech/crawl/142/w550h392/20191108/aa06-ihyxcrq5824071.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/11/29/QvkxTVMsOGX1aCe.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/29/dQGBPtqlpyhfzAK.png">
+<meta property="article:published_time" content="2020-11-29T04:06:44.000Z">
+<meta property="article:modified_time" content="2020-11-29T07:07:42.039Z">
 <meta property="article:author" content="Dinghy Ye">
-<meta property="article:tag" content="机器学习">
-<meta property="article:tag" content="Detectron2">
+<meta property="article:tag" content="统计学">
+<meta property="article:tag" content="基础概念">
+<meta property="article:tag" content="P值">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2020/10/31/5AfveKbuG3sZQFq.png">
+<meta name="twitter:image" content="c:/Users/DELL/Desktop/两种错误.jpg">
 
-<link rel="canonical" href="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/">
+<link rel="canonical" href="http://dinghye.gitee.io/2020/11/29/statisticErrors/">
 
 
 <script id="page-configurations">
@@ -56,7 +58,7 @@
   };
 </script>
 
-  <title>【Detectron2】Faster-RCNN：2.数据加载注册原理 | DontWakeMeUp</title>
+  <title>【统计学】统计学当中的第一类错误、第二类错误、P值危机 | DontWakeMeUp</title>
   
 
 
@@ -205,7 +207,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/11/29/statisticErrors/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/laptop.jpg">
@@ -218,7 +220,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【Detectron2】Faster-RCNN：2.数据加载注册原理
+          【统计学】统计学当中的第一类错误、第二类错误、P值危机
         </h1>
 
         <div class="post-meta">
@@ -228,27 +230,17 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-11-01 09:53:51" itemprop="dateCreated datePublished" datetime="2020-11-01T09:53:51+08:00">2020-11-01</time>
+              <time title="创建时间：2020-11-29 12:06:44 / 修改时间：15:07:42" itemprop="dateCreated datePublished" datetime="2020-11-29T12:06:44+08:00">2020-11-29</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-02 19:59:02" itemprop="dateModified" datetime="2020-11-02T19:59:02+08:00">2020-11-02</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
-                </span>
-                  ，
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">原理</span></a>
+                  <a href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">统计学</span></a>
                 </span>
             </span>
 
@@ -258,14 +250,14 @@
                 <i class="far fa-file-word"></i>
               </span>
                 <span class="post-meta-item-text">本文字数：</span>
-              <span>2.4k</span>
+              <span>3.4k</span>
             </span>
             <span class="post-meta-item" title="阅读时长">
               <span class="post-meta-item-icon">
                 <i class="far fa-clock"></i>
               </span>
                 <span class="post-meta-item-text">阅读时长 &asymp;</span>
-              <span>2 分钟</span>
+              <span>3 分钟</span>
             </span>
 
         </div>
@@ -277,58 +269,78 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>【深度研究Detectron2】，基于文档Digging into Detectron2。Detectron2 的数据注册原理。</p>
-<a id="more"></a>
+        <a id="more"></a>
 
-<h2 id="1-网络中哪些地方使用了ground-truth-data？"><a href="#1-网络中哪些地方使用了ground-truth-data？" class="headerlink" title="1. 网络中哪些地方使用了ground truth data？"></a>1. 网络中哪些地方使用了ground truth data？</h2><p>为了训练检测模型，我们需要准备<strong>图像和标注</strong><br>至于Base-RCNN-FPN(Faster R-CNN)，在区域建议网络(Region Proposal Network，RPN)和箱头(Box Head)中使用的是ground truth数据(见图1)。</p>
+<h1 id="1-第一类错误与第二类错误"><a href="#1-第一类错误与第二类错误" class="headerlink" title="1. 第一类错误与第二类错误"></a>1. 第一类错误与第二类错误</h1><p>两者的概念都非常简单，可以通过下表理解</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>H0 True</th>
+<th>H0 False</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Reject H0</td>
+<td>Type One Error</td>
+<td>√</td>
+</tr>
+<tr>
+<td>Fail to reject H0</td>
+<td>√</td>
+<td>Type Two Error</td>
+</tr>
+</tbody></table>
+<p>简单来说，第一类错误即<strong>抓错了好人</strong>，第二类错误即<strong>放走了坏人</strong>。</p>
+<p>哈哈哈哈哈哈哈哈哈哈哈网上的沙雕例子很多啊，什么古董鉴定思聪选妃什么的。这里说一个比较好理解的例子。小明和朋友摇骰子，摇到单数小明赢，摇到双数小明输。理论上小明胜利的概率应该在50%左右，然而小明玩了100把，结果只胜了4把。小明不服气觉得对方对骰子做了手脚。但是经过专业人员检查，发现骰子一切正常。小明赢了4把纯属运气背。这个时候，小明就犯了<strong>第一类错误</strong>。</p>
+<p>第二类错误则是反过来的。比如，在一次产品检验中，H0是：所有货物都是好的产品。在单次抽样中，发现产品果然是好产品，并接受了H0。但实际上这批货物有5%的损坏率，即产生了<strong>第二类错误</strong>。同时可以发现，发生第二类错误的概率，达到了95%。</p>
+<h1 id="2-两类错误的关系"><a href="#2-两类错误的关系" class="headerlink" title="2. 两类错误的关系"></a>2. 两类错误的关系</h1><img src="C:\Users\DELL\Desktop\两种错误.jpg" alt="两种错误，关注α和β交界的线" style="zoom: 25%;" />
+
+<p>​    在统计学上，我们通常会把样本称为样本点，如果你结合样本均数来理解就会很清楚为什么要加一个“点”字。首先，每一个样本都会计算出一个样本均数，每一个样本均数其实都是X轴上的一个点，有的样本均数离总体均数近，而有的离总体均数远。当我们抽中的样本计算出来的样本均数离总体均数远的时候，即两者差异较大时，我们就会倾向拒绝两者相等的假设。所以，即便实际上H0假设正确，数轴上依然会有一些点<strong>与总体均数的距离较远</strong>，当这些点对应的样本被我们抽中时，我们就会做出拒绝H0的决定，从而我们就会犯错了，这便是第一类错误的发生逻辑。</p>
+<p>​    那第二类错误怎么理解呢？要犯第二类错误，那么意味着H0是假的。这其中会出现一个比较绕的点是，由于H0和事实不一致，所以<strong>H0所代表的总体和实际研究的总体也不一样</strong>。我们用假设检验进行判断时用的是第一个总体，即依据第一个总体的均数来计算检验统计量并判断是否要拒绝原假设，因为我们假设所获得的这个样本是来自于第一个总体的。但我们计算犯错概率时，用的是第二个实际总体，即我们这个样本并不是来自第一个总体，而是来自第二个实际的总体，在这个实际的总体中，会有多少样本点导致在前一步计算检验统计量时不拒绝H0。</p>
+<p>​    通过上述说明，对照图你可能就能理解，为什么我们会说<strong>减少第一类错误的发生概率就会增加第二类错误的概率</strong>：</p>
 <blockquote>
-<p>在有监督学习中，数据是有标注的，以(x, t)的形式出现，其中x是输入数据，t是标注。<strong>正确的t标注是ground truth，</strong> 错误的标记则不是。（也有人将所有标注数据都叫做ground truth）</p>
+<p>因为，第一类错误的概率是我们根据检验水准人为设定的，当我们把检验水准从0.05提高到0.01时，我们减少了α的面积，但增大了图中第二类错误发生概率。</p>
 </blockquote>
-<img src="https://i.loli.net/2020/10/31/5AfveKbuG3sZQFq.png" alt="图1.ground-truth箱注释用于RPN和Box Head计算损失" style="zoom:50%;" />
+<p>另一个常见的问题是为什么只有增加样本量才能同时<del>减少这两类错误的犯错概率</del>，简单理解，就是由<strong>于样本量的增加</strong>会降低标准误的大小（标准误=S/根号N），样本本量N越大，标准误越小，反映在图形中就是两个总体（假设总体和实际总体）变得更“细瘦”，所以重合的部分越少，由此代表犯错概率的图形的面积也会变小。</p>
+<h1 id="3-显著性检验与P值危机"><a href="#3-显著性检验与P值危机" class="headerlink" title="3. 显著性检验与P值危机"></a>3. 显著性检验与P值危机</h1><p>​    “显著性检验”的英文名称是“significance test”。在统计学中，显著性检验是“统计假设检验”(Statistical hypothesis tesing)的一种，显著性检验是<strong>检测科学实验中的实验组与对照组之间是否存在差异以及差异是否显著的办法。</strong>“统计假设检验”指出了“显著性检验”的前提条件是“统计假设”，换言之“无假设，不检验”。<strong>任何人在使用显著性检验之前必须知道假设是什么。</strong>一般而言，把要检验的假设称之为原假设，记为H0，把与H0相对应的假设称之为备择假设，记为H1。</p>
+<p>​    假设检验是推断统计中的一项重要内容，在假设检验中常见到P值(P-value,Pr)，P值是进行检验决策的一个重要依据。P值即概率，是反映某一事件发生的可能性大小。在统计学中根据显著性检验得到的P值，一般以P&lt;0.05为有统计学差异，P&lt;0.01为有显著统计学差异，P&lt;0.001为有极其显著统计学差异。其含义是样本间的差异由抽样误差所致的概率小于0.05、0.01、0.001。计算出P值后，将给定的α与P 值比较，就可作出检验的结论：</p>
+<img src="https://n.sinaimg.cn/tech/crawl/142/w550h392/20191108/aa06-ihyxcrq5824071.jpg" alt="图片来源：slate" style="zoom:50%;" />
 
-
-
-<p>用于物体检测的注释数据包括：</p>
 <ul>
-<li><strong>方框标签</strong>：对象的位置和大小(如[x，y，w，h])</li>
-<li><strong>类别标签</strong>：对象的类别id(如12：“parking meter”)</li>
+<li>如果α &gt; P值，则在显著性水平α下拒绝原假设。</li>
+<li>如果α ≤ P值，则在显著性水平α下不拒绝原假设。 </li>
 </ul>
-<p>需要注意的是，<a href="https://dinghye.gitee.io/2020/10/31/Detectron2FPN/">RPN</a><u>不会学习对对象类别进行分类</u>，所以类别标签只在<a href="https://dinghye.gitee.io/2020/11/01/Detectron2ROI/">ROI Head</a>处使用。从指定数据集的注释文件中加载标注数据。我们来看一下数据加载的过程。</p>
-<h2 id="2-数据加载器"><a href="#2-数据加载器" class="headerlink" title="2. 数据加载器"></a>2. 数据加载器</h2><p>Detectron 2的数据加载器是多级嵌套的。它是在开始训练³之前由<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/build.py#L255-L385">构建器</a>构建的。</p>
+<hr>
+<h3 id="p值真的有用吗"><a href="#p值真的有用吗" class="headerlink" title="p值真的有用吗"></a>p值真的有用吗</h3><p>​    以统计方法为中心，实验结果的检验被称为零假设显著性检验，这个过程会产生一个p值。P值只是对事情有一个模糊的描述。“当我们进行实验时，我们想知道的是——我们的假设是真的吗？”本杰明说，“但是，显著性检验回答了一个令人费解的替代问题，那就是，如果我的假设是错误的，我的数据有多大的概率导致错误的结论？”        </p>
+<p>​    在过去十年里，关于统计重要性的争论以不寻常的强度爆发。援引两篇论文的观点：一篇文章称统计分析的薄弱基础导致了“科学最肮脏的秘密”；另一篇则提到，在检验某些假设时，存在“许多深层次的缺陷”。在争议声中，实验经济学、生物医学研究，特别是心理学被卷入了一场科学实验可重复性的危机之中。在这场危机中，科学家发现相当一部分研究是不可重复的。</p>
+<h3 id="问题在哪-amp-解决方法"><a href="#问题在哪-amp-解决方法" class="headerlink" title="问题在哪&amp;解决方法"></a>问题在哪&amp;解决方法</h3><p>​        另一些人则认为，重新定义统计显著性没有好处，<u>因为真正的问题是阈值始终存在</u>。今年3月份，瑞士巴塞尔大学的流行病学家、动物学家瓦伦丁·阿姆莱因（Valentin Amrhein）与美国西北大学的统计学家、市场营销专家布莱克利·麦克沙恩（Blakeley McShane）在《自然》杂志上发表了一篇评论文章，主张放弃统计学显著性的概念。他们建议将p值作为一个连续变量，并将置信区间（confidence intervals）重命名为“<strong>相容性区间</strong>”（compatibility intervals），以反映它们彰显的实际意义：评估数据的相容性，而不是置信度。</p>
+<p>　　显然，有更好的（至少是更直接的）统计方法可以用。格尔曼经常批评其他人的统计方法，他在工作中根本没有使用零假设显著性检验。他更喜欢贝叶斯方法，这是一种基于初始信念的、更为直接的统计方法，在这种方法中，研究人员接受最初的信念，添加新的证据并更新信念。</p>
 <ul>
-<li>  *dataset_dicts (list)*是一个从数据集注册的注释数据的列表。</li>
-<li>  <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/common.py#L58-L81">DatasetFromList</a>(<em>data.Dataset</em>)取一个<em>dataset_dicts</em>，并将其包装成一个torch数据集。</li>
-<li>  (<em>data.Dataset</em>)<em>调用</em><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/dataset_mapper.py#L19-L147">DatasetMapper</a>类来映射DatasetFromList的每个元素。它加载图像，转换图像和注解，并将注解转换为&quot;Instances&quot;对象。</li>
+<li><p><strong>贝叶斯方法：</strong></p>
+<p>在贝叶斯推理方法中,一个人对未知参数的不确定性状态可以用概率分布来表示。贝叶斯定理会把个人的初始信念(即他们在查看数据之前所认为的数据分布模式)与他们从数据中获得的信息相结合,从而让个人对数据分别产生新的信念。而根据一项研究更新的信念,会成为下一项研究的初始信念,依此类推。目前,讨论最多的地方是，如何找到初始信念的“客观”标准。这样做的目的是找到构建初始信念的方法,而这样的初始信念能得到研究人员的广泛认可。</p>
+</li>
 </ul>
-<img src="https://i.loli.net/2020/11/01/neBpQ6UWrdN14kz.png" alt="图3.Detectron 2的数据加载器Detectron 2的数据加载器" style="zoom: 67%;" />
+<img src="https://i.loli.net/2020/11/29/QvkxTVMsOGX1aCe.png" alt="贝叶斯方法" style="zoom: 67%;" />
 
+<p>​    格林兰德正在推广使用一种叫做稀奇程度（surprisal）的新数学量，可以调整p值以产生信息位（如计算机比特位）。为了检验原假设，0.05的p值仅有4.3比特的信息熵（假设有一枚均匀的硬币，抛硬币出现正面设为0、出现反面设为1，则抛一个硬币事件的信息熵就是1个比特。独立地抛256次硬币的信息熵就是256个比特。那么求解方程0.5x=0.05，解得0.05的概率约为抛掷x=-log20.05=4.3次，于是0.05的p值约为空值的4.3比特的信息熵。</p>
+<p>　　所谓信息熵就是某个概率分布所包含的信息量的多少，这是信息论的基础知识。在信息论中，如果你对一件事情的发生百分之百确定，那么这件事情对你来说的信息熵等于0比特。反过来说，如果你对一件事情是不确定的，那么这件事情对你来说是包含信息熵的。格林兰德认为，如果研究人员不得不在每一个p值旁边加上一个稀奇程度，那么他们将被置于更高的标准之下。强调效应量（effect size），即发现差异的大小，也将有所帮助。</p>
+<ul>
+<li><p><strong>稀奇程度</strong></p>
+<p>假设在现实中,施肥对南瓜的生长没有影响，那么p值则表示我们对南瓜数据的惊讶程度。一些研究者认为,p值表示惊讶程度的方式，其实很难被大多数人都感觉到奇。所以，我们在这里不说概率,而是用一个我们在日常生活中很熟悉的概念:抛硬币。对结果的惊讶程度，我们可以硬币正面连续朝上的次数来表示，而正面朝上的概率就等于p值。</p>
+<img src="https://i.loli.net/2020/11/29/dQGBPtqlpyhfzAK.png" alt="稀奇程度" style="zoom: 80%;" />
 
-
-<h2 id="3-加载注解数据"><a href="#3-加载注解数据" class="headerlink" title="3. 加载注解数据"></a>3. 加载注解数据</h2><p>假设我们有一个名为&#39;<em>mydataset</em>&#39;的数据集，它的图片和注释如下。</p>
-<p><img src="https://i.loli.net/2020/11/01/gZuVN3owjnSDfzO.png" alt="图4.图像和注释的例子"></p>
-<p>要从一个数据集加载数据，<strong>必须将它注册到DatasetCatalog</strong>。例如，要注册<em>mydataset</em>。</p>
-<p>从detectron2.data导入DatasetCatalog。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mydataset <span class="keyword">import</span> load_mydataset_jsondef register_mydataset_instances(name, json_file):</span><br><span class="line">(name, <span class="keyword">lambda</span>: load_mydataset_json(json_file, name))</span><br></pre></td></tr></table></figure>
-
-<p>并调用 <em>register_mydataset_instances</em> 函数，指定你的 json 文件路径。</p>
-<p><em>load_mydataset_json</em>函数必须包含一个json加载器，这样才能返回下面的dict记录列表。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line">	&#x27;file_name&#x27;: &#x27;imagedata_1.jpg&#x27;, # 图片文件名。</span><br><span class="line">	&#x27;height&#x27;: 640, # 图片高度</span><br><span class="line">	&#x27;width&#x27;: 640, # 图片宽度</span><br><span class="line">	&#x27;image_id&#x27;:12, # image id</span><br><span class="line">	&#x27;annotations&#x27;:[ # 注释列表</span><br><span class="line">		&#123;</span><br><span class="line">    		&#x27;iscrowd&#x27;:0, #人群标志</span><br><span class="line">			&#x27;bbox&#x27;:[180.58, 162.66, 24.20, 18.29], # 界线盒标签。</span><br><span class="line">			&#x27;category_id&#x27;: 9, # 类别标签</span><br><span class="line">			&#x27;bbox_mode&#x27;: &lt; BoxMode.XYWH_ABS: 1&gt;&#125;&#125;。 # 盒式坐标模式</span><br><span class="line">			,...</span><br><span class="line">		</span><br><span class="line">]&#125;,</span><br><span class="line">,...</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<p>对于<u>COCO数据集(Detectron 2的默认值)</u>，<em>load_coco_json</em><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/datasets/coco.py#L29-L194">函数</a>起到了作用。</p>
-<h2 id="4-映射数据"><a href="#4-映射数据" class="headerlink" title="4. 映射数据"></a>4. 映射数据</h2><p>在训练过程中，注册的标注记录会被逐一挑选出来。我们需要实际的图像数据（不是路径）和相应的注释。数据集映射器<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/dataset_mapper.py#L19-L147"><em>DatasetMapper</em></a>处理记录，为<em>数据集_dict</em>添加&#39;图像&#39;和&#39;实例&#39;。&#39;Instances&#39;是Detectron 2的地真结构对象。</p>
+</li>
+</ul>
+<p><em>参考</em></p>
 <ol>
-<li><p>加载和转换图像通过<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/detection_utils.py#L36-L70">read_image</a>函数<br> 加载由&quot;文件名&quot;指定的图像。加载的图像<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/dataset_mapper.py#L78-L81">通过预定义的变换器}</a>（如左右翻转）进行变换，最后注册形状为（通道、高度、宽度）的图像张量。</p>
+<li><p>Brick何：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20993864/answer/958223021">https://www.zhihu.com/question/20993864/answer/958223021</a></p>
 </li>
-<li><p>转换标注数据集<br> 的&quot;注释&quot;是通过对图像进行转换而转换的。例如，如果图像已被翻转，则方框坐标将被改变为翻转的位置。</p>
+<li><p>GQRstar ：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/11f91c292bd1">https://www.jianshu.com/p/11f91c292bd1</a></p>
 </li>
-<li><p>将标注转换为实例（Instances）</p>
-<p> <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/detection_utils.py#L234-L257">这个函数</a>在数据集映射器中调用，将标注<br> 转换为实例。bbox&#39;注解被注册到<em>Boxes</em>结构对象中，它可以存储一个边界盒的列表。&#39;category_id&#39;注解被简单地转换为一个火炬张量。</p>
+<li><p>《环球科学》2019/11月刊的文章</p>
 </li>
 </ol>
-<p>映射后，<em>dataset_dict</em>应该长成：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;file_name&#x27;: &#x27;imagedata_1.jpg&#x27;,</span><br><span class="line"> &#x27;height&#x27;: 640, </span><br><span class="line"> &#x27;width&#x27;: 640, </span><br><span class="line"> &#x27;image_id&#x27;:0,</span><br><span class="line"> &#x27;image&#x27;: tensor([[[255., 255., 255., ..., 29., 34., 36.], ...[169., 163., 162., ..., 44., 44., 45，]]]),</span><br><span class="line"> &#x27;instances&#x27;:</span><br><span class="line">     &#x27;gt_boxes&#x27;:Boxes(tensor([[100.55, 180.24, 114.63, 103.01],[180.58, 162.66, 204.78, 180.95]])),</span><br><span class="line">     &#x27;gt_classes&#x27;: tensor([9, 9]),</span><br><span class="line">&#125;。</span><br></pre></td></tr></table></figure>
-
-<p>现在我们有了图像和地道的注释，Detectron 2模型可以进行学习啦！</p>
 
     </div>
 
@@ -344,7 +356,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/" title="【Detectron2】Faster-RCNN：2.数据加载注册原理">http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/</a>
+    <a href="http://dinghye.gitee.io/2020/11/29/statisticErrors/" title="【统计学】统计学当中的第一类错误、第二类错误、P值危机">http://dinghye.gitee.io/2020/11/29/statisticErrors/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -356,8 +368,9 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
-              <a href="/tags/Detectron2/" rel="tag"><i class="fa fa-tag"></i> Detectron2</a>
+              <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag"><i class="fa fa-tag"></i> 统计学</a>
+              <a href="/tags/%E5%9F%BA%E7%A1%80%E6%A6%82%E5%BF%B5/" rel="tag"><i class="fa fa-tag"></i> 基础概念</a>
+              <a href="/tags/P%E5%80%BC/" rel="tag"><i class="fa fa-tag"></i> P值</a>
           </div>
 
         
@@ -371,13 +384,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/31/Detectron2FPN/" rel="prev" title="【深度学习】Faster-RCNN：1. 特征金字塔网络Feature Pyramid Network">
-      <i class="fa fa-chevron-left"></i> 【深度学习】Faster-RCNN：1. 特征金字塔网络Feature Pyramid Network
+    <a href="/2020/11/26/SisypheOne/" rel="prev" title="【Le Mythe de Sisyphe】西西弗神话Part1：荒诞推理">
+      <i class="fa fa-chevron-left"></i> 【Le Mythe de Sisyphe】西西弗神话Part1：荒诞推理
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/11/01/Detectron2RPN/" rel="next" title="【深度学习】Faster-RCNN ：3.核心Region Proposal Network">
-      【深度学习】Faster-RCNN ：3.核心Region Proposal Network <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -441,7 +451,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%BD%91%E7%BB%9C%E4%B8%AD%E5%93%AA%E4%BA%9B%E5%9C%B0%E6%96%B9%E4%BD%BF%E7%94%A8%E4%BA%86ground-truth-data%EF%BC%9F"><span class="nav-text">1. 网络中哪些地方使用了ground truth data？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="nav-text">2. 数据加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%8A%A0%E8%BD%BD%E6%B3%A8%E8%A7%A3%E6%95%B0%E6%8D%AE"><span class="nav-text">3. 加载注解数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%98%A0%E5%B0%84%E6%95%B0%E6%8D%AE"><span class="nav-text">4. 映射数据</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%AC%AC%E4%B8%80%E7%B1%BB%E9%94%99%E8%AF%AF%E4%B8%8E%E7%AC%AC%E4%BA%8C%E7%B1%BB%E9%94%99%E8%AF%AF"><span class="nav-text">1. 第一类错误与第二类错误</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E4%B8%A4%E7%B1%BB%E9%94%99%E8%AF%AF%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-text">2. 两类错误的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E6%98%BE%E8%91%97%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B8%8EP%E5%80%BC%E5%8D%B1%E6%9C%BA"><span class="nav-text">3. 显著性检验与P值危机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#p%E5%80%BC%E7%9C%9F%E7%9A%84%E6%9C%89%E7%94%A8%E5%90%97"><span class="nav-text">p值真的有用吗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%9C%A8%E5%93%AA-amp-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-text">问题在哪&amp;解决方法</span></a></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
