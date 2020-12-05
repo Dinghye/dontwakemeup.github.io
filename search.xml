@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
+    <title>Dec. ReadMe</title>
+    <url>/2020/12/05/DecTop/</url>
+    <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">Print(<span class="string">&quot;Hello December!&quot;</span>) 			<span class="comment">#导航&amp; Flags</span></span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=530 height=86 src="//music.163.com/outchain/player?type=2&id=474948610&auto=0&height=66"></iframe>
+
+<hr>
+<h1 id="使用指北"><a href="#使用指北" class="headerlink" title="使用指北"></a>使用指北</h1><p>👍文章下方有讨论/评分 欢迎来玩</p>
+<p>✨Discussion</p>
+<h1 id="导航"><a href="#导航" class="headerlink" title="导航"></a>导航</h1><p>❓<a href="https://dinghye.gitee.io/2020/11/02/discussion/">Welcome to the Discussion 001</a></p>
+<p>🏆<a href="https://dinghye.gitee.io/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/">机器学习</a>：更新2020/12/5</p>
+<p>🕵️‍♀️<a href="https://dinghye.gitee.io/categories/%E5%93%B2%E5%AD%A6/">哲学什么的</a>：更新2020/11/26</p>
+<p>🔑<a href="https://dinghye.gitee.io/categories/%E9%9A%8F%E7%AC%94/">随笔</a>：更新2020/11/4</p>
+<h1 id="我最近喜欢的文章"><a href="#我最近喜欢的文章" class="headerlink" title="我最近喜欢的文章"></a>我最近喜欢的文章</h1><p>🐑西西弗神话 Le Mythe de Sisyphe 加缪</p>
+<p>🤸‍♀️<a href="https://dinghye.gitee.io/2020/11/26/Kierkegaard/">克尔凯郭尔-恐惧与战栗</a></p>
+<h1 id="12月的Nonsense"><a href="#12月的Nonsense" class="headerlink" title="12月的Nonsense"></a>12月的Nonsense</h1><ol>
+<li><p>福禄寿冲鸭！</p>
+</li>
+<li><p>分享书单：</p>
+<p>√ 存在主义咖啡馆 自由、存在和杏子鸡尾酒/ [英]莎拉贝克韦尔</p>
+<p>√ 现象学的观念/ [德] 胡塞尔</p>
+<p>√ 西西弗神话/ [法] 加缪</p>
+<p>存在与时间/ [德] 海德格尔</p>
+<p>√ 特拉克尔诗集/ [奥] 特拉克尔</p>
+<p>√ 女宾/ [法] 西蒙娜 德 波伏娃</p>
+<p>第二性/ [法] 西蒙娜 德 波伏娃</p>
+</li>
+<li><p>希望考试顺利大家！</p>
+</li>
+</ol>
+<hr>
+<p>12/5：不学无术</p>
+]]></content>
+      <categories>
+        <category>Flags</category>
+      </categories>
+      <tags>
+        <tag>Flags</tag>
+      </tags>
+  </entry>
+  <entry>
     <title>Nov. ReadMe</title>
     <url>/2020/11/02/NovTop/</url>
     <content><![CDATA[<figure class="highlight python"><table><tr><td class="code"><pre><span class="line">Print(<span class="string">&quot;Hello World!&quot;</span>) 			<span class="comment">#导航&amp; Flags</span></span><br></pre></td></tr></table></figure>
@@ -40,6 +83,40 @@
       </categories>
       <tags>
         <tag>Flags</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【机器学习】python&amp;numpy 两层神经网络小实验</title>
+    <url>/2020/12/05/2-layer-network/</url>
+    <content><![CDATA[<blockquote>
+<p>这是一个简单的！用numpy以及mnist数据集的两层神经网络小实验脚本！</p>
+</blockquote>
+<a id="more"></a>
+
+<h1 id="1-基本函数"><a href="#1-基本函数" class="headerlink" title="1. 基本函数"></a>1. 基本函数</h1><h2 id="1-1-激活函数"><a href="#1-1-激活函数" class="headerlink" title="1.1 激活函数"></a>1.1 激活函数</h2><blockquote>
+<p>什么是激活函数？</p>
+</blockquote>
+<p>激活函数的作用在于决定如何来激活输入信号的总和。在我们的模型中需要用到两个激活函数，第一层神经网络做线性运算的输出需要经过一个sigmoid函数，它的函数表达式为<br>$$<br>h(x)=\frac{1}{1+exp(-x)}<br>$$<br>。因为手写数字识别是一个分类问题，而softmax函数的输出是0.0-1.0之间的实数，我们可以将其解释为每个类别存在的概率，因此第二层神经网络做线性运算的输出经过一个softmax函数后输出预测结果，它的函数表达式为<br>$$<br>y_k=\frac{exp(a_k)}{\sum^{n}_{i=1}exp(a_i)}<br>$$<br>，分子是输入信号ak的指数函数，分母是所有输入信号的指数函数的和,n为所有输入信息号的数目。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sigmoid</span>(<span class="params">x</span>):</span></span><br><span class="line">    si = []</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> x:</span><br><span class="line">        si.append(<span class="number">1</span> / (<span class="number">1</span> + np.exp(-x)))</span><br><span class="line">    <span class="keyword">return</span> si</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">softmax</span>(<span class="params">x</span>):</span></span><br><span class="line">    x -= np.<span class="built_in">max</span>(x, axis=<span class="number">1</span>, keepdims=<span class="literal">True</span>)  <span class="comment"># 为了稳定地计算softmax概率， 一般会减掉最大的那个元素</span></span><br><span class="line">    x = np.exp(x) / np.<span class="built_in">sum</span>(np.exp(x), axis=<span class="number">1</span>, keepdims=<span class="literal">True</span>)</span><br><span class="line">    <span class="keyword">return</span> x</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-2-定义损失函数"><a href="#1-2-定义损失函数" class="headerlink" title="1.2 定义损失函数"></a>1.2 定义损失函数</h2><p> 本实验使用交叉熵误差作为损失函数，它的数学公式为<br>$$<br>E=-\sum_k t_klogy_k<br>$$<br>，log表示以e为底数的自然对数(loge)，$y_k$是神经网络的输出，$t_k$是正确解标签。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">cross_entropy_error</span>(<span class="params">y, t</span>):</span></span><br><span class="line">    delta = <span class="number">1e-7</span>  <span class="comment"># 防止计算错误，加上一个微小值</span></span><br><span class="line">    <span class="keyword">return</span> -np.<span class="built_in">sum</span>(t * np.log(y + delta))</span><br></pre></td></tr></table></figure>
+
+<h2 id="1-3-获取权重参数的梯度"><a href="#1-3-获取权重参数的梯度" class="headerlink" title="1.3 获取权重参数的梯度"></a>1.3 获取权重参数的梯度</h2><p>由全部参数的偏导数汇总而成的向量称为梯度，由于数值微分含有误差，所以在此处我们使用中心差分进行求导，求导公式为<br>$$<br>\frac{df(x)}{dx}=\lim_{h→0}\frac{f(x+h)-f(x-h)}{2h}<br>$$</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">numerical_gradient</span>(<span class="params">f, x</span>):</span></span><br><span class="line">    h = <span class="number">0.0001</span></span><br><span class="line">    h = <span class="number">1e-4</span>  <span class="comment"># 0.0001</span></span><br><span class="line">    grad = np.zeros_like(x)</span><br><span class="line">    count = <span class="number">0</span></span><br><span class="line">    it = np.nditer(x, flags=[<span class="string">&#x27;multi_index&#x27;</span>], op_flags=[<span class="string">&#x27;readwrite&#x27;</span>])</span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">not</span> it.finished:</span><br><span class="line">        idx = it.multi_index</span><br><span class="line">        tmp_val = x[idx]</span><br><span class="line">        x[idx] = <span class="built_in">float</span>(tmp_val) + h</span><br><span class="line">        fxh1 = f(x)  <span class="comment"># f(x+h)</span></span><br><span class="line">        x[idx] = tmp_val - h</span><br><span class="line">        fxh2 = f(x)  <span class="comment"># f(x-h)</span></span><br><span class="line">        grad[idx] = (fxh1 - fxh2) / (<span class="number">2</span> * h)</span><br><span class="line">        x[idx] = tmp_val  <span class="comment"># 还原值</span></span><br><span class="line">        it.iternext()</span><br><span class="line">        count += <span class="number">1</span></span><br><span class="line">        <span class="comment"># print(count)</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> grad</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-构建神经网络"><a href="#2-构建神经网络" class="headerlink" title="2. 构建神经网络"></a>2. 构建神经网络</h1><p>这一步我们将训练需要用到的两层神经网络实现为一个名为TwoLayerNet的类。参考代码中input_size,hidden_size,output_size分别表示输入层的神经元数量，隐藏层的神经元数量，输出层的神经元数量。params和grads分别为保存神经网络和梯度的字典型变量。</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">TwoLayerNet</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, input_size, hidden_size, output_size, weight_init_std=<span class="number">0.01</span></span>):</span></span><br><span class="line">        self.params = &#123;&#125;</span><br><span class="line">        self.params[<span class="string">&#x27;W1&#x27;</span>] = weight_init_std * np.random.randn(input_size, hidden_size)</span><br><span class="line">        self.params[<span class="string">&#x27;b1&#x27;</span>] = np.zeros(hidden_size)</span><br><span class="line">        self.params[<span class="string">&#x27;W2&#x27;</span>] = weight_init_std * np.random.randn(hidden_size, output_size)</span><br><span class="line">        self.params[<span class="string">&#x27;b2&#x27;</span>] = np.zeros(output_size)</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">forward</span>(<span class="params">self, x</span>):</span></span><br><span class="line">        z1 = np.dot(x, self.params[<span class="string">&#x27;W1&#x27;</span>]) + self.params[<span class="string">&#x27;b1&#x27;</span>]</span><br><span class="line">        h1 = sigmoid(z1)</span><br><span class="line">        z2 = np.dot(h1, self.params[<span class="string">&#x27;W2&#x27;</span>]) + self.params[<span class="string">&#x27;b2&#x27;</span>]</span><br><span class="line">        y = softmax(z2)</span><br><span class="line">        <span class="keyword">return</span> y</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">loss</span>(<span class="params">self, x, t</span>):</span></span><br><span class="line">        y = self.forward(x)</span><br><span class="line">        loss = cross_entropy_error(y, t)</span><br><span class="line">        <span class="keyword">return</span> loss</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">accuracy</span>(<span class="params">self, x, t</span>):</span></span><br><span class="line">        z = self.forward(x)</span><br><span class="line">        y = np.argmax(z, axis=<span class="number">1</span>)</span><br><span class="line">        t = np.argmax(t, axis=<span class="number">1</span>)</span><br><span class="line">        accuracy = np.<span class="built_in">sum</span>(y == t) / <span class="built_in">float</span>(x.shape[<span class="number">0</span>])</span><br><span class="line">        <span class="keyword">return</span> accuracy</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">gradient</span>(<span class="params">self, x, t</span>):</span></span><br><span class="line">        grads = &#123;&#125;</span><br><span class="line">        w1, w2 = self.params[<span class="string">&#x27;W1&#x27;</span>], self.params[<span class="string">&#x27;W2&#x27;</span>]</span><br><span class="line">        b1, b2 = self.params[<span class="string">&#x27;b1&#x27;</span>], self.params[<span class="string">&#x27;b2&#x27;</span>]</span><br><span class="line"></span><br><span class="line">        f = <span class="keyword">lambda</span> W: self.loss(x, t)</span><br><span class="line"></span><br><span class="line">        grads[<span class="string">&#x27;W1&#x27;</span>] = numerical_gradient(f, w1)</span><br><span class="line">        grads[<span class="string">&#x27;b1&#x27;</span>] = numerical_gradient(f, b1)</span><br><span class="line">        grads[<span class="string">&#x27;W2&#x27;</span>] = numerical_gradient(f, w2)</span><br><span class="line">        grads[<span class="string">&#x27;b2&#x27;</span>] = numerical_gradient(f, b2)</span><br><span class="line">        <span class="keyword">return</span> grads</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-模型训练"><a href="#2-2-模型训练" class="headerlink" title="2.2 模型训练"></a>2.2 模型训练</h2><figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">train_model</span>(<span class="params">self, x_train, t_train, x_test, t_test</span>):</span></span><br><span class="line">    <span class="comment"># 定义训练循环迭代次数</span></span><br><span class="line">    iters_num = <span class="number">10000</span></span><br><span class="line">    <span class="comment"># 获取训练数据规模</span></span><br><span class="line">    train_size = x_train.shape[<span class="number">0</span>]</span><br><span class="line">    <span class="comment"># 定义训练批次大小</span></span><br><span class="line">    batch_size = <span class="number">10</span></span><br><span class="line">    <span class="comment"># 定义学习率</span></span><br><span class="line">    learning_rate = <span class="number">0.1</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">#创建记录模型训练损失值的列表</span></span><br><span class="line">	train_loss_list = []</span><br><span class="line">	<span class="comment">#创建记录模型在训练数据集上预测精度的列表</span></span><br><span class="line">	train_acc_list = []</span><br><span class="line">	<span class="comment">#创建记录模型在测试数据集上预测精度的列表</span></span><br><span class="line">	test_acc_list = []</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    iter_per_epoch = <span class="built_in">max</span>(train_size / batch_size, <span class="number">1</span>)</span><br><span class="line">    <span class="comment">###请补充创建训练循环的代码</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(iters_num):</span><br><span class="line">    	<span class="comment"># 在每次训练迭代内部选择一个批次的数据</span></span><br><span class="line">        batch_mask = np.random.choice(train_size, batch_size)</span><br><span class="line">        x_batch = x_train[batch_mask]</span><br><span class="line">        t_batch = t_train[batch_mask]</span><br><span class="line"></span><br><span class="line">        grad = self.gradient(x_batch, t_batch)</span><br><span class="line">    	<span class="comment">###请补充更新模型参数的代码</span></span><br><span class="line">        <span class="keyword">for</span> key <span class="keyword">in</span> (<span class="string">&#x27;W1&#x27;</span>, <span class="string">&#x27;b1&#x27;</span>, <span class="string">&#x27;W2&#x27;</span>, <span class="string">&#x27;b2&#x27;</span>):</span><br><span class="line">            self.params[key] -= learning_rate * grad[key]</span><br><span class="line">            loss = self.loss(x_batch, t_batch)</span><br><span class="line">            train_loss_list.append(loss)</span><br><span class="line"></span><br><span class="line">       <span class="comment"># 判断是否完成了一个epoch，即所有训练数据都遍历完一遍</span></span><br><span class="line">       <span class="keyword">if</span> i % iter_per_epoch == <span class="number">0</span>:</span><br><span class="line">            <span class="comment">###请补充向train_acc_list列表添加当前模型对于训练集预测精度的代码</span></span><br><span class="line">            train_acc = self.accuracy(x_train, t_train)</span><br><span class="line">            <span class="comment">###请补充向test_acc_list列表添加当前模型对于测试集预测精度的代码</span></span><br><span class="line">            test_acc = self.accuracy(x_test, t_test)</span><br><span class="line">            train_acc_list.append(train_acc)</span><br><span class="line">            test_acc_list.append(test_acc)</span><br><span class="line">            print(<span class="string">&quot;train acc, test acc | &quot;</span> + <span class="built_in">str</span>(train_acc) + <span class="string">&quot;, &quot;</span> + <span class="built_in">str</span>(test_acc))</span><br><span class="line"></span><br><span class="line">       <span class="comment"># 输出一个epoch完成后模型分别在训练集和测试集上的预测精度以及损失值</span></span><br><span class="line">       print(<span class="string">&quot;iteration:&#123;&#125; ,train acc:&#123;&#125;, test acc:&#123;&#125; ,loss:&#123;&#125;|&quot;</span>.<span class="built_in">format</span>(i, train_acc, test_acc, loss))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># add: draw picture stuff</span></span><br><span class="line"> 	markers = &#123;<span class="string">&#x27;train&#x27;</span>: <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;test&#x27;</span>: <span class="string">&#x27;s&#x27;</span>&#125;</span><br><span class="line">    x = np.arange(<span class="built_in">len</span>(train_acc_list))</span><br><span class="line">    plt.plot(x, train_acc_list, label=<span class="string">&#x27;train acc&#x27;</span>)</span><br><span class="line">    plt.plot(x, test_acc_list, label=<span class="string">&#x27;test acc&#x27;</span>, linestyle=<span class="string">&#x27;--&#x27;</span>)</span><br><span class="line">    plt.xlabel(<span class="string">&quot;epochs&quot;</span>)</span><br><span class="line">    plt.ylabel(<span class="string">&quot;accuracy&quot;</span>)</span><br><span class="line">    plt.ylim(<span class="number">0</span>, <span class="number">1.0</span>)</span><br><span class="line">    plt.legend(loc=<span class="string">&#x27;lower right&#x27;</span>)</span><br><span class="line">    plt.show()</span><br></pre></td></tr></table></figure>
+
+]]></content>
+      <categories>
+        <category>机器学习</category>
+        <category>实践操作</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
       </tags>
   </entry>
   <entry>
@@ -1815,8 +1892,8 @@
         <category>连续学习</category>
       </categories>
       <tags>
-        <tag>连续学习</tag>
         <tag>机器学习</tag>
+        <tag>连续学习</tag>
         <tag>Paper Reading</tag>
       </tags>
   </entry>
@@ -1906,8 +1983,8 @@
         <category>连续学习</category>
       </categories>
       <tags>
-        <tag>连续学习</tag>
         <tag>机器学习</tag>
+        <tag>连续学习</tag>
         <tag>Paper Reading</tag>
       </tags>
   </entry>

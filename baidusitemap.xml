@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://dinghye.gitee.io/2020/12/05/2-layer-network/</loc>
+    <lastmod>2020-12-05</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/12/05/DecTop/</loc>
+    <lastmod>2020-12-05</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/02/NovTop/</loc>
+    <lastmod>2020-12-05</lastmod>
+  </url>
+  <url>
     <loc>http://dinghye.gitee.io/2020/11/29/statisticErrors/</loc>
     <lastmod>2020-11-29</lastmod>
   </url>
@@ -26,10 +38,6 @@
   </url>
   <url>
     <loc>http://dinghye.gitee.io/2020/11/10/detectron2guidance2/</loc>
-    <lastmod>2020-11-10</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/11/02/NovTop/</loc>
     <lastmod>2020-11-10</lastmod>
   </url>
   <url>
