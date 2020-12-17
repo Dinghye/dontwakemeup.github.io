@@ -25,25 +25,24 @@
     var CONFIG = {"hostname":"dinghye.gitee.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="【深度研究Detectron2】，基于文档Digging into Detectron2。Detectron2 的数据注册原理。">
+  <meta name="description" content="马基雅维利最先敏锐地提出了「美德」不能决定政治，而古典的「善」也不是政治的诉求，这是现代政治学冲破古典政治学的开端。但马基雅维利本人是一个共和主义者，他对政治的理解和分析中不乏古典时代的痕迹和结构，他在《君主论》中给出的方案是君主们用适应当下的「新道德」代替古典的「旧道德」。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="【Detectron2】Faster-RCNN：2.数据加载注册原理">
-<meta property="og:url" content="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/index.html">
+<meta property="og:title" content="【政治哲学】马基雅维利：毁誉参半的现代政治之父">
+<meta property="og:url" content="http://dinghye.gitee.io/2020/12/17/Machiavelli/index.html">
 <meta property="og:site_name" content="DontWakeMeUp">
-<meta property="og:description" content="【深度研究Detectron2】，基于文档Digging into Detectron2。Detectron2 的数据注册原理。">
+<meta property="og:description" content="马基雅维利最先敏锐地提出了「美德」不能决定政治，而古典的「善」也不是政治的诉求，这是现代政治学冲破古典政治学的开端。但马基雅维利本人是一个共和主义者，他对政治的理解和分析中不乏古典时代的痕迹和结构，他在《君主论》中给出的方案是君主们用适应当下的「新道德」代替古典的「旧道德」。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.loli.net/2020/10/31/5AfveKbuG3sZQFq.png">
-<meta property="og:image" content="https://i.loli.net/2020/11/01/neBpQ6UWrdN14kz.png">
-<meta property="og:image" content="https://i.loli.net/2020/11/01/gZuVN3owjnSDfzO.png">
-<meta property="article:published_time" content="2020-11-01T01:53:51.000Z">
-<meta property="article:modified_time" content="2020-11-02T11:59:02.161Z">
+<meta property="og:image" content="https://i.loli.net/2020/12/17/zyOdeighcuUSXn1.png">
+<meta property="article:published_time" content="2020-12-17T02:41:44.000Z">
+<meta property="article:modified_time" content="2020-12-17T03:32:54.390Z">
 <meta property="article:author" content="Dinghy Ye">
-<meta property="article:tag" content="机器学习">
-<meta property="article:tag" content="Detectron2">
+<meta property="article:tag" content="哲学">
+<meta property="article:tag" content="政治哲学">
+<meta property="article:tag" content="马基雅维利">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2020/10/31/5AfveKbuG3sZQFq.png">
+<meta name="twitter:image" content="https://i.loli.net/2020/12/17/zyOdeighcuUSXn1.png">
 
-<link rel="canonical" href="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/">
+<link rel="canonical" href="http://dinghye.gitee.io/2020/12/17/Machiavelli/">
 
 
 <script id="page-configurations">
@@ -56,7 +55,7 @@
   };
 </script>
 
-  <title>【Detectron2】Faster-RCNN：2.数据加载注册原理 | DontWakeMeUp</title>
+  <title>【政治哲学】马基雅维利：毁誉参半的现代政治之父 | DontWakeMeUp</title>
   
 
 
@@ -205,7 +204,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/12/17/Machiavelli/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/laptop.jpg">
@@ -218,7 +217,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          【Detectron2】Faster-RCNN：2.数据加载注册原理
+          【政治哲学】马基雅维利：毁誉参半的现代政治之父
         </h1>
 
         <div class="post-meta">
@@ -228,27 +227,21 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-11-01 09:53:51" itemprop="dateCreated datePublished" datetime="2020-11-01T09:53:51+08:00">2020-11-01</time>
+              <time title="创建时间：2020-12-17 10:41:44 / 修改时间：11:32:54" itemprop="dateCreated datePublished" datetime="2020-12-17T10:41:44+08:00">2020-12-17</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-02 19:59:02" itemprop="dateModified" datetime="2020-11-02T19:59:02+08:00">2020-11-02</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+                  <a href="/categories/%E5%93%B2%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">哲学</span></a>
                 </span>
                   ，
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">原理</span></a>
+                  <a href="/categories/%E5%93%B2%E5%AD%A6/%E6%94%BF%E6%B2%BB%E5%93%B2%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">政治哲学</span></a>
                 </span>
             </span>
 
@@ -277,58 +270,47 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>【深度研究Detectron2】，基于文档Digging into Detectron2。Detectron2 的数据注册原理。</p>
+        <p>马基雅维利最先敏锐地提出了「美德」不能决定政治，而古典的「善」也不是政治的诉求，这是现代政治学冲破古典政治学的开端。但马基雅维利本人是一个共和主义者，他对政治的理解和分析中不乏古典时代的痕迹和结构，他在《君主论》中给出的方案是君主们用适应当下的「新道德」代替古典的「旧道德」。</p>
 <a id="more"></a>
 
-<h2 id="1-网络中哪些地方使用了ground-truth-data？"><a href="#1-网络中哪些地方使用了ground-truth-data？" class="headerlink" title="1. 网络中哪些地方使用了ground truth data？"></a>1. 网络中哪些地方使用了ground truth data？</h2><p>为了训练检测模型，我们需要准备<strong>图像和标注</strong><br>至于Base-RCNN-FPN(Faster R-CNN)，在区域建议网络(Region Proposal Network，RPN)和箱头(Box Head)中使用的是ground truth数据(见图1)。</p>
-<blockquote>
-<p>在有监督学习中，数据是有标注的，以(x, t)的形式出现，其中x是输入数据，t是标注。<strong>正确的t标注是ground truth，</strong> 错误的标记则不是。（也有人将所有标注数据都叫做ground truth）</p>
-</blockquote>
-<img src="https://i.loli.net/2020/10/31/5AfveKbuG3sZQFq.png" alt="图1.ground-truth箱注释用于RPN和Box Head计算损失" style="zoom:50%;" />
+<img src="https://i.loli.net/2020/12/17/zyOdeighcuUSXn1.png" alt="马基雅维利 君主论" style="zoom: 67%;" />
 
-
-
-<p>用于物体检测的注释数据包括：</p>
-<ul>
-<li><strong>方框标签</strong>：对象的位置和大小(如[x，y，w，h])</li>
-<li><strong>类别标签</strong>：对象的类别id(如12：“parking meter”)</li>
-</ul>
-<p>需要注意的是，<a href="https://dinghye.gitee.io/2020/10/31/Detectron2FPN/">RPN</a><u>不会学习对对象类别进行分类</u>，所以类别标签只在<a href="https://dinghye.gitee.io/2020/11/01/Detectron2ROI/">ROI Head</a>处使用。从指定数据集的注释文件中加载标注数据。我们来看一下数据加载的过程。</p>
-<h2 id="2-数据加载器"><a href="#2-数据加载器" class="headerlink" title="2. 数据加载器"></a>2. 数据加载器</h2><p>Detectron 2的数据加载器是多级嵌套的。它是在开始训练³之前由<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/build.py#L255-L385">构建器</a>构建的。</p>
-<ul>
-<li>  *dataset_dicts (list)*是一个从数据集注册的注释数据的列表。</li>
-<li>  <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/common.py#L58-L81">DatasetFromList</a>(<em>data.Dataset</em>)取一个<em>dataset_dicts</em>，并将其包装成一个torch数据集。</li>
-<li>  (<em>data.Dataset</em>)<em>调用</em><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/dataset_mapper.py#L19-L147">DatasetMapper</a>类来映射DatasetFromList的每个元素。它加载图像，转换图像和注解，并将注解转换为&quot;Instances&quot;对象。</li>
-</ul>
-<img src="https://i.loli.net/2020/11/01/neBpQ6UWrdN14kz.png" alt="图3.Detectron 2的数据加载器Detectron 2的数据加载器" style="zoom: 67%;" />
-
-
-
-<h2 id="3-加载注解数据"><a href="#3-加载注解数据" class="headerlink" title="3. 加载注解数据"></a>3. 加载注解数据</h2><p>假设我们有一个名为&#39;<em>mydataset</em>&#39;的数据集，它的图片和注释如下。</p>
-<p><img src="https://i.loli.net/2020/11/01/gZuVN3owjnSDfzO.png" alt="图4.图像和注释的例子"></p>
-<p>要从一个数据集加载数据，<strong>必须将它注册到DatasetCatalog</strong>。例如，要注册<em>mydataset</em>。</p>
-<p>从detectron2.data导入DatasetCatalog。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> mydataset <span class="keyword">import</span> load_mydataset_jsondef register_mydataset_instances(name, json_file):</span><br><span class="line">(name, <span class="keyword">lambda</span>: load_mydataset_json(json_file, name))</span><br></pre></td></tr></table></figure>
-
-<p>并调用 <em>register_mydataset_instances</em> 函数，指定你的 json 文件路径。</p>
-<p><em>load_mydataset_json</em>函数必须包含一个json加载器，这样才能返回下面的dict记录列表。</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[&#123;</span><br><span class="line">	&#x27;file_name&#x27;: &#x27;imagedata_1.jpg&#x27;, # 图片文件名。</span><br><span class="line">	&#x27;height&#x27;: 640, # 图片高度</span><br><span class="line">	&#x27;width&#x27;: 640, # 图片宽度</span><br><span class="line">	&#x27;image_id&#x27;:12, # image id</span><br><span class="line">	&#x27;annotations&#x27;:[ # 注释列表</span><br><span class="line">		&#123;</span><br><span class="line">    		&#x27;iscrowd&#x27;:0, #人群标志</span><br><span class="line">			&#x27;bbox&#x27;:[180.58, 162.66, 24.20, 18.29], # 界线盒标签。</span><br><span class="line">			&#x27;category_id&#x27;: 9, # 类别标签</span><br><span class="line">			&#x27;bbox_mode&#x27;: &lt; BoxMode.XYWH_ABS: 1&gt;&#125;&#125;。 # 盒式坐标模式</span><br><span class="line">			,...</span><br><span class="line">		</span><br><span class="line">]&#125;,</span><br><span class="line">,...</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
-
-<p>对于<u>COCO数据集(Detectron 2的默认值)</u>，<em>load_coco_json</em><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/datasets/coco.py#L29-L194">函数</a>起到了作用。</p>
-<h2 id="4-映射数据"><a href="#4-映射数据" class="headerlink" title="4. 映射数据"></a>4. 映射数据</h2><p>在训练过程中，注册的标注记录会被逐一挑选出来。我们需要实际的图像数据（不是路径）和相应的注释。数据集映射器<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/1a7daee064eeca2d7fddce4ba74b74183ba1d4a0/detectron2/data/dataset_mapper.py#L19-L147"><em>DatasetMapper</em></a>处理记录，为<em>数据集_dict</em>添加&#39;图像&#39;和&#39;实例&#39;。&#39;Instances&#39;是Detectron 2的地真结构对象。</p>
+<h1 id="1-生平"><a href="#1-生平" class="headerlink" title="1. 生平"></a>1. 生平</h1><p>​    马基雅维利 1469 年出生在意大利佛罗伦萨的一个破落贵族家庭，他的父亲是律师，虽然出身名门，却家境贫寒。他生活在文艺复兴阶段，这一时期西欧社会教会的势力衰落，社会等级发生改变，人文主义和自由精神开始兴起。当时的意大利封建割据、四分五裂、内忧外患。佛罗伦萨由美第奇家族统治。1492 年洛仑佐去世后，佛罗伦萨发生政变，美第奇家族集团被驱逐出去，共和国成立。1498 年 29 岁的马基雅维利出任共和国政务院高级官员，主要执行外交任务，期间他游历许多国家。1512 年美第奇家族在教皇的支持下复辟，共和国解体，马基雅维利被开除公职。1515 年前后，他将自己的政治代表作《君主论》献给美第奇家族的小洛伦佐，表示敬意，但未得到垂青。1520 年，被佛罗伦萨大学聘任为历史编纂，撰写《佛罗伦萨史》。1527 年，美第奇家族再次被推翻，马基雅维利于这一年六月去世。</p>
+<p>生平可以简单分为三个要点：</p>
 <ol>
-<li><p>加载和转换图像通过<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/detection_utils.py#L36-L70">read_image</a>函数<br> 加载由&quot;文件名&quot;指定的图像。加载的图像<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/dataset_mapper.py#L78-L81">通过预定义的变换器}</a>（如左右翻转）进行变换，最后注册形状为（通道、高度、宽度）的图像张量。</p>
-</li>
-<li><p>转换标注数据集<br> 的&quot;注释&quot;是通过对图像进行转换而转换的。例如，如果图像已被翻转，则方框坐标将被改变为翻转的位置。</p>
-</li>
-<li><p>将标注转换为实例（Instances）</p>
-<p> <a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/blob/master/detectron2/data/detection_utils.py#L234-L257">这个函数</a>在数据集映射器中调用，将标注<br> 转换为实例。bbox&#39;注解被注册到<em>Boxes</em>结构对象中，它可以存储一个边界盒的列表。&#39;category_id&#39;注解被简单地转换为一个火炬张量。</p>
-</li>
+<li>早期严格的古典哲学训练</li>
+<li>丰富的政治生活：从事了十几年的外交工作</li>
+<li>著书阶段：佛罗伦萨的覆灭（美迪奇家族复兴），政治生活结束，《论李维》、《君主论》，《曼陀罗花》，《兵法》</li>
 </ol>
-<p>映射后，<em>dataset_dict</em>应该长成：</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#x27;file_name&#x27;: &#x27;imagedata_1.jpg&#x27;,</span><br><span class="line"> &#x27;height&#x27;: 640, </span><br><span class="line"> &#x27;width&#x27;: 640, </span><br><span class="line"> &#x27;image_id&#x27;:0,</span><br><span class="line"> &#x27;image&#x27;: tensor([[[255., 255., 255., ..., 29., 34., 36.], ...[169., 163., 162., ..., 44., 44., 45，]]]),</span><br><span class="line"> &#x27;instances&#x27;:</span><br><span class="line">     &#x27;gt_boxes&#x27;:Boxes(tensor([[100.55, 180.24, 114.63, 103.01],[180.58, 162.66, 204.78, 180.95]])),</span><br><span class="line">     &#x27;gt_classes&#x27;: tensor([9, 9]),</span><br><span class="line">&#125;。</span><br></pre></td></tr></table></figure>
-
-<p>现在我们有了图像和地道的注释，Detectron 2模型可以进行学习啦！</p>
+<h1 id="2-德性"><a href="#2-德性" class="headerlink" title="2. 德性"></a>2. 德性</h1><p>​    马基雅维利在《君主论》与《论李维》中频频使用 virtù 一词却又用以指称纷繁不同的涵义，仿佛赋予了这一重要概念某种模糊性。而在马基雅维利对 virtù 涵义的运用中，<strong>是否预示其有意将伦理德性下降到政治德性</strong>，甚或，马基雅维利直白的作出了事实与价值的区分，并意图将政治学从伦理学中解放出来出来，即<strong>政治的去道德化，并由此认为政治与道德属于互不能干涉的两种领域</strong>？</p>
+<p>​    以赛亚·伯林在《马基雅维利的原创性》中对此问题的回应是，马基雅维利所作的区分并不是对道德特有的价值和政治特有的价值之间的区分，也不是将政治从道德中分离了出来，</p>
+<blockquote>
+<p>而是对两种不可调和的生活理想、因此也是两种道德的区分</p>
+</blockquote>
+<p>一方是异教徒世界的道德，它的价值是「勇气、活力、百折不回、公共成就、秩序、纪律、幸福、力量、正义，尤其是对保证这些品质实现的正当要求、知识和权力的维护」，截然对立的是基督教道德，即「慈爱、怜悯、爱上帝、宽恕敌人、轻蔑现世的幸福、相信来世、相信个人灵魂得救有着无可比拟的价值。」马基雅维利并非通过重新定义「善」、或者「恶」来重申道德观念，即将谦卑、自我牺牲、服从等基督教的美德看作是软弱或罪恶，他对善、好的用法与一般人的用法并无不同。马基雅维利亦并不否认基督教道德的正确性，甚至是没有谴责基督教道德，他仅仅是毫不掩饰的将事物的现实层面呈现出来。</p>
+<h1 id="3-《君主论》：政治无关道德"><a href="#3-《君主论》：政治无关道德" class="headerlink" title="3. 《君主论》：政治无关道德"></a>3. 《君主论》：政治无关道德</h1><h3 id="3-1-政治无关道德"><a href="#3-1-政治无关道德" class="headerlink" title="3.1 政治无关道德"></a>3.1 政治无关道德</h3><ul>
+<li><p><u>一个好的君主如果想巩固自己的统治，就必须要<strong>收买人心</strong>：</u>（道德化讲法：一个好的君主如果想长治久安，就必须以德服人）但是，马基雅维利觉得以德服人是完全不靠谱的，必须要通过<em>利益、权术</em>。一个平民老百姓，什么时候会对君主充满了怨恨，什么时候又会支持君主统治呢？社会阶层的屁股究竟坐在那里，这些阶层如何进行调整，巩固统治呢？</p>
+</li>
+<li><p><u>人心的恶</u>：绝大多数看起来庸俗的平民，实际上是君主巩固统治的关键。《君主论》（马基雅维利观点）中的平民表现非常庸俗愚蠢……所以一个新君主进行统治，一方面需要这些乌合之众的支持，但是一方面又不能太信任他们，他们翻手为云，覆手为雨，毫无诚信可言。</p>
+<p><em>那君主如何获得平民阶层的支持呢？</em></p>
+<blockquote>
+<p>任何情况下，让平民阶层有求于他。</p>
+</blockquote>
+<p>（道德化讲法：我们都会拥护一个道德高尚的君主）但是在马基雅维利的看法！道德是靠不住的！</p>
+</li>
+<li><p><u>国家的建设不能唱高调</u>：军队和国家的建设就<u>不能</u>采取<u>雇佣军</u>。马基雅维利看到了风雨飘摇的意大利城邦分崩离析，被其他国家的军队击溃。故他特别强调了<strong>忠诚</strong>的问题，<strong>国家必须整合自己的军队</strong>才是长治久安的（当时意大利多采用雇佣军制）。</p>
+</li>
+<li><p><u>政治是无所谓道德的</u>：看起来腹黑的观点！是现实！政治需要的是现实。只有在现实当中，我们才能区思考国家是什么，政治是什么。</p>
+</li>
+</ul>
+<h3 id="3-2-要懂得作恶"><a href="#3-2-要懂得作恶" class="headerlink" title="3.2 要懂得作恶"></a>3.2 要懂得作恶</h3><p>政治并不是一个反道德的东西（因为它无关乎道德）。但是如果可能的话，我们还是不要取背离道德，背离善良。这不是因为我们信任道德，而是因为我们没必要为自己背上恶名。一个成熟的君主，必须要懂得作恶。我们需要巧妙的做一个坏人。（手段根本不重要，重要的是目的）只要目的达到了，手段就是正确的。</p>
+<p>马基雅维利认为，重要的是成功之后，去掩盖它。善于去掩盖之前见不得光的登西。</p>
+<h3 id="3-3-征服命运"><a href="#3-3-征服命运" class="headerlink" title="3.3 征服命运"></a>3.3 征服命运</h3><p>马基雅维利认为，事在人为。我们要懂得去驾驭命运，掌握它。与传统命运是超越人类的观点是非常不一样的。</p>
+<h1 id="4-总结"><a href="#4-总结" class="headerlink" title="4. 总结"></a>4. 总结</h1><p>​    马基雅维利对于人性的这种险恶，人性的危险，人性可能有的一些问题，都做出了非常透彻的，暗黑的分析。可以说他就是一个，我们可以说他就是政治不断的走向黑化的过程中的一个重要的代表人物。</p>
+<p>​    他辉煌的那一面就在于说，他尽管说了很多比较腹黑的东西，但是人们又承认它确实行之有效，很有道理。这些道理都不是从纸上空谈而来的，而是从马基亚维利自己丰富的外交实践之中总结出来的。</p>
+<p>​    马基雅维利说，明智的君主应该采取怎么样的办法才能够让民众一直支持他呢？应该让他的民众，他的臣民在任何情况下都有求于他。有求于国家，只有这样才能够维持住臣民对君主的忠诚。</p>
+<p>​    在他看来，他们（政治家）的双手都是有鲜血的。但是核心的问题在于说你必须要懂得去掩盖这些鲜血，也就是说要懂得去掩盖自己的兽性，并且成为一个伟大的伪装者。</p>
+<p>​    马基亚维利的这个思想它是邪恶而富有魅力的。他一方面来讲，他是非常的厚黑和腹黑。另外一方面来讲，他似乎又说的是一个大实话，是很实诚的话。反过来看，其实马基雅维利也不是所谓善于掩盖自己的人，这也是他可爱的之处。</p>
 
     </div>
 
@@ -344,7 +326,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/" title="【Detectron2】Faster-RCNN：2.数据加载注册原理">http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/</a>
+    <a href="http://dinghye.gitee.io/2020/12/17/Machiavelli/" title="【政治哲学】马基雅维利：毁誉参半的现代政治之父">http://dinghye.gitee.io/2020/12/17/Machiavelli/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -356,8 +338,9 @@
       <footer class="post-footer">
           
           <div class="post-tags">
-              <a href="/tags/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" rel="tag"><i class="fa fa-tag"></i> 机器学习</a>
-              <a href="/tags/Detectron2/" rel="tag"><i class="fa fa-tag"></i> Detectron2</a>
+              <a href="/tags/%E5%93%B2%E5%AD%A6/" rel="tag"><i class="fa fa-tag"></i> 哲学</a>
+              <a href="/tags/%E6%94%BF%E6%B2%BB%E5%93%B2%E5%AD%A6/" rel="tag"><i class="fa fa-tag"></i> 政治哲学</a>
+              <a href="/tags/%E9%A9%AC%E5%9F%BA%E9%9B%85%E7%BB%B4%E5%88%A9/" rel="tag"><i class="fa fa-tag"></i> 马基雅维利</a>
           </div>
 
         
@@ -371,13 +354,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/31/Detectron2FPN/" rel="prev" title="【深度学习】Faster-RCNN：1. 特征金字塔网络Feature Pyramid Network">
-      <i class="fa fa-chevron-left"></i> 【深度学习】Faster-RCNN：1. 特征金字塔网络Feature Pyramid Network
+    <a href="/2020/12/05/DecTop/" rel="prev" title="Dec. ReadMe">
+      <i class="fa fa-chevron-left"></i> Dec. ReadMe
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/11/01/Detectron2RPN/" rel="next" title="【深度学习】Faster-RCNN ：3.核心Region Proposal Network">
-      【深度学习】Faster-RCNN ：3.核心Region Proposal Network <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -441,7 +421,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%BD%91%E7%BB%9C%E4%B8%AD%E5%93%AA%E4%BA%9B%E5%9C%B0%E6%96%B9%E4%BD%BF%E7%94%A8%E4%BA%86ground-truth-data%EF%BC%9F"><span class="nav-text">1. 网络中哪些地方使用了ground truth data？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E5%8A%A0%E8%BD%BD%E5%99%A8"><span class="nav-text">2. 数据加载器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%8A%A0%E8%BD%BD%E6%B3%A8%E8%A7%A3%E6%95%B0%E6%8D%AE"><span class="nav-text">3. 加载注解数据</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%98%A0%E5%B0%84%E6%95%B0%E6%8D%AE"><span class="nav-text">4. 映射数据</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%94%9F%E5%B9%B3"><span class="nav-text">1. 生平</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%BE%B7%E6%80%A7"><span class="nav-text">2. 德性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E3%80%8A%E5%90%9B%E4%B8%BB%E8%AE%BA%E3%80%8B%EF%BC%9A%E6%94%BF%E6%B2%BB%E6%97%A0%E5%85%B3%E9%81%93%E5%BE%B7"><span class="nav-text">3. 《君主论》：政治无关道德</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-%E6%94%BF%E6%B2%BB%E6%97%A0%E5%85%B3%E9%81%93%E5%BE%B7"><span class="nav-text">3.1 政治无关道德</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E8%A6%81%E6%87%82%E5%BE%97%E4%BD%9C%E6%81%B6"><span class="nav-text">3.2 要懂得作恶</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-3-%E5%BE%81%E6%9C%8D%E5%91%BD%E8%BF%90"><span class="nav-text">3.3 征服命运</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E6%80%BB%E7%BB%93"><span class="nav-text">4. 总结</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
