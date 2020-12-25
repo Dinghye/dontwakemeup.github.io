@@ -1,11 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>http://dinghye.gitee.io/2020/12/17/Hobbes/</loc>
-    <lastmod>2020-12-17</lastmod>
+    <loc>http://dinghye.gitee.io/2020/12/25/DavidHume/</loc>
+    <lastmod>2020-12-25</lastmod>
   </url>
   <url>
     <loc>http://dinghye.gitee.io/2020/12/17/Machiavelli/</loc>
+    <lastmod>2020-12-24</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/01/Detectron2RPN/</loc>
+    <lastmod>2020-12-22</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/12/17/Hobbes/</loc>
     <lastmod>2020-12-17</lastmod>
   </url>
   <url>
@@ -67,10 +75,6 @@
   <url>
     <loc>http://dinghye.gitee.io/2020/11/02/discussion/</loc>
     <lastmod>2020-11-03</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/11/01/Detectron2RPN/</loc>
-    <lastmod>2020-11-02</lastmod>
   </url>
   <url>
     <loc>http://dinghye.gitee.io/2020/11/02/Detectron2Index/</loc>
