@@ -219,6 +219,231 @@
       </tags>
   </entry>
   <entry>
+    <title>【RS Detection】目标检测模型的选择（一个简单的overview）</title>
+    <url>/2021/07/20/RS-Detection-1/</url>
+    <content><![CDATA[<p>主要针对目前目标检测的竞赛的冠军方法进行了一个overview</p>
+<a id="more"></a>
+
+<blockquote>
+<p>啊写在前面：这是一个比赛的记录blog，主要还是面向遥感的目标检测竞赛进行记录和梳理的。由于之前使用的框架的缘故，本篇可能会更倾向于使用pytorch（然而在倾斜框检测很多方法都是用的tensorflow，头疼）</p>
+</blockquote>
+<h1 id="1-相关目标检测模型"><a href="#1-相关目标检测模型" class="headerlink" title="1. 相关目标检测模型"></a>1. 相关目标检测模型</h1><h2 id="1-1-普通的目标检测冠军方法"><a href="#1-1-普通的目标检测冠军方法" class="headerlink" title="1.1 普通的目标检测冠军方法"></a>1.1 普通的目标检测冠军方法</h2><p>​    在CV领域有很多的目标检测竞赛，下表主要展示了我搜索到的在2019-2020年的竞赛的一些冠军队伍的策略。</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>任务类型</th>
+<th>模型名称</th>
+<th>策略</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CVPR/商汤2020</td>
+<td>Open Images/</td>
+<td>Faster-RCNN</td>
+<td>任务间空间自适应解耦：有效地减弱通用物体检测中分类任务和回归任务之间的潜在冲突，可以灵活插入大多检测器中。</td>
+<td><a href="https://www.sohu.com/a/391981080_500659">https://www.sohu.com/a/391981080_500659</a>     <a href="https://arxiv.org/abs/2003.07540">https://arxiv.org/abs/2003.07540</a></td>
+</tr>
+<tr>
+<td>CVPR EPIC-Kitchens/浙江大华2020</td>
+<td>厨房目标检测/</td>
+<td>Cascade-RCNN</td>
+<td>1. 骨干网：ResNet101 with FPN and  deformable convolution （DCN）；2. 数据增强：Duck filling、mix-up，显著提高所提出方法的鲁棒性    ；3. 特征增强：使用 GRE-FPN 和 Hard IoU-imbalance Sampler 提取更具代表性的全局目标特征。   ；4. 解决样本类别不平衡：Class Balance Sampling  ；5. 训练策略：随机权值平均(Stochastic Weight Averaging）    ；6. 测试策略：多尺度测试</td>
+<td><a href="https://arxiv.org/abs/2006.15553">https://arxiv.org/abs/2006.15553</a></td>
+</tr>
+<tr>
+<td>CVPR /深兰科技 2020</td>
+<td>挑战赛雾天条件下的（半）监督目标检测任务</td>
+<td>Cascade-RCNN</td>
+<td>Baseline＝Backbone＋DCN［1］＋FPN［2］＋CascadeRCNN［3］；1．我们将Cascadercnn＋DCN＋FPN作为我们的baseline；2. 将原有head改为Double head；3．将<strong>FFA－Net</strong>处理过的数据集与原数据集合并训练；4．Augmentation；5．Testingtricks</td>
+<td><a href="https://mp.ofweek.com/ai/a445693724976">https://mp.ofweek.com/ai/a445693724976</a></td>
+</tr>
+<tr>
+<td>CVPR NightOwls/深兰科技 2020</td>
+<td>夜间目标检测/运动模糊图像噪点、色彩信息少、数据分布笑</td>
+<td>Cascade-RCNN</td>
+<td>Baseline = Backbone + DCN + FPN +  Cascade + anchor ratio (2.44)     ；1. 将 Cascade rcnn + DCN + FPN 作为 baseline；     2. 将原有 head 改为 Double head；     3. 将 CBNet 作为 backbone；     4. 使用 cascade rcnn COCO-Pretrained weight；    5. 数据增强；    6. 多尺度训练 + Testing tricks</td>
+<td><a href="https://bbs.cvmart.net/articles/3326">https://bbs.cvmart.net/articles/3326</a></td>
+</tr>
+<tr>
+<td>ECCV Google AI/百度视觉 2019</td>
+<td>Open Images/数据没有完全精细标注，属于弱监督任务，框选类别数目不均衡且有非常广泛的类别分布</td>
+<td>Cascade, Deformable, FPN,  Faster-RCNN</td>
+<td></td>
+<td><a href="https://bbs.cvmart.net/articles/664">https://bbs.cvmart.net/articles/664</a></td>
+</tr>
+</tbody></table>
+<p>值得注意的是：</p>
+<ul>
+<li><strong>模型使用类别上</strong>：基本上大家都会几乎都用到Cascade，并且未见到使用One stage的方法；反而是YOLO这种很少用到。感觉可能one stage的方法可能在<u>精度</u>上整体跟 two stage还是有差距，而竞赛中主要是看精度。此外，个人感觉two stage的这种<u>可魔改性</u>要稍微强一些。</li>
+<li><strong>竞赛主题上：</strong>不同的竞赛，有不同的数据集和特点。特别值得注意的是CVPR 深兰科技在雾天竞赛当中，用到了<a href="https://blog.csdn.net/weixin_42096202/article/details/103277598">FFA除雾</a>。这个其实有点类似于那种遥感云层，之后也许可以用上。</li>
+<li><strong>任务上：</strong>几乎所有的这样的cv目标检测都是正框，而遥感领域更多的可能是斜框检测。中间可能还有一些不太一样的地方（比如数据朝向，提案框选择等等），也因此下面我找到一些遥感斜框的一些方法，详见1.2</li>
+</ul>
+<h2 id="1-2-斜框目标检测-amp-遥感影像"><a href="#1-2-斜框目标检测-amp-遥感影像" class="headerlink" title="1.2 斜框目标检测&amp;遥感影像"></a>1.2 斜框目标检测&amp;遥感影像</h2><blockquote>
+<p>这一部分主要讲遥感领域斜框做的公认比较好的方法和思路。但是遗憾的是，似乎很多斜框的方法框架都不开源，而且大都使用到的Tensorflow的框架，而我们以后可能都会使用pytorch……（哭</p>
+</blockquote>
+<h3 id="1-2-1-从根本出发型"><a href="#1-2-1-从根本出发型" class="headerlink" title="1.2.1 从根本出发型"></a>1.2.1 从根本出发型</h3><p>针对斜框！它斜着的！这一部分提出了一些思考和方法。</p>
+<ol>
+<li><p>**更科学的提案框：CVPR2019\dingjian 武大夏桂松 **</p>
+<p>baseline：Faster R-CNN OBB + RoI Transformer</p>
+<blockquote>
+<p>考虑到了在旋转的时候提案框的问题，更科学的提案（ROI Transformer）使用的mmdetection的框架。</p>
+</blockquote>
+<p>论文：<a href="https://openaccess.thecvf.com/content_CVPR_2019/papers/Ding_Learning_RoI_Transformer_for_Oriented_Object_Detection_in_Aerial_Images_CVPR_2019_paper.pdf">https://openaccess.thecvf.com/content_CVPR_2019/papers/Ding_Learning_RoI_Transformer_for_Oriented_Object_Detection_in_Aerial_Images_CVPR_2019_paper.pdf</a><br>代码：<a href="https://github.com/dingjiansw101/AerialDetection">https://github.com/dingjiansw101/AerialDetection</a></p>
+</li>
+<li><p><strong>旋转不变性：ReDet CVPR 2021\武大夏桂松: 用于遥感目标检测的旋转等边检测器</strong></p>
+<blockquote>
+<p>提出了一个旋转等变检测器（ReDet）来解决这些问题，它明确地编码了旋转等变和旋转不变性。基于AerialDetection &amp; mmdetection</p>
+</blockquote>
+<img src="C:\Users\DELL\Desktop\Export-a6833b76-72bb-42b1-a43a-1e3563a66a52\Meeting 1：安排 f5d7bab66c444d00ac1ea4db745e6a0c\Untitled 1.png" alt="Meeting%201%EF%BC%9A%E5%AE%89%E6%8E%92%20f5d7bab66c444d00ac1ea4db745e6a0c/Untitled%201.png" style="zoom: 10%;" />
+
+<p>博客：<a href="https://zhuanlan.zhihu.com/p/358303556">https://zhuanlan.zhihu.com/p/358303556</a></p>
+<p>论文：<a href="https://arxiv.org/abs/2103.07733">https://arxiv.org/abs/2103.07733</a></p>
+<p>代码：<a href="https://github.com/csuhan/ReDet">https://github.com/csuhan/ReDet</a></p>
+</li>
+<li><p><strong>顺序标签点问题：Gliding Vertex 2020、RSDet</strong> </p>
+<blockquote>
+<p>考虑到的是顺序标签点（Sequential label points）的问题：举一个简单的例子，如果一个四边形的ground-truth是（x1,y1,x2,y2,x3,y3,x4,y4）并且所有的ground-truth并不是按一定规则顺序标注的，那么检测器有可能给出的预测结果是（x2,y2,x3,y3,x4,y4,x1,y1）。其实这两个是框是完全重合的，但是网络训练算损失的时候并不知道，它会按对应位置计算损失，此时的损失值并不为0甚至很大。</p>
+</blockquote>
+<img src="https://pic4.zhimg.com/v2-deb5da8837c84b973a3e9c708bf0d8d7_b.jpg" alt="img" style="zoom: 67%;" />
+
+<ul>
+<li><p>Gliding Vertex 2020：这篇文章发现，直接就是通过<strong>改变框的表达方式</strong> 避免了排序的麻烦。先检测水平框，这个是没有序列问题的，然后学习水平框四个角点的偏移量来达到四边形检测的目的，其实这里的（偏移量，对应的水平框的点）配对就有排序的意思了。</p>
+<p>论文：<a href="https://arxiv.org/abs/1911.09358">https://arxiv.org/abs/1911.09358</a></p>
+</li>
+<li><p>RSDet：给点排序！直接粗暴</p>
+<p>论文：<a href="https://arxiv.org/abs/1911.08299">https://arxiv.org/abs/1911.08299</a></p>
+<p>野生代码by yangxue（但他妈的还是tensorflow啊，但是这是一个很好的框架）：<a href="https://github.com/yangxue0827/RotationDetection">https://github.com/yangxue0827/RotationDetection</a></p>
+</li>
+</ul>
+<p>本部分参考：<a href="https://www.zhihu.com/search?type=content&amp;q=%E9%81%A5%E6%84%9F%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B">https://www.zhihu.com/search?type=content&amp;q=%E9%81%A5%E6%84%9F%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B</a></p>
+</li>
+</ol>
+<h3 id="1-2-2-从数据出发型"><a href="#1-2-2-从数据出发型" class="headerlink" title="1.2.2 从数据出发型"></a>1.2.2 从数据出发型</h3><ol>
+<li><p><strong>我们是专门搞舰船的！：R3Det CVPR 2020</strong></p>
+<blockquote>
+<p>⚠用的是tensorflow哈。<strong>大纵横比、密集分布和类别极不平衡的旋转物体</strong>仍然存在挑战。在本文中，提出了一种端到端的精细单级旋转检测器，用于快速准确定位物体。特征精炼模块的关键思想是通过<u>特征插值将当前精炼的边界框位置信息重新编码为对应的特征点</u>，以实现特征重构和对齐</p>
+</blockquote>
+<p>论文：<a href="https://arxiv.org/abs/1908.05612v1">https://arxiv.org/abs/1908.05612v1</a></p>
+<p>代码：<a href="https://github.com/DetectionTeamUCAS/RetinaNet_Tensorflow_Rotation">https://github.com/DetectionTeamUCAS/RetinaNet_Tensorflow_Rotation</a></p>
+</li>
+<li><p><strong>旋转多尺度特征：Rotation-aware and multi-scale convolutional neural network for object detection in remote sensing images 2020</strong></p>
+<blockquote>
+<p>faster r-cnn发展而来，一种考虑了多尺度特征，不开源</p>
+</blockquote>
+<p>![Meeting%201%EF%BC%9A%E5%AE%89%E6%8E%92%20f5d7bab66c444d00ac1ea4db745e6a0c/Untitled.png](C:\Users\DELL\Desktop\Export-a6833b76-72bb-42b1-a43a-1e3563a66a52\Meeting 1：安排 f5d7bab66c444d00ac1ea4db745e6a0c\Untitled.png)</p>
+<p>论文：<a href="https://www.sciencedirect.com/science/article/pii/S0924271620300319?via=ihub">https://www.sciencedirect.com/science/article/pii/S0924271620300319?via%3Dihub</a></p>
+</li>
+</ol>
+<ol start="3">
+<li><p><strong>我们的数据不太行之不平衡：YOLT 针对遥感卫星目标检测</strong></p>
+<blockquote>
+<p>针对「机场目标」和「其它目标」分别训练了一个检测模型，这两个检测模型的输入图像尺度也不一样，测试图像时同理，最后将不同检测模型、不同chip的检测结果合并在一起就得到最终一张卫星图像的输出。也即是说这篇文章的核心操作就是这个「不同尺度的模型融合」以及「针对机场单独训练一个模型」，这样确实是从数据出发能够很好的解决实际场景（卫星图像）中机场目标数据太少带来的问题。</p>
+</blockquote>
+<img src="C:\Users\DELL\Desktop\Export-a6833b76-72bb-42b1-a43a-1e3563a66a52\Meeting 1：安排 f5d7bab66c444d00ac1ea4db745e6a0c\Untitled 3.png" alt="Meeting%201%EF%BC%9A%E5%AE%89%E6%8E%92%20f5d7bab66c444d00ac1ea4db745e6a0c/Untitled%203.png" style="zoom: 50%;" />
+
+<ul>
+<li><p>卫星图目标的<strong>「尺寸，方向多样」</strong>。卫星图是从空中拍摄的，因此角度不固定，像船、汽车的方向都可能和常规目标检测算法中的差别较大，因此检测难度大。针对这一点的解决方案是对数据做<strong>「尺度变换，旋转等数据增强操作」</strong>。</p>
+</li>
+<li><p><strong>「小目标的检测难度大」</strong>。针对这一点解决方案有下面三点。</p>
+<p>a) 修改网络结构，使得YOLOV2的 stride 16,而不是32，这样有利于检测出大小在16x16→32x32</p>
+<p>b) 沿用YOLOV2中的passthrough layer，融合不同尺度的特征（52x52和26x26大小的特征），这种特征融合做法在目前大部分通用目标检测算法中被用来提升对小目标的检测效果。</p>
+<p>c) 不同尺度的检测模型融合，即Ensemble，原因是例如飞机和机场的尺度差异很大，因此采用不同尺度的输入训练检测模型，然后再融合检测结果得到最终输出。</p>
+</li>
+<li><p><strong>「卫星图像尺寸太大」</strong>。解决方案有将原始图像切块，然后分别输入模型进行检测以及将不同尺度的检测模型进行融合。</p>
+</li>
+</ul>
+<p>代码：<a href="https://http//github.com/CosmiQ/yolt">https://http://github.com/CosmiQ/yolt</a></p>
+<p>论文：<a href="https://arxiv.org/abs/1805.09512">https://arxiv.org/abs/1805.09512</a></p>
+</li>
+</ol>
+<ol start="4">
+<li><p><strong>我们的数据不太行之框框在瞎标注：CVPR 2019\旷视</strong></p>
+<blockquote>
+<p>案例中的基本 ground truth 边界框原本就是模糊的，导致回归函数的学习更困难：定位更精准的损失函数（KL）！</p>
+</blockquote>
+<img src="C:\Users\DELL\Desktop\Export-a6833b76-72bb-42b1-a43a-1e3563a66a52\Meeting 1：安排 f5d7bab66c444d00ac1ea4db745e6a0c\Untitled 2.png" alt="Meeting%201%EF%BC%9A%E5%AE%89%E6%8E%92%20f5d7bab66c444d00ac1ea4db745e6a0c/Untitled%202.png" style="zoom: 67%;" />
+
+<p>链接：<a href="https://mp.weixin.qq.com/s?__biz=MzIwMTE1NjQxMQ==&mid=2247486607&idx=1&sn=17554987819b343e1f1bb066ea3e21ad&chksm=96f37edba184f7cdffe461edb2a89eb72bd493061cfc9b841ca5043c003a611a8855326d039d&mpshare=1&scene=22&srcid=0828kphGGoXwZThz28xhSUR7&sharer_sharetime=1567004558685&sharer_shareid=5c55e87df338791d997e8905ad2ebfe0#rd">https://mp.weixin.qq.com/s?__biz=MzIwMTE1NjQxMQ==&amp;mid=2247486607&amp;idx=1&amp;sn=17554987819b343e1f1bb066ea3e21ad&amp;chksm=96f37edba184f7cdffe461edb2a89eb72bd493061cfc9b841ca5043c003a611a8855326d039d&amp;mpshare=1&amp;scene=22&amp;srcid=0828kphGGoXwZThz28xhSUR7&amp;sharer_sharetime=1567004558685&amp;sharer_shareid=5c55e87df338791d997e8905ad2ebfe0#rd</a></p>
+</li>
+</ol>
+<h1 id="2-思考整个流程"><a href="#2-思考整个流程" class="headerlink" title="2. 思考整个流程"></a>2. 思考整个流程</h1><ol>
+<li><p>首先敲定主体框架</p>
+</li>
+<li><p>数据扩增：遥感图像有一个很大的特点，就是多方向性。</p>
+<ul>
+<li><p>旋转、水平翻转、随机亮度、随机对比</p>
+</li>
+<li><p>TTA单图多测</p>
+</li>
+</ul>
+</li>
+<li><p>数据集制作：⚠值得注意的是！有关提交要求</p>
+</li>
+<li><p>模型训练：⚠docker容器？</p>
+</li>
+<li><p>问题分析及解决</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>机器学习</category>
+        <category>实践操作</category>
+      </categories>
+      <tags>
+        <tag>机器学习</tag>
+        <tag>目标检测</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>【西方哲学史十五讲】C1：智慧的痛苦</title>
+    <url>/2021/07/10/noteofWestPhilosphy/</url>
+    <content><![CDATA[<p>正在阅读中</p>
+<a id="more"></a>
+
+<h1 id="智慧的痛苦"><a href="#智慧的痛苦" class="headerlink" title="智慧的痛苦"></a>智慧的痛苦</h1><ol>
+<li><p>哲学、科学与宗教：</p>
+<ul>
+<li><p>科学（理性）：认识世界改造世界的手段</p>
+</li>
+<li><p>宗教（信仰）：人类精神的“终极关怀”，对宇宙的真实存在和中级奥秘以及包括人自己在内的所有存在物的来源、归宿和实在性的关怀或牵挂→永恒无限之特征的<strong>超验和理想性</strong>→<strong>无法通过认识来把握</strong></p>
+</li>
+<li><p>哲学（介于二者之间）：根本上诉诸理性，源于“终极关怀”→造成其优越性：其对象为理性无法企及的永恒无限的东西→维特根斯坦“我找不着北”（尴尬境地）</p>
+<p>问题（1+1=2）&amp;难题，哲学是难题中的难题，无法有确切的正确答案，造成了其之于科学的“普遍必然性”，哲学不是科学。</p>
+</li>
+</ul>
+</li>
+<li><p>意义与价值</p>
+<blockquote>
+<p>人生在世不仅或者，而且希望知道他为什么或者，明白人生的意义和价值。然而，作为一个自然存在物，他生存于期期中的自然界并没有什么意义和价值，应该说，<strong>所谓意义和价值是人赋予这个世界的</strong></p>
+</blockquote>
+<p>价值的词源于梵文wer（掩盖、保护）和wal（掩盖、加固），拉丁文的vallo（用堤护住、加鼓）、valeo（成为有力量的、健康的）。<strong>价值是与主体的目的、意愿或需要相关的概念</strong>。</p>
+</li>
+<li><p>意志的自由&amp;智慧的痛苦</p>
+<blockquote>
+<p>伊甸园神话中最令人难以理解的并不是亚当犯了原罪，而是亚当怎么可能会触犯原罪？如果上<strong>帝是全知全能全善的，亚当怎么可能会犯罪呢</strong>？…..</p>
+<p>我们获悉可以有一种解释：认识上帝所创造的最高级的产物，他的”高级“就体现在<strong>自由</strong>上，因为创造一个完全被上帝所支配的造物并不能真正显示上帝的荣耀。所以，不是人凭她自己就可以违背上帝的意志，<u>而是上帝赋予了人违背他意志的自由。</u></p>
+<p>这一解释t同样也适用于自然的进化。….难道自然产生人类的目的就是为了自我毁灭的吗？实际上我没应该这样看：自然进化的最高阶段是自由，而自由毕竟是需要冒险的。人类的自由不同与上帝的自由，上帝的自由是创造的自由，而人类作为被创造物，主要体现为训责的自由，即在数不清的可能性中选择自己的道路。（责任）</p>
+</blockquote>
+<p><strong>哲学问题的本性</strong>：由于人是某种尚未定型、永远开放的自由存在，因而他的至高无上的终极理想本身也一定是一种尚未定型、永远开放的存在。</p>
+</li>
+</ol>
+]]></content>
+      <categories>
+        <category>哲学</category>
+        <category>概论</category>
+      </categories>
+      <tags>
+        <tag>哲学</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>essay04</title>
+    <url>/2021/07/05/essay04/</url>
+    <content><![CDATA[]]></content>
+  </entry>
+  <entry>
     <title>【书摘】禅与摩托车维修艺术：良质与朴质</title>
     <url>/2021/03/17/zenAndtheArtOfMotorcycleMaintenance/</url>
     <content><![CDATA[<p>关于**<u>良质</u>**(<strong>quality</strong>)的探讨</p>
