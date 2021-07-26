@@ -1880,7 +1880,7 @@
         <category>实践操作</category>
       </categories>
       <tags>
-        <tag>detectron2</tag>
+        <tag>Detectron2</tag>
       </tags>
   </entry>
   <entry>
@@ -1972,7 +1972,7 @@
 <ol>
 <li><p>Adadelta</p>
 <p>有了Adagrad的基础思路（关联梯度与学习率实现自适应），Adadelta进行了新的假设，它将原来的G换成了梯度平方的衰减平均值——指数衰减平均值，以此来解决Adagrad的学习率急剧下降问题。</p>
-<p>其中：<br>$$<br>E[g^2]<em>t = \gamma E[g^2]</em>{t-1}+(1-\gamma)g^2_t<br>$$<br>其中$\gamma$一般设定为0.9</p>
+<p>其中：<br>$$<br>E[g^2]<em>t = \gamma E[g^2]</em>{t-1}+(1-\gamma)g^2_t<br>$$<br>其中γ一般设定为0.9</p>
 </li>
 <li><p>RMSprop</p>
 <p>类似的，RMSprop 与 Adadelta 的第一种形式相同：（使用的是指数加权平均，旨在消除梯度下降中的摆动，与Momentum的效果一样，某一维度的导数比较大，则指数加权平均就大，某一维度的导数比较小，则其指数加权平均就小，这样就保证了各维度导数都在一个量级，进而减少了摆动。允许使用一个更大的学习率η）</p>
@@ -2440,7 +2440,7 @@
       </categories>
       <tags>
         <tag>机器学习</tag>
-        <tag>Detectron</tag>
+        <tag>Detectron2</tag>
       </tags>
   </entry>
   <entry>
@@ -2604,7 +2604,7 @@
       </categories>
       <tags>
         <tag>机器学习</tag>
-        <tag>Detectron</tag>
+        <tag>Detectron2</tag>
       </tags>
   </entry>
   <entry>
@@ -2886,7 +2886,7 @@
       </categories>
       <tags>
         <tag>机器学习</tag>
-        <tag>Detectron</tag>
+        <tag>Detectron2</tag>
       </tags>
   </entry>
   <entry>
@@ -2968,7 +2968,7 @@
         <category>实践操作</category>
       </categories>
       <tags>
-        <tag>detectron2</tag>
+        <tag>Detectron2</tag>
       </tags>
   </entry>
   <entry>
