@@ -1,16 +1,156 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
+    <loc>http://dinghye.gitee.io/2021/07/02/JulyTop/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/07/20/RS-Detection-1/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/07/28/RS-Detection-ToolKit-ReadMe/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/08/02/AugTop/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/12/05/2-layer-network/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/03/17/zenAndtheArtOfMotorcycleMaintenance/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/03/11/WhereIsTheWorldGoing/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/03/11/WhatIsTheSelf/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/10/25/TheRootofTheChestnutTree/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/29/statisticErrors/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/03/02/Ockham/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/07/10/noteofWestPhilosphy/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/02/08/NOOSCOPE3/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/02/06/NOOSCOPE2/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/02/04/NOOSCOPE1/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/12/17/Machiavelli/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/10/30/LinuxGuidance/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/23/improveOfRemoteSensingDetection/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/26/Kierkegaard/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/03/12/HowWeDefineMachineLearning/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/12/17/Hobbes/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/11/Heidegger/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/10/25/FrenchExistentialism/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/03/essay001/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/02/06/essay003/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/04/essay002/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/05/DLOptimizer/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
     <loc>http://dinghye.gitee.io/2020/10/31/Detectron2Total/</loc>
-    <lastmod>2021-07-26</lastmod>
+    <lastmod>2021-08-02</lastmod>
   </url>
   <url>
     <loc>http://dinghye.gitee.io/2020/11/01/Detectron2RPN/</loc>
-    <lastmod>2021-07-26</lastmod>
+    <lastmod>2021-08-02</lastmod>
   </url>
   <url>
     <loc>http://dinghye.gitee.io/2020/11/01/Detectron2ROI/</loc>
-    <lastmod>2021-07-26</lastmod>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/02/Detectron2Index/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/10/31/Detectron2FPN/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/12/25/DavidHume/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/10/24/CL_part2/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/10/24/CL_part1/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2020/10/24/AFundamentalIdea/</loc>
+    <lastmod>2021-08-02</lastmod>
+  </url>
+  <url>
+    <loc>http://dinghye.gitee.io/2021/02/06/discussion/</loc>
+    <lastmod>2021-08-02</lastmod>
   </url>
   <url>
     <loc>http://dinghye.gitee.io/2020/11/10/detectron2guidance2/</loc>
@@ -21,23 +161,7 @@
     <lastmod>2021-07-26</lastmod>
   </url>
   <url>
-    <loc>http://dinghye.gitee.io/2020/11/05/DLOptimizer/</loc>
-    <lastmod>2021-07-26</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/07/10/noteofWestPhilosphy/</loc>
-    <lastmod>2021-07-20</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/07/20/RS-Detection-1/</loc>
-    <lastmod>2021-07-20</lastmod>
-  </url>
-  <url>
     <loc>http://dinghye.gitee.io/2021/06/11/JuneTop/</loc>
-    <lastmod>2021-07-02</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/07/02/JulyTop/</loc>
     <lastmod>2021-07-02</lastmod>
   </url>
   <url>
@@ -53,131 +177,15 @@
     <lastmod>2021-04-08</lastmod>
   </url>
   <url>
-    <loc>http://dinghye.gitee.io/2021/03/17/zenAndtheArtOfMotorcycleMaintenance/</loc>
-    <lastmod>2021-03-18</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/03/12/HowWeDefineMachineLearning/</loc>
-    <lastmod>2021-03-15</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/03/11/WhatIsTheSelf/</loc>
-    <lastmod>2021-03-11</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/03/11/WhereIsTheWorldGoing/</loc>
-    <lastmod>2021-03-11</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/03/02/Ockham/</loc>
-    <lastmod>2021-03-02</lastmod>
-  </url>
-  <url>
     <loc>http://dinghye.gitee.io/2021/02/04/FebTop/</loc>
     <lastmod>2021-03-02</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/10/24/AFundamentalIdea/</loc>
-    <lastmod>2021-02-16</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/02/08/NOOSCOPE3/</loc>
-    <lastmod>2021-02-08</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/02/06/essay003/</loc>
-    <lastmod>2021-02-06</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/02/04/NOOSCOPE1/</loc>
-    <lastmod>2021-02-06</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/02/06/NOOSCOPE2/</loc>
-    <lastmod>2021-02-06</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2021/02/06/discussion/</loc>
-    <lastmod>2021-02-06</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/10/30/LinuxGuidance/</loc>
-    <lastmod>2021-02-04</lastmod>
   </url>
   <url>
     <loc>http://dinghye.gitee.io/2020/12/05/DecTop/</loc>
     <lastmod>2021-02-04</lastmod>
   </url>
   <url>
-    <loc>http://dinghye.gitee.io/2020/12/25/DavidHume/</loc>
-    <lastmod>2020-12-25</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/12/17/Machiavelli/</loc>
-    <lastmod>2020-12-24</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/12/17/Hobbes/</loc>
-    <lastmod>2020-12-17</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/12/05/2-layer-network/</loc>
-    <lastmod>2020-12-05</lastmod>
-  </url>
-  <url>
     <loc>http://dinghye.gitee.io/2020/11/02/NovTop/</loc>
     <lastmod>2020-12-05</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/11/29/statisticErrors/</loc>
-    <lastmod>2020-11-29</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/11/26/Kierkegaard/</loc>
-    <lastmod>2020-11-26</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/11/23/improveOfRemoteSensingDetection/</loc>
-    <lastmod>2020-11-24</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/11/11/Heidegger/</loc>
-    <lastmod>2020-11-11</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/11/04/essay002/</loc>
-    <lastmod>2020-11-04</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/11/03/essay001/</loc>
-    <lastmod>2020-11-03</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/11/02/Detectron2Index/</loc>
-    <lastmod>2020-11-02</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/</loc>
-    <lastmod>2020-11-02</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/10/31/Detectron2FPN/</loc>
-    <lastmod>2020-11-02</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/10/24/CL_part2/</loc>
-    <lastmod>2020-11-01</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/10/24/CL_part1/</loc>
-    <lastmod>2020-10-31</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/10/25/TheRootofTheChestnutTree/</loc>
-    <lastmod>2020-10-30</lastmod>
-  </url>
-  <url>
-    <loc>http://dinghye.gitee.io/2020/10/25/FrenchExistentialism/</loc>
-    <lastmod>2020-10-25</lastmod>
   </url>
 </urlset> 
