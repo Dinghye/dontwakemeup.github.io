@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dinghye.gitee.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="The rise of AI statistical models as instruments of  knowledge . A diagram of machine learning errors, biases and limitations  作为知识工具的人工智能统计模型的兴起，机器学习的错误、偏差和局限性示意图（理解框架）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【技术哲学】(Part3)NOOSCOPE:AI--知识提取主义的工具">
+<meta property="og:url" content="http://dinghye.gitee.io/2021/02/08/NOOSCOPE3/index.html">
+<meta property="og:site_name" content="DontWakeMeUP">
+<meta property="og:description" content="The rise of AI statistical models as instruments of  knowledge . A diagram of machine learning errors, biases and limitations  作为知识工具的人工智能统计模型的兴起，机器学习的错误、偏差和局限性示意图（理解框架）">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/02/04/uBqFf2w7cW8SAH1.jpg">
+<meta property="og:image" content="https://i.loli.net/2021/02/08/i8lJhcNy7IDKMf1.gif">
+<meta property="og:image" content="https://nooscope.ai/img/Nooscope-11-Faces.gif">
+<meta property="article:published_time" content="2021-02-08T06:04:40.000Z">
+<meta property="article:modified_time" content="2021-08-02T07:53:42.000Z">
+<meta property="article:author" content="Dingqi Ye">
+<meta property="article:tag" content="技术哲学">
+<meta property="article:tag" content="人工智能">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/02/04/uBqFf2w7cW8SAH1.jpg">
+
+
+<link rel="canonical" href="http://dinghye.gitee.io/2021/02/08/NOOSCOPE3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://dinghye.gitee.io/2021/02/08/NOOSCOPE3/","path":"2021/02/08/NOOSCOPE3/","title":"【技术哲学】(Part3)NOOSCOPE:AI--知识提取主义的工具"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【技术哲学】(Part3)NOOSCOPE:AI--知识提取主义的工具 | DontWakeMeUP</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">DontWakeMeUP</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Curious</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#9-%E7%BB%9F%E8%AE%A1%E5%B7%A5%E5%85%B7%E7%9A%84%E7%BC%BA%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">9. 统计工具的缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#9-1-%E5%88%B6%E5%BA%A6%E8%A7%84%E8%8C%83"><span class="nav-number">1.1.</span> <span class="nav-text">9.1 制度规范</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#9-2-%E5%81%8F%E8%A7%81%E4%B8%8E%E5%9B%B0%E9%9A%BE"><span class="nav-number">1.2.</span> <span class="nav-text">9.2 偏见与困难</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-1-%E9%80%BB%E8%BE%91%E5%92%8C%E6%94%BF%E6%B2%BB%E5%B1%80%E9%99%90%E6%80%A7"><span class="nav-number">1.2.1.</span> <span class="nav-text">9.2.1 逻辑和政治局限性</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#9-2-2-%E5%9B%A0%E6%9E%9C%E5%85%B3%E7%B3%BB"><span class="nav-number">1.2.2.</span> <span class="nav-text">9.2.2 因果关系</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#10-%E5%AF%B9%E6%8A%97%E6%99%BA%E8%83%BD%E4%B8%8E%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD"><span class="nav-number">1.3.</span> <span class="nav-text">10.对抗智能与人工智能</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#11-%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD%E6%97%B6%E4%BB%A3%E7%9A%84%E5%8A%B3%E5%8A%A8"><span class="nav-number">2.</span> <span class="nav-text">11. 人工智能时代的劳动</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Punchlines-in-this-Paper"><span class="nav-number">3.</span> <span class="nav-text">Punchlines in this Paper</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dingqi Ye"
+      src="/images/laptop.jpg">
+  <p class="site-author-name" itemprop="name">Dingqi Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Dinghye" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Dinghye" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:dinghyye@163.com" title="E-Mail → mailto:dinghyye@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2021/02/08/NOOSCOPE3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/laptop.jpg">
+      <meta itemprop="name" content="Dingqi Ye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【技术哲学】(Part3)NOOSCOPE:AI--知识提取主义的工具 | DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【技术哲学】(Part3)NOOSCOPE:AI--知识提取主义的工具
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-02-08 14:04:40" itemprop="dateCreated datePublished" datetime="2021-02-08T14:04:40+08:00">2021-02-08</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-08-02 15:53:42" itemprop="dateModified" datetime="2021-08-02T15:53:42+08:00">2021-08-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%93%B2%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">哲学</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E5%93%B2%E5%AD%A6/%E6%B5%81%E6%B4%BE/" itemprop="url" rel="index"><span itemprop="name">流派</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>5.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>5 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>The rise of AI statistical models as instruments of  knowledge . A diagram of machine learning errors, biases and limitations</p>
+</blockquote>
+<p>作为知识工具的人工智能统计模型的兴起，机器学习的错误、偏差和局限性示意图（理解框架）</p>
+<span id="more"></span>
+
+<p>上一篇地址：<a href="https://dinghye.gitee.io/2021/02/06/NOOSCOPE2/">(Part2) NOOSCOPE：AI–知识提取主义的工具</a></p>
+<p><img src="https://i.loli.net/2021/02/04/uBqFf2w7cW8SAH1.jpg" alt="NOOSCOPE MODEL APPLICATION"></p>
+<h1 id="9-统计工具的缺点"><a href="#9-统计工具的缺点" class="headerlink" title="9. 统计工具的缺点"></a>9. 统计工具的缺点</h1><blockquote>
+<p>在21世纪，AI的规范化力量审查需要在这些方面：框架化知识集合为模式有怎样的含义？绘制矢量空间和社会行为的统计分布的含义又是什么？</p>
+</blockquote>
+<h2 id="9-1-制度规范"><a href="#9-1-制度规范" class="headerlink" title="9.1 制度规范"></a>9.1 制度规范</h2><p>根据福柯的观点，在近代法国，统计能力已被用来衡量社会规范，以区别正常和异常行为。人工智能很容易扩展了现代机构的“规范化力量power of normalisation”，其中包括官僚机构，医学和统计学，然而这些知识现在已经交到了人工智能公司手中。<u>制度规范已成为一种计算规范</u>：主题，主体和行为的分类似乎不再是公共登记册的事务，而是算法和数据中心的事务。 Paula Duarte得出结论，“以数据为中心的理性”应该被理解为权力殖民的一种表达。</p>
+<h2 id="9-2-偏见与困难"><a href="#9-2-偏见与困难" class="headerlink" title="9.2 偏见与困难"></a>9.2 偏见与困难</h2><p>但是，AI统计模型与应该被测量和控制的人类对象之间始终存在差距和冲突。AI统计模型与社会之间的这种逻辑鸿沟通常被认为是<strong>偏见</strong>。它已得到广泛证明，面部识别如何误导社会少数群体，以及如何通过人工智能驱动的物流和送货服务绕开黑人社区。如果通过AI算法放大了性别，种族和阶级歧视，那么这也是机器学习逻辑核心上更大的歧视和规范化问题的一部分。</p>
+<h3 id="9-2-1-逻辑和政治局限性"><a href="#9-2-1-逻辑和政治局限性" class="headerlink" title="9.2.1 逻辑和政治局限性"></a>9.2.1 逻辑和政治局限性</h3><p>AI的逻辑和政治局限性是技术在<strong>识别和预测新事件</strong>方面的困难。机器学习如何处理真正独特的异常，罕见的社会行为，创新的破坏行为？机器学习的两种模式显示出一个限制，而不仅仅是一个偏见。</p>
+<p>机器学习分类或模式识别的逻辑限制是无法识别首次出现的<strong>独特异常</strong>，例如诗歌中的新隐喻，日常对话中的新笑话或不寻常的障碍（行人？一个塑料袋？）在<strong>新的未检测事物</strong>（模型从未“看到”的东西，从未在已知类别中进行过分类）对于自动驾驶汽车和已经造成死亡的汽车来说，是一个特别危险的问题。机器学习预测或模式生成在未来趋势和行为的猜测中显示出类似的错误。作为一种信息压缩技术，机器学习使过去的分类法和行为模式要比现在更加占主导地位。这个问题可以称为<strong>旧</strong>问题的<strong>重生</strong>——</p>
+<blockquote>
+<p><strong>同质时空视观</strong>的应用限制了发生新的历史事件的可能性。(the application of a homogenous space-time view that restrains the possibility of a new historical event.)</p>
+</blockquote>
+<p>有趣的是，在机器学习中，安全问题的逻辑定义也描述了其创造潜力的逻辑限制。对存在的问题特征<strong>的新的预测</strong>逻辑相关的那些特征的<strong>新的一代</strong>，因为机器学习算法在时间表上预测趋势的方式与从学习的模式生成新作品的方式相同。刻不容缓的问题：“人工智能可以有创造力吗？” 应该用技术术语重新表述：</p>
+<blockquote>
+<p>机器学习是否能够创造出<strong>非过去</strong>的作品？机器学习是否能够<strong>外推</strong>其训练数据的样式边界？</p>
+</blockquote>
+<p>机器学习的“创造力”仅限于从训练数据中检测样式，然后在这些样式中随机即兴创作。换句话说，机器学习只能在训练数据设置的逻辑范围内探索和改进。对于所有这些问题及其信息压缩程度，将机器学习技术称为<em>统计技术</em>会更加准确<em>。</em></p>
+<img src="https://i.loli.net/2021/02/08/i8lJhcNy7IDKMf1.gif" alt="Lewis Fry Richardson, Weather Prediction by Numerical Process, Cambridge University Press, 1922." style="zoom: 67%;" />
+
+
+
+<h3 id="9-2-2-因果关系"><a href="#9-2-2-因果关系" class="headerlink" title="9.2.2 因果关系"></a>9.2.2 因果关系</h3><p>机器学习的另一个不言而喻的错误是，经常采用两种现象之间的统计相关性来解释一种因果关系。在统计中，通常应理解，<strong>关联并不表示因果关系</strong>，这<strong>意味着</strong>仅凭统计巧合不足以证明因果关系。在统计学家弗雷德里克·霍夫曼（Frederick Hoffman）的工作中可以找到一个悲剧性的例子，他在1896年为保险公司发布了一份330页的报告，以证明身为美国黑人与预期寿命短之间存在<em>种族关系</em>。机器学习从表面上挖掘数据，可以构造任何随后被视为真实的任意相关性。在2008年，有线逻辑主管克里斯·安德森（Chris Anderson）自豪地拥抱了这种逻辑谬论，他宣布“理论的终结”，因为“数据泛滥使科学方法过时了”。据安德森说，他本人也不是科学方法和逻辑推理方面的专家，统计相关性足以使Google经营其广告业务，因此，它也必须具有足够的能力来自动发现科学范式。甚至是贝叶斯网络的先驱Judea Pearl也认为，机器学习痴迷于“曲线拟合”、记录相关性，而没有提供解释。如果人们认为全世界的警察已经采用了预测性警务算法，那么这种逻辑上的谬论就已经成为一种政治谬论。据丹·麦奎拉恩（Dan McQuillan）所述，当机器学习以这种方式应用于社会时，它变成了<strong>先发制人</strong>的生物政治手段，产生了可随后被定为犯罪的主观性。最终，痴迷于“曲线拟合”的机器学习强加了一种<em>统计文化，</em>并用决策自动化自动化盲目驱动的一种相关性取代了传统的因果关系（和政治责任感）。</p>
+<h2 id="10-对抗智能与人工智能"><a href="#10-对抗智能与人工智能" class="headerlink" title="10.对抗智能与人工智能"></a>10.对抗智能与人工智能</h2><p>到目前为止，通过Nooscope的多个镜头，我们看到了机器学习的统计衍射和幻觉。在这一点上，仪器的方向必须颠倒：</p>
+<blockquote>
+<p>科学理论和计算设备都倾向于巩固抽象的观点：科学的“无处可见”，这通常只是力量的观点。</p>
+</blockquote>
+<p>对AI的痴迷研究可以将学者吸引到计算的深渊中，以及技术形式照亮社会领域的错觉。正如Paola Ricaurte所说：“数据提取主义假设一切都是数据源。” </p>
+<blockquote>
+<p>如何在以数据为中心的世界解放自己？</p>
+</blockquote>
+<p>现在是时候意识到，不是由统计模型构成主体，而是由主体构成统计模型。AI的内在主义internalist和外在主义externalist研究必须模糊：</p>
+<blockquote>
+<p>主观性使数学从内部进行控制，而不是外部。(subjectivities make the mathematics of control from within, not from without.)</p>
+</blockquote>
+<p>就像Guattari通常所说的机器一样，机器智能也由“人类主观某些方面的过度发展和高度集中的形式”构成。</p>
+<p>批判性探究不仅仅是研究技术是如何工作的，它还研究技术是如何被打破的，研究对象是如何反抗其规范控制的，以及工人是如何破坏它的齿轮的。</p>
+<p>从这个意义上讲，克服AI局限性的一种方法是研究黑客行为。黑客攻击是知识产生的重要方法，是对人工智能模糊性的重要认知认识。用于面部识别的深度学习系统已经引发了反监督行动主义等形式。通过面部混淆技术，人类已经决定成为人工智能无法理解的东西:也就是说，人类自己变成了<strong>黑匣子</strong>。传统的<strong>混淆</strong>技术在机器学习时代，针对监视的反对立即获得了数学上的意义。例如，人工智能艺术家兼研究人员亚当·哈维发明了一种名为HyperFace的伪装纺织品，它可以愚弄计算机视觉算法，让它们看到多个人脸，而实际上根本没有人脸。哈维的工作引发了这样一个问题：是什么构成了人眼的面孔，又是什么构成了计算机视觉算法的面孔？HyperFace的神经缺陷利用了这种认知缺口，揭示了人脸在机器眼中的样子。人类和机器感知之间的差距有助于引入日益增长的对抗性攻击领域。</p>
+<p><img src="https://nooscope.ai/img/Nooscope-11-Faces.gif" alt="Adam Harvey, HyperFace pattern, 2016."></p>
+<p><strong>对抗性攻击</strong>利用神经网络统计模型中的盲点和薄弱区域，通常是为了愚弄分类器，让它感知到不存在的东西。在物体识别方面，一个对抗的例子是被篡改过的海龟图像，它看起来对人眼无害，但却被神经网络误分类为步枪。对抗的例子可以被实现为3D物体，甚至路牌贴纸，可能会误导自动驾驶汽车(可能读取的限速是120公里&#x2F;小时，而实际上是50公里&#x2F;小时)。对抗性的例子被设计成机器从未见过的东西。这种效果也可以通过对统计模型进行逆向工程或污染训练数据集来实现。在后一种意义上，<strong>数据中毒</strong>技术以训练数据集为目标，引入篡改数据。在这样做的过程中，它改变了统计模型的准确性，并创建了一个最终可被对手攻击利用的后门。</p>
+<p>对抗性攻击似乎指向了所有机器学习模型都存在的数学漏洞:“对抗性例子的一个有趣的方面是，为一个模型生成的例子经常被其他模型错误分类，即使它们拥有不同的架构或在不相关联的训练集上进行训练。1965年，对攻性攻击提醒了我们人类和机器感知之间的差异，以及机器学习的逻辑限制也是一个政治限制。机器学习的逻辑和本体论边界是不受分类和控制的不受约束的主题或异常事件。算法控制的主题发起了反击。对抗性攻击是一种破坏机器学习装配线的方式，通过发明一个可以使控制装置脱离关节的虚拟障碍。一个对抗性的例子是AI时代的sabot。</p>
+<h1 id="11-人工智能时代的劳动"><a href="#11-人工智能时代的劳动" class="headerlink" title="11. 人工智能时代的劳动"></a>11. 人工智能时代的劳动</h1><p>机器学习的“输入”和“输出”的性质必须明确。人工智能的麻烦不仅与信息偏见有关，而且还涉及劳动。AI不仅是一种控制手段，而且是一种生产力。如前所述，在装配线的每个步骤（数据集组成，算法监督，模型评估等）中都涉及不可见的劳动力。无尽任务的管道从全球北部延伸到全球南部；例如，委内瑞拉，巴西和意大利的工人众包平台对于教会德国自动驾驶汽车“如何看”至关重要。反对工作中的外来智能的想法，必须强调的是，在AI的整个计算过程中，人类工作人员从未离开，或更准确地说，从未离开装配线。玛丽·格雷（Mary Gray）和西达斯·苏里（Siddharth Suri）创造了“<strong>鬼工</strong>”一词，意指使AI显得人为自主的无形劳动。</p>
+<blockquote>
+<p>除了一些基本的决定，如果没有人类参与，当今的人工智能将无法发挥作用。无论是发布相关新闻摘要还是执行复杂的文本披萨订单，当人工智能（AI）跳闸或无法完成工作时，成千上万的企业都呼吁人们悄悄地完成该项目。这条新的数字装配线汇集了分散的工人的集体投入，运送了一些项目而不是产品，并在白天和黑夜的所有时间跨多个经济部门运作。</p>
+</blockquote>
+<p>自动化是神话；由于包括AI在内的机器不断需要人工帮助，因此一些作者建议用更准确的术语“<strong>异质化heteromation</strong>”代替“自动化” 。异化意味着只有借助后备工人军，才有可能将AI作为<em>永续的移动</em>进行熟悉的叙述。</p>
+<p>然而，劳动力构成AI的方式却更为深刻。机器学习的信息源（无论其名称是：输入数据，培训数据还是仅仅是数据）始终代表着人类的技能，活动和行为以及整个社会的生产。所有的训练数据集都隐含地是AI必须分析和自动化的人类劳动分工图。例如，用于图像识别的数据集记录了驾驶员，后卫和上司通常在其任务期间执行的视觉工作。甚至科学数据集也要依靠科学劳动，实验计划，实验室组织和分析观察。简而言之，机器智能的起源是<strong>劳动分工</strong>，其主要目的是<strong>劳动自动化</strong>。</p>
+<p>计算的历史学家已经强调了19机器智能的早期步骤个机械化脑力劳动的分工，手工计算的具体任务的世纪工程。从那时起，计算工作就一直是对劳动的监督和纪律，对剩余价值的最佳计算以及对集体行为的计划的结合。计算是由可见性和可理解性建立的，并且仍在继续执行这种机制，而不仅仅是逻辑推理。如今，人工智能作为一种动力工具的家谱已经在识别和预测技术中得到广泛应用，这一点得到了证实，但始终有待计算的核心异常现象是<em>劳动力</em>的<em>混乱</em>。</p>
+<p>作为一种自动化技术，人工智能将对就业市场产生巨大影响。例如，如果深度学习在图像识别中的错误率是1％，则意味着大约有99％的基于视觉任务（例如机场安全）的日常工作有可能被替换（法律限制和工会反对允许）。在欧洲工会协会的一篇论文中（最后是从工人的角度）很好地描述了AI对劳动力的影响，该论文强调了未来法规为保护工人而应解决的七个基本方面：1）维护工人隐私和数据保护；2）处理监视，跟踪和监视；3）使AI算法的目的透明化；4）确保对算法或机器学习模型的决策行使“解释权”；5）在人机交互中维护工人的安全和保障；6）增强工人在人机交互中的自主权；7）使工人具备AI素养。</p>
+<p>最终，Nooscope在AI时代出现了一个新颖的机械问题。机械问题是一场在工业革命期间在英国引发的辩论，当时对机械使用和工人随后的技术失业的反应是一场社会运动，目的是对机械进行更多的教育，采取了机械学会运动的形式。如今，需要一个智能机械问题来开发更多有关“机器智能”的集体情报，更多地开展公共教育，而不是“学习机器”及其知识提取主义制度（通过查看众包平台的网络地图，这可以强化旧的殖民路线）。同样在全球北部，企业AI与知识生产之间的殖民关系也应得到重视。Nooscope的目的是揭露公司Mechanical Turk的隐藏空间，并阐明使机器智能在意识形态上活跃起来的知识的无形劳动。（敷衍的机器翻译</p>
+<h1 id="Punchlines-in-this-Paper"><a href="#Punchlines-in-this-Paper" class="headerlink" title="Punchlines in this Paper"></a>Punchlines in this Paper</h1><p>本文非常有意思，比起原来学习常看的技术型的AI论文，这篇是发在AI&amp;Soc上，其实是更偏向于哲学的论文。它更像是从宏观上（如NOOSCOPE的比喻）来反思人工智能，去回顾他的发展，它的本质。啊！就读起来非常inspired，因为往往过去我们在一个非常恼人的问题时，不知不觉就陷入了一个死胡同，而跳出来，去反思，批判性思考能给我们更多的思路。当然作为一篇站在山上思考的文章，里面讲到的技术也没有非常细致，偏向入门。</p>
+<ul>
+<li>Part2，从世界到矢量：将世界抽象使用向量表示，这些向量像光线一样分布在思维的空间，数据集和星座中。像城市的光一样渐渐退去。</li>
+<li>Part2&amp;Part3：AI的逻辑政治局限性（“外推”？“homogenous space-time view”）</li>
+<li>Part3：subjectivities make the mathematics of control from within, not from without. 主观性使数学从内部进行控制，而不是外部。不要沉迷于统计。制度规范的变化和区别</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Dingqi Ye
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://dinghye.gitee.io/2021/02/08/NOOSCOPE3/" title="【技术哲学】(Part3)NOOSCOPE:AI--知识提取主义的工具">http://dinghye.gitee.io/2021/02/08/NOOSCOPE3/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%8A%80%E6%9C%AF%E5%93%B2%E5%AD%A6/" rel="tag"># 技术哲学</a>
+              <a href="/tags/%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD/" rel="tag"># 人工智能</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/02/06/essay003/" rel="prev" title="【随笔】003：How We defeat Nihilism">
+                  <i class="fa fa-chevron-left"></i> 【随笔】003：How We defeat Nihilism
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/03/02/MarTop/" rel="next" title="MarTop. ReadMe">
+                  MarTop. ReadMe <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dingqi Ye</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">181k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:44</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

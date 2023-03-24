@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dinghye.gitee.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="影响机器学习结果的因素有很多，包括模型设计、数据等等因素。本文总结了一些常见提高效果的方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【机器学习】提升模型效果的小方法">
+<meta property="og:url" content="http://dinghye.gitee.io/2020/11/23/improveOfRemoteSensingDetection/index.html">
+<meta property="og:site_name" content="DontWakeMeUP">
+<meta property="og:description" content="影响机器学习结果的因素有很多，包括模型设计、数据等等因素。本文总结了一些常见提高效果的方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://pic1.zhimg.com/80/v2-427fbfa87d132162b04e4dc8a75c446c_720w.jpg">
+<meta property="og:image" content="https://bbs.cvmart.net/uploads/images/202003/28/16/DUbs91SEKS.png?imageView2/2/w/1240/h/0">
+<meta property="og:image" content="https://mmbiz.qpic.cn/sz_mmbiz_png/gYUsOT36vfogQwQSEpqTKnZY1NQ1FcZbJV0icgmmUqFkTuaiafExEPLupq3ic2dpXm8xMCgJEx3d6WzxTicW8Hmetg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://mmbiz.qpic.cn/sz_mmbiz_jpg/gYUsOT36vfogQwQSEpqTKnZY1NQ1FcZbRTJHlSRto8GCeC8n7m4sT4XWHZzkTW1LnGPOlxzpNemDPYTcDtMPaw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1">
+<meta property="og:image" content="https://pic3.zhimg.com/80/v2-5378f1dfba3e73dedafdc879bbc4c71e_720w.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/24/EJ2TRFB7irM9c4n.jpg">
+<meta property="article:published_time" content="2020-11-23T01:07:41.000Z">
+<meta property="article:modified_time" content="2021-08-02T07:52:44.000Z">
+<meta property="article:author" content="Dingqi Ye">
+<meta property="article:tag" content="技巧">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://pic1.zhimg.com/80/v2-427fbfa87d132162b04e4dc8a75c446c_720w.jpg">
+
+
+<link rel="canonical" href="http://dinghye.gitee.io/2020/11/23/improveOfRemoteSensingDetection/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://dinghye.gitee.io/2020/11/23/improveOfRemoteSensingDetection/","path":"2020/11/23/improveOfRemoteSensingDetection/","title":"【机器学习】提升模型效果的小方法"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【机器学习】提升模型效果的小方法 | DontWakeMeUP</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">DontWakeMeUP</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Curious</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E5%A2%9E%E5%BC%BA"><span class="nav-number">1.</span> <span class="nav-text">1. 数据增强</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E9%95%BF%E5%B0%BE%E5%88%86%E5%B8%83"><span class="nav-number">2.</span> <span class="nav-text">2 长尾分布</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E9%87%8D%E9%87%87%E6%A0%B7%EF%BC%88re-sampling%EF%BC%89%E7%9B%B8%E5%85%B3"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 重采样（re-sampling）相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E9%87%8D%E5%8A%A0%E6%9D%83%EF%BC%88re-weighting%EF%BC%89%E7%9B%B8%E5%85%B3"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 重加权（re-weighting）相关</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E8%BF%81%E7%A7%BB%E5%AD%A6%E4%B9%A0%EF%BC%88transfer-learning%EF%BC%89%E7%9B%B8%E5%85%B3"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 迁移学习（transfer learning）相关</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E8%B6%85%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">3. 超参数设置</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E6%84%9F%E5%8F%97%E9%87%8E"><span class="nav-number">4.</span> <span class="nav-text">4. 感受野</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-number">5.</span> <span class="nav-text">3. 优化器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-Focal-Loss"><span class="nav-number">6.</span> <span class="nav-text">4. Focal Loss</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-label-smooth"><span class="nav-number">7.</span> <span class="nav-text">5. label smooth</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#6-%E9%9D%9E%E6%9E%81%E5%A4%A7%E5%80%BC%E6%8A%91%E5%88%B6"><span class="nav-number">8.</span> <span class="nav-text">6. 非极大值抑制</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dingqi Ye"
+      src="/images/laptop.jpg">
+  <p class="site-author-name" itemprop="name">Dingqi Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Dinghye" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Dinghye" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:dinghyye@163.com" title="E-Mail → mailto:dinghyye@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/11/23/improveOfRemoteSensingDetection/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/laptop.jpg">
+      <meta itemprop="name" content="Dingqi Ye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【机器学习】提升模型效果的小方法 | DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【机器学习】提升模型效果的小方法
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-23 09:07:41" itemprop="dateCreated datePublished" datetime="2020-11-23T09:07:41+08:00">2020-11-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-08-02 15:52:44" itemprop="dateModified" datetime="2021-08-02T15:52:44+08:00">2021-08-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E8%B7%B5%E6%93%8D%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">实践操作</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>影响机器学习结果的因素有很多，包括模型设计、数据等等因素。本文总结了一些常见提高效果的方法</p>
+<span id="more"></span>
+
+<h1 id="1-数据增强"><a href="#1-数据增强" class="headerlink" title="1. 数据增强"></a>1. 数据增强</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/41679153">https://zhuanlan.zhihu.com/p/41679153</a></p>
+<p>我们常常会遇到数据不足的情况。比如，你遇到的一个任务，目前只有小几百的数据，然而，你知道目前现在流行的最先进的神经网络都是成千上万的图片数据。你知道有人提及大的数据集是效果好的保证。</p>
+<blockquote>
+<p>如果没有很多的数据，我们怎么去获得更多的数据？</p>
+</blockquote>
+<p><img src="https://pic1.zhimg.com/80/v2-427fbfa87d132162b04e4dc8a75c446c_720w.jpg" alt="移位网球"></p>
+<p>一个欠训练的网络会认为上述三个网球是不同、独特的。所以为了更多的数据，我们可以<strong>对现有数据集进行微小的转变</strong> 比如旋转（flips）、移位（translations）、旋转（rotations）等等。</p>
+<p>一个卷积神经网络，如果能够对物体即使它放在不同的地方也能稳健的分类，就被称为具有不变性的属性。更具体的，CNN可以对移位（translation）、视角（viewpoint）、大小（size）、照明（illumination）（或者以上的组合）具有不变性。</p>
+<h1 id="2-长尾分布"><a href="#2-长尾分布" class="headerlink" title="2 长尾分布"></a>2 长尾分布</h1><p><a target="_blank" rel="noopener" href="https://bbs.cvmart.net/topics/1694">https://bbs.cvmart.net/topics/1694</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzU5MTgzNzE0MA==&mid=2247487069&idx=1&sn=1011ebe0f4ec56f3e48a6d71cf50c2b1&chksm=fe29ace6c95e25f0691c53fd58796270b25b944a3bcab2d45d0608932e0324d73d7b5ec1d30f&scene=27#wechat_redirect">https://mp.weixin.qq.com/s?__biz=MzU5MTgzNzE0MA==&amp;mid=2247487069&amp;idx=1&amp;sn=1011ebe0f4ec56f3e48a6d71cf50c2b1&amp;chksm=fe29ace6c95e25f0691c53fd58796270b25b944a3bcab2d45d0608932e0324d73d7b5ec1d30f&amp;scene=27#wechat_redirect</a></p>
+<img src="https://bbs.cvmart.net/uploads/images/202003/28/16/DUbs91SEKS.png?imageView2/2/w/1240/h/0" alt="长尾分布" style="zoom: 50%;" />
+
+<blockquote>
+<p>CVPR2019[1]认为：当数据呈现长尾分布时，会导致分类器出现bias(势利眼)，<strong>分类器更偏向于识别样本量充足</strong>，类内多样性丰富的头部类，从而忽略了尾部类，这对尾部类而言是不公平的。</p>
+</blockquote>
+<p>我们认为由于尾部ID的数量庞大，而且每个尾部ID所拥有的样本数量稀少，这会导致特征空间十分混乱，大量类别的辨识度不高，使得特征空间发生扭曲，畸变。最终网络学习得到的是一个不健康的模型，先天畸形。</p>
+<p>常用的方法有：</p>
+<h2 id="2-1-重采样（re-sampling）相关"><a href="#2-1-重采样（re-sampling）相关" class="headerlink" title="2.1 重采样（re-sampling）相关"></a>2.1 重采样（re-sampling）相关</h2><ol>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1910.09217">Decoupling Representation and Classifier for Long-Tailed Recognition, ICLR 2020</a></p>
+<p><em>对任何不均衡分类数据集地再平衡本质都应该只是对分类器地再均衡，而不应该用类别的分布改变特征学习时图片特征的分布，或者说图片特征的分布和类别标注的分布，本质上是不耦合的。</em></p>
+<p>基于上述假设，有了Decoupling 以及BBN。Decoupling的核心在于图片特征的分布和类别分布其实不耦合，所以学习backbone的特征提取时不应该用类别的分布去重采样（re-sampling），而应该直接利用原始的数据分布。</p>
+<p>Decoupling将长尾分类模型的学习分为了两步。第一步，先不作任何再均衡，而是直接像传统的分类一样，利用原始数据学习一个分类模型（包含特征提取的backbone + 一个全连接分类器）。第二步，将第一步学习的模型中的特征提取backbone的参数固定（不再学习），然后单独接上一个分类器（可以是不同于第一步的分类器），对分类器进行class-balanced sampling学习。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1912.02413">BBN: Bilateral-Branch Network with Cumulative Learning for Long-Tailed Visual Recognition，CVPR 2020</a></p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_png/gYUsOT36vfogQwQSEpqTKnZY1NQ1FcZbJV0icgmmUqFkTuaiafExEPLupq3ic2dpXm8xMCgJEx3d6WzxTicW8Hmetg/640?wx_fmt=png&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="长尾分类的最佳组合来自于：利用Cross-Entropy Loss和原始数据学出来的backbone + 利用Re-sampling学出来的分类器。"></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.06783">Dynamic Curriculum Learning for Imbalanced Data Classification，ICCV 2019</a></p>
+<p>课程学习（Curriculum Learning）是一种模拟人类学习过程的训练策略，旨在从简到难。先用简单的样本学习出一个比较好的初始模型，再学习复杂样本，从而达到一个更优的解。</p>
+</li>
+</ol>
+<h2 id="2-2-重加权（re-weighting）相关"><a href="#2-2-重加权（re-weighting）相关" class="headerlink" title="2.2 重加权（re-weighting）相关"></a>2.2 重加权（re-weighting）相关</h2><ol>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1901.05555">Class-Balanced Loss Based on Effective Number of Samples，CVPR 2019</a></p>
+<p>这篇文章的核心理念在于，随着样本数量的增加，每个样本带来的收益是显著递减的。所以作者通过理论推导，得到了一个更优的重加权权重的设计，从而取得更好的长尾分类效果。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1906.07413">Learning Imbalanced Datasets with Label-Distribution-Aware Margin Loss，NIPS 2019</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.10780">Rethinking Class-Balanced Methods for Long-Tailed Visual Recognition from a Domain Adaptation Perspective, CVPR 2020</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2007.03943">Remix: Rebalanced Mixup,Arxiv Preprint 2020</a></p>
+<p>Mixup是一个这两年常用的数据增强方法，简单来说就是对两个sample的input image和one-hot label做线性插值，得到一个新数据。实现起来看似简单，但是却非常有效，因为他自带一个很强的约束，就是样本之间的差异变化是线性的，从而优化了特征学习和分类边界</p>
+</li>
+</ol>
+<h2 id="2-3-迁移学习（transfer-learning）相关"><a href="#2-3-迁移学习（transfer-learning）相关" class="headerlink" title="2.3 迁移学习（transfer learning）相关"></a>2.3 迁移学习（transfer learning）相关</h2><ol>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2002.10826">Deep Representation Learning on Long-tailed Data: A Learnable Embedding Augmentation Perspective，CVPR 2020</a></p>
+<p>长尾分布中因为尾部样本缺乏，无法支撑一个较好的分类边界，这篇工作在尾部的样本周围创造了一些虚拟样本，形成一个特征区域而非原先的特征点，即特征云（feature cloud）。而如何从特征点生成特征云，则利用的头部数据的分布。图例如下</p>
+<p><img src="https://mmbiz.qpic.cn/sz_mmbiz_jpg/gYUsOT36vfogQwQSEpqTKnZY1NQ1FcZbRTJHlSRto8GCeC8n7m4sT4XWHZzkTW1LnGPOlxzpNemDPYTcDtMPaw/640?wx_fmt=jpeg&tp=webp&wxfrom=5&wx_lazy=1&wx_co=1" alt="图示"></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2001.01536">Learning From Multiple Experts: Self-paced Knowledge Distillation for Long-tailed Classification，ECCV 2020</a></p>
+<p>作者发现在一个长尾分布的数据集中，如果我们取一个更均衡的子集来训练，其结果反而比利用完整的数据集效果更好。所以原文利用多个子集来训练更均衡的专家模型来指导一个unified学生模型。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://arxiv.org/abs/1904.05160">Large-Scale Long-Tailed Recognition in an Open World，CVPR 2019</a></p>
+<p>该方法学习一组动态的元向量（dynamic meta-embedding）来将头部的视觉信息知识迁移给尾部类别使用。这组动态元向量之所以可以迁移视觉知识，因为他不仅结合了直接的视觉特征，同时也利用了一组关联的记忆特征（memory feature）。这组记忆特征允许尾部类别通过相似度利用相关的头部信息。</p>
+</li>
+</ol>
+<h1 id="3-超参数设置"><a href="#3-超参数设置" class="headerlink" title="3. 超参数设置"></a>3. 超参数设置</h1><p>比如通过对原始数据的一些检测，获得目标的大小等信息，给出更合适的Anchor大小，帮助模型进行训练识别等等。</p>
+<p>除此之外一些其他的超参数设置可以参考：</p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/mzpmzk/article/details/80136958">https://blog.csdn.net/mzpmzk/article/details/80136958</a></p>
+<h1 id="4-感受野"><a href="#4-感受野" class="headerlink" title="4. 感受野"></a>4. 感受野</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/28492837">https://zhuanlan.zhihu.com/p/28492837</a></p>
+<blockquote>
+<p>在机器视觉领域的深度神经网络中有一个概念叫做感受野，用来表示网络内部的不同位置的神经元对原图像的感受范围的大小。</p>
+<p>（在卷积神经网络中，感受野（Receptive Field）的定义是卷积神经网络每一层输出的特征图（feature map）上的像素点在输入图片上映射的区域大小。再通俗点的解释是，特征图上的一个点对应输入图上的区域）</p>
+</blockquote>
+<p>神经元之所以无法对原始图像的所有信息进行感知，是因为在这些网络结构中普遍使用卷积层和pooling层，在层与层之间均为局部相连（通过sliding filter）。神经元感受野的值越大表示其能接触到的原始图像范围就越大，也意味着他可能蕴含更为全局、语义层次更高的特征；而值越小则表示其所包含的特征越趋向于局部和细节。因此感受野的值可以大致用来判断每一层的抽象层次。</p>
+<img src="https://pic3.zhimg.com/80/v2-5378f1dfba3e73dedafdc879bbc4c71e_720w.png" alt="感受野" style="zoom: 80%;" />
+
+<p><strong>如何计算感受野？</strong></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/objectDetect/p/5947169.html">https://www.cnblogs.com/objectDetect/p/5947169.html</a></p>
+<p><strong>如何增强感受野？</strong></p>
+<ul>
+<li>增加pooling层，但是会降低准确性（pooling过程中造成了信息损失）</li>
+<li>增大卷积核的kernel size，但是会增加参数（卷积层的参数计算参考[<a target="_blank" rel="noopener" href="https://blog.csdn.net/dcxhun3/article/details/46878999">2]</a>）</li>
+<li>增加卷积层的个数，但是会面临梯度消失的问题（梯度消失参考[<a target="_blank" rel="noopener" href="https://blog.csdn.net/cppjava_/article/details/68941436">3]</a>）</li>
+</ul>
+<h1 id="3-优化器"><a href="#3-优化器" class="headerlink" title="3. 优化器"></a>3. 优化器</h1><p><a href="https://dinghye.gitee.io/2020/11/05/DLOptimizer/">https://dinghye.gitee.io/2020/11/05/DLOptimizer/</a></p>
+<h1 id="4-Focal-Loss"><a href="#4-Focal-Loss" class="headerlink" title="4. Focal Loss"></a>4. Focal Loss</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/49981234">https://zhuanlan.zhihu.com/p/49981234</a></p>
+<p>object detection的算法主要可以分为两大类：<strong>two-stage detector和one-stage detector</strong>。前者是指类似Faster RCNN，RFCN这样需要region proposal的检测算法，这类算法可以达到很高的准确率，但是速度较慢。虽然可以通过减少proposal的数量或降低输入图像的分辨率等方式达到提速，但是速度并没有质的提升。后者是指类似YOLO，SSD这样不需要region proposal，直接回归的检测算法，这类算法速度很快，但是准确率不如前者。<strong>作者提出focal loss的出发点也是希望one-stage detector可以达到two-stage detector的准确率，同时不影响原有的速度。</strong></p>
+<blockquote>
+<p>作者认为one-stage detector的准确率不如two-stage detector原因是：<strong>样本的类别不均衡导致的</strong>。我们知道在object detection领域，一张图像可能生成成千上万的candidate locations，但是其中只有很少一部分是包含object的，这就带来了类别不均衡。</p>
+</blockquote>
+<p>那么类别不均衡会带来什么后果呢？负样本数量太大，占总loss的大部分，而且多是容易分类的，因此使得优化方向与我们希望的不一样。因此，针对类别不均衡问题给，作者基于标准交叉熵损失基础上提出一种新的损失函数focal loss。</p>
+<h1 id="5-label-smooth"><a href="#5-label-smooth" class="headerlink" title="5. label smooth"></a>5. label smooth</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/76587755">https://zhuanlan.zhihu.com/p/76587755</a></p>
+<blockquote>
+<p>在常见的多分类问题中，先经过softmax处理后进行交叉熵计算，原理很简单可以将计算loss理解为，为了使得网络对测试集预测的概率分布和其真实分布接近，常用的做法是使用one-hot对真实标签进行编码，作者认为这种将标签强制one-hot的方式使网络过于自信会导致<strong>过拟合</strong>，因此软化这种编码方式。</p>
+</blockquote>
+<p>其方法为：label smoothing相当于减少真实样本标签的类别在计算损失函数时的权重，最终起到抑制过拟合的效果。</p>
+<h1 id="6-非极大值抑制"><a href="#6-非极大值抑制" class="headerlink" title="6. 非极大值抑制"></a>6. 非极大值抑制</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/37489043">https://zhuanlan.zhihu.com/p/37489043</a></p>
+<blockquote>
+<p>目标检测的过程中在同一目标的位置上会产生大量的候选框，这些候选框相互之间可能会有重叠，此时我们需要利用非极大值抑制找到最佳的目标边界框，消除冗余的边界框。</p>
+</blockquote>
+<p><img src="https://i.loli.net/2020/11/24/EJ2TRFB7irM9c4n.jpg" alt="非极大值抑制"></p>
+<p>其方法为：目标边界框列表及其对应的置信度得分列表，设定阈值，阈值用来删除重叠较大的边界框。<strong>IoU</strong>：intersection-over-union，即两个边界框的交集部分除以它们的并集。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Dingqi Ye
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://dinghye.gitee.io/2020/11/23/improveOfRemoteSensingDetection/" title="【机器学习】提升模型效果的小方法">http://dinghye.gitee.io/2020/11/23/improveOfRemoteSensingDetection/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%8A%80%E5%B7%A7/" rel="tag"># 技巧</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/11/11/Heidegger/" rel="prev" title="【存在论】海德格尔早期存在论思想：存在、存在者、此在">
+                  <i class="fa fa-chevron-left"></i> 【存在论】海德格尔早期存在论思想：存在、存在者、此在
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/26/Kierkegaard/" rel="next" title="【存在主义】克尔凯郭尔-恐惧与战栗">
+                  【存在主义】克尔凯郭尔-恐惧与战栗 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dingqi Ye</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">181k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:44</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

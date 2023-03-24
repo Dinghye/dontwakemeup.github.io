@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dinghye.gitee.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="detectron2 入门笔记，数据格式转换，模型训练、检测、评价">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Detectron2】Detectron2 用自己的数据训练使用Faster-RCNN">
+<meta property="og:url" content="http://dinghye.gitee.io/2020/10/30/detectron2guidance/index.html">
+<meta property="og:site_name" content="DontWakeMeUP">
+<meta property="og:description" content="detectron2 入门笔记，数据格式转换，模型训练、检测、评价">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/6Ctiljarxv7UAPy.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/Av9WBQpDURwFZhN.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/dRZbeSyB7u9j2cl.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/i9jJTlcFAoE7ba1.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/02/1y9b4w8ixHaEZNC.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/ctHJlwhfuirUEo1.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/936KvpJzmElakSe.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/EHrbt4LeJK6ynv9.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/dlAcoG2xRWVqEwZ.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/30/d2GgpQFt98WeRUK.png">
+<meta property="article:published_time" content="2020-10-30T07:20:19.000Z">
+<meta property="article:modified_time" content="2021-07-26T02:24:36.000Z">
+<meta property="article:author" content="Dingqi Ye">
+<meta property="article:tag" content="Detectron2">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/01/6Ctiljarxv7UAPy.png">
+
+
+<link rel="canonical" href="http://dinghye.gitee.io/2020/10/30/detectron2guidance/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://dinghye.gitee.io/2020/10/30/detectron2guidance/","path":"2020/10/30/detectron2guidance/","title":"【Detectron2】Detectron2 用自己的数据训练使用Faster-RCNN"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【Detectron2】Detectron2 用自己的数据训练使用Faster-RCNN | DontWakeMeUP</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">DontWakeMeUP</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Curious</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E9%A1%B9%E7%9B%AE%E7%9B%AE%E5%BD%95"><span class="nav-number">1.</span> <span class="nav-text">1. 项目目录</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E8%BD%AC%E6%8D%A2"><span class="nav-number">2.</span> <span class="nav-text">2. 数据格式转换</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-COCO%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 COCO数据格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E5%BD%93%E5%89%8D%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F%E4%B8%8E%E8%BD%AC%E6%8D%A2"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 当前数据格式与转换</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-1-%E6%95%B0%E6%8D%AE%E6%A0%BC%E5%BC%8F"><span class="nav-number">2.2.1.</span> <span class="nav-text">2.2.1 数据格式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-2-%E6%AD%A3%E6%A1%86%E8%BD%AC%E6%8D%A2"><span class="nav-number">2.2.2.</span> <span class="nav-text">2.2.2 正框转换</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-COCO%E6%95%B0%E6%8D%AE%E9%A2%84%E8%A7%88"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 COCO数据预览</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83"><span class="nav-number">3.</span> <span class="nav-text">3. 模型训练</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E6%95%B0%E6%8D%AE%E6%B3%A8%E5%86%8C"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 数据注册</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-%E7%BC%96%E8%BE%91%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 编辑配置文件</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-%E6%A8%A1%E5%9E%8B%E8%AE%AD%E7%BB%83"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 模型训练</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E6%A8%A1%E5%9E%8B%E4%BD%BF%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">4. 模型使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E6%A8%A1%E5%9E%8B%E8%AF%84%E4%BB%B7"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 模型评价</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-%E6%A3%80%E6%B5%8B%E6%96%B0%E5%9B%BE%E7%89%87"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 检测新图片</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-%E6%80%BB%E7%BB%93"><span class="nav-number">5.</span> <span class="nav-text">5. 总结</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dingqi Ye"
+      src="/images/laptop.jpg">
+  <p class="site-author-name" itemprop="name">Dingqi Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Dinghye" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Dinghye" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:dinghyye@163.com" title="E-Mail → mailto:dinghyye@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/10/30/detectron2guidance/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/laptop.jpg">
+      <meta itemprop="name" content="Dingqi Ye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【Detectron2】Detectron2 用自己的数据训练使用Faster-RCNN | DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【Detectron2】Detectron2 用自己的数据训练使用Faster-RCNN
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-10-30 15:20:19" itemprop="dateCreated datePublished" datetime="2020-10-30T15:20:19+08:00">2020-10-30</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-07-26 10:24:36" itemprop="dateModified" datetime="2021-07-26T10:24:36+08:00">2021-07-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E8%B7%B5%E6%93%8D%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">实践操作</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>8 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>detectron2 入门笔记，数据格式转换，模型训练、检测、评价</p>
+<span id="more"></span>
+
+<p>参考：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/rioka/p/13781852.html">https://www.cnblogs.com/rioka/p/13781852.html</a></p>
+<h1 id="1-项目目录"><a href="#1-项目目录" class="headerlink" title="1. 项目目录"></a>1. 项目目录</h1><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">Project</span><br><span class="line">--COCO-Detection</span><br><span class="line">    faster_rcnn_R_50_FPN_3x.yaml  # 官方代码库 copy</span><br><span class="line">    Base-RCNN-FPN.yaml  # 同上</span><br><span class="line">    my_config.yaml  # 自己的训练配置文件</span><br><span class="line">--tools</span><br><span class="line">    train_net.py  # 官方代码库 copy 并自行修改</span><br><span class="line">    predictor.py  # 模型预测 输出</span><br><span class="line">    single_predictor.py # 单张图片模型输出</span><br><span class="line">    train.sh</span><br><span class="line">    train_resume.sh</span><br><span class="line">    eval.sh</span><br><span class="line">--utils</span><br><span class="line">    csv2coco.py  # 将自己的数据集转化为标准 coco 数据集</span><br><span class="line">    cocoDatasetViewer.py # coco数据集展示</span><br><span class="line">    dataReview.py  # 训练数据展示</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>数据集目录为</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">--MyDataset   # 数据集</span><br><span class="line">----annotations</span><br><span class="line">	  train.json</span><br><span class="line">	  val.json</span><br><span class="line">----images</span><br><span class="line">----train</span><br><span class="line">      1.jpg</span><br><span class="line">      ....</span><br><span class="line">----val</span><br><span class="line">      2.jpg</span><br><span class="line">      ....</span><br></pre></td></tr></table></figure>
+
+<h1 id="2-数据格式转换"><a href="#2-数据格式转换" class="headerlink" title="2. 数据格式转换"></a>2. 数据格式转换</h1><h2 id="2-1-COCO数据格式"><a href="#2-1-COCO数据格式" class="headerlink" title="2.1 COCO数据格式"></a>2.1 COCO数据格式</h2><p>COCO的 全称是Common Objects in COntext，是微软团队提供的一个可以用来进行图像识别的数据集。MS COCO数据集中的图像分为训练、验证和测试集。</p>
+<p>COCO数据集现在有3种标注类型：<strong>object instances（目标实例）, object keypoints（目标上的关键点）, 和image captions（看图说话）</strong>，使用JSON文件存储。</p>
+<p>这里我们使用的是instances（框住目标），用于进行目标检测。一些仓库提供了对应的数据转换程序</p>
+<blockquote>
+<p>参考：<a target="_blank" rel="noopener" href="https://github.com/spytensor/prepare_detection_dataset">https://github.com/spytensor/prepare_detection_dataset</a></p>
+</blockquote>
+<p><img src="https://i.loli.net/2020/11/01/6Ctiljarxv7UAPy.png" alt="目录"></p>
+<h2 id="2-2-当前数据格式与转换"><a href="#2-2-当前数据格式与转换" class="headerlink" title="2.2 当前数据格式与转换"></a>2.2 当前数据格式与转换</h2><h3 id="2-2-1-数据格式"><a href="#2-2-1-数据格式" class="headerlink" title="2.2.1 数据格式"></a>2.2.1 数据格式</h3><p>根据对应说明有：训练集中每张图像数据对应一个 txt 标注文件,如图像数据名称为 1.tif,则对应的标注文件为 1.txt, 标注文件每一行为 cls x1 y1x2 y2 x3 y3 x4 y4 共 5 个参数,间隔字符为空格,标注对象的个数<br>对应存储的行数。其中(x1,y1),(x2,y2),(x3,y3),(x4,y4)四个点构成对象的标注框。同时，图像数据均为1024x1024的tif格式文件。</p>
+<h3 id="2-2-2-正框转换"><a href="#2-2-2-正框转换" class="headerlink" title="2.2.2 正框转换"></a>2.2.2 正框转换</h3><p>然而值得注意的是，这里的标注是<strong>斜框</strong>，而一般来说的coco程序转换的都是正框。所以这里对原数据进行了获取正框的处理，<strong>但是实际上这样操作会导致模型精度降低</strong>。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 这里进行数据格式的转换，原来csv代码使用的是path,xmin, ymin, xmax, ymax,label的格式</span></span><br><span class="line">       <span class="comment"># specially , we used absolute path</span></span><br><span class="line">       formalnum = [path + <span class="string">&quot;images/&quot;</span> + <span class="built_in">str</span>(name) + <span class="string">&quot;.jpg&quot;</span>, <span class="built_in">min</span>(num[<span class="number">1</span>], num[<span class="number">3</span>], num[<span class="number">5</span>], num[<span class="number">7</span>]),</span><br><span class="line">                    <span class="built_in">min</span>(num[<span class="number">2</span>], num[<span class="number">4</span>], num[<span class="number">6</span>], num[<span class="number">8</span>]),</span><br><span class="line">                    <span class="built_in">max</span>(num[<span class="number">1</span>], num[<span class="number">3</span>], num[<span class="number">5</span>], num[<span class="number">7</span>]), <span class="built_in">max</span>(num[<span class="number">2</span>], num[<span class="number">4</span>], num[<span class="number">6</span>], num[<span class="number">8</span>]), <span class="built_in">str</span>(<span class="built_in">int</span>(num[<span class="number">0</span>]))]</span><br></pre></td></tr></table></figure>
+
+<p>通过 <a target="_blank" rel="noopener" href="https://github.com/spytensor/prepare_detection_dataset">Github</a> 这样的转换，将现有数据转换为前面csvTococo的预数据。得到对应的coco数据集</p>
+<blockquote>
+<p><img src="https://i.loli.net/2020/11/01/Av9WBQpDURwFZhN.png" alt="数据集路径"></p>
+</blockquote>
+<h2 id="2-3-COCO数据预览"><a href="#2-3-COCO数据预览" class="headerlink" title="2.3 COCO数据预览"></a>2.3 COCO数据预览</h2><p>在转换完数据之后，理论上要对转换后的coco数据进行一次预览，检查是否已经转换好了（然而我最开始的时候并没有做这一步，训练完模型之后发现结果很差，再反过头来发现自己有个地方写错了导致要重新来过）。</p>
+<p>选择链接好对应的annotations和images</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pycocotools.coco <span class="keyword">import</span> COCO</span><br><span class="line"><span class="keyword">import</span> cv2 <span class="keyword">as</span> cv</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> random</span><br><span class="line"></span><br><span class="line">img_path = <span class="string">&#x27;../MyDataset/images/val&#x27;</span>  <span class="comment"># 把图片直接放在同一文件夹下</span></span><br><span class="line">annFile = <span class="string">&#x27;../MyDataset/annotations/val.json&#x27;</span>  <span class="comment"># 同样</span></span><br><span class="line"></span><br><span class="line">coco = COCO(annFile)</span><br><span class="line">cats = coco.loadCats(coco.getCatIds())</span><br><span class="line"></span><br><span class="line">catIds = coco.getCatIds(catNms=[<span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;4&#x27;</span>, <span class="string">&#x27;5&#x27;</span>])</span><br><span class="line">imgIds = coco.getImgIds(catIds=catIds)</span><br><span class="line">img_list = os.listdir(img_path)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(img_list)):</span><br><span class="line">    img = coco.loadImgs(imgIds[np.random.randint(<span class="number">0</span>, <span class="built_in">len</span>(imgIds))])[<span class="number">0</span>]</span><br><span class="line">    image_name = img[<span class="string">&#x27;file_name&#x27;</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 加了catIds就是只加载目标类别的anno，不加就是图像中所有的类别anno</span></span><br><span class="line">    annIds = coco.getAnnIds(imgIds=img[<span class="string">&#x27;id&#x27;</span>], catIds=[], iscrowd=<span class="literal">None</span>)</span><br><span class="line">    anns = coco.loadAnns(annIds)</span><br><span class="line"></span><br><span class="line">    coco.showAnns(anns)</span><br><span class="line"></span><br><span class="line">    coordinates = []</span><br><span class="line">    img_raw = cv.imread(os.path.join(img_path, image_name))</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(anns)):</span><br><span class="line">        x1 = <span class="built_in">int</span>(anns[j][<span class="string">&#x27;bbox&#x27;</span>][<span class="number">0</span>])</span><br><span class="line">        y1 = <span class="built_in">int</span>(anns[j][<span class="string">&#x27;bbox&#x27;</span>][<span class="number">1</span>] + anns[j][<span class="string">&#x27;bbox&#x27;</span>][<span class="number">3</span>])</span><br><span class="line">        x2 = <span class="built_in">int</span>(anns[j][<span class="string">&#x27;bbox&#x27;</span>][<span class="number">0</span>] + anns[j][<span class="string">&#x27;bbox&#x27;</span>][<span class="number">2</span>])</span><br><span class="line">        y2 = <span class="built_in">int</span>(anns[j][<span class="string">&#x27;bbox&#x27;</span>][<span class="number">1</span>])</span><br><span class="line">        cv.rectangle(img_raw,</span><br><span class="line">                     (x1, y1),</span><br><span class="line">                     (x2, y2),</span><br><span class="line">                     (random.randint(<span class="number">0</span>, <span class="number">255</span>), random.randint(<span class="number">0</span>, <span class="number">255</span>), random.randint(<span class="number">0</span>, <span class="number">255</span>)),</span><br><span class="line">                     <span class="number">2</span>)</span><br><span class="line">    cv.imshow(<span class="string">&#x27;image&#x27;</span>, img_raw)</span><br><span class="line">    cv.waitKey()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>预览结果如下，不同框的颜色就是不同的分类：</p>
+<p><img src="https://i.loli.net/2020/11/01/dRZbeSyB7u9j2cl.png" alt="ground-truth box"></p>
+<h1 id="3-模型训练"><a href="#3-模型训练" class="headerlink" title="3. 模型训练"></a>3. 模型训练</h1><h2 id="3-1-数据注册"><a href="#3-1-数据注册" class="headerlink" title="3.1 数据注册"></a>3.1 数据注册</h2><p>使用 CocoFormat 的数据集是最优雅的做法，也可以按照官方给定的方法在 <code>tools/rain_net.py</code> 中自定义数据集。</p>
+<p>这里使用前面已经转换好的coco数据集，并将数据集初测代码包装成类，放在tools&#x2F;train_net.py中</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> detectron2.data <span class="keyword">import</span> DatasetCatalog, MetadataCatalog</span><br><span class="line"><span class="keyword">from</span> detectron2.data.datasets.coco <span class="keyword">import</span> load_coco_json</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Register</span>:</span><br><span class="line">    <span class="string">&quot;&quot;&quot;用于注册自己的数据集&quot;&quot;&quot;</span></span><br><span class="line">    CLASS_NAMES = [<span class="string">&#x27;__background__&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;4&#x27;</span>, <span class="string">&#x27;5&#x27;</span>]  <span class="comment"># 保留 background 类</span></span><br><span class="line">    ROOT = <span class="string">&quot;../MyDataset&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        self.CLASS_NAMES = Register.CLASS_NAMES <span class="keyword">or</span> [<span class="string">&#x27;__background__&#x27;</span>, ]</span><br><span class="line">        <span class="comment"># 数据集路径</span></span><br><span class="line">        self.DATASET_ROOT = Register.ROOT</span><br><span class="line">        <span class="comment"># ANN_ROOT = os.path.join(self.DATASET_ROOT, &#x27;COCOformat&#x27;)</span></span><br><span class="line">        self.ANN_ROOT = self.DATASET_ROOT</span><br><span class="line"></span><br><span class="line">        self.TRAIN_PATH = os.path.join(self.DATASET_ROOT, <span class="string">&#x27;images/train&#x27;</span>)</span><br><span class="line">        self.VAL_PATH = os.path.join(self.DATASET_ROOT, <span class="string">&#x27;images/val&#x27;</span>)</span><br><span class="line">        self.TRAIN_JSON = os.path.join(self.ANN_ROOT, <span class="string">&#x27;annotations/train.json&#x27;</span>)</span><br><span class="line">        self.VAL_JSON = os.path.join(self.ANN_ROOT, <span class="string">&#x27;annotations/val.json&#x27;</span>)</span><br><span class="line">        <span class="comment"># VAL_JSON = os.path.join(self.ANN_ROOT, &#x27;test.json&#x27;)</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># 声明数据集的子集</span></span><br><span class="line">        self.PREDEFINED_SPLITS_DATASET = &#123;</span><br><span class="line">            <span class="string">&quot;coco_my_train&quot;</span>: (self.TRAIN_PATH, self.TRAIN_JSON),</span><br><span class="line">            <span class="string">&quot;coco_my_val&quot;</span>: (self.VAL_PATH, self.VAL_JSON),</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">register_dataset</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        purpose: register all splits of datasets with PREDEFINED_SPLITS_DATASET</span></span><br><span class="line"><span class="string">        注册数据集（这一步就是将自定义数据集注册进Detectron2）</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">for</span> key, (image_root, json_file) <span class="keyword">in</span> self.PREDEFINED_SPLITS_DATASET.items():</span><br><span class="line">            self.register_dataset_instances(name=key,</span><br><span class="line">                                            json_file=json_file,</span><br><span class="line">                                            image_root=image_root)</span><br><span class="line"></span><br><span class="line"><span class="meta">    @staticmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">register_dataset_instances</span>(<span class="params">self, name, json_file, image_root</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        purpose: register datasets to DatasetCatalog,</span></span><br><span class="line"><span class="string">                 register metadata to MetadataCatalog and set attribute</span></span><br><span class="line"><span class="string">        注册数据集实例，加载数据集中的对象实例</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">        DatasetCatalog.register(name, <span class="keyword">lambda</span>: load_coco_json(json_file, image_root, name))</span><br><span class="line">        MetadataCatalog.get(name).<span class="built_in">set</span>(json_file=json_file,</span><br><span class="line">                                      image_root=image_root,</span><br><span class="line">                                      evaluator_type=<span class="string">&quot;coco&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">plain_register_dataset</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;注册数据集和元数据&quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># 训练集</span></span><br><span class="line">        DatasetCatalog.register(<span class="string">&quot;coco_my_train&quot;</span>, <span class="keyword">lambda</span>: load_coco_json(self.TRAIN_JSON, self.TRAIN_PATH))</span><br><span class="line">        MetadataCatalog.get(<span class="string">&quot;coco_my_train&quot;</span>).<span class="built_in">set</span>(thing_classes=self.CLASS_NAMES,  <span class="comment"># 可以选择开启，但是不能显示中文，这里需要注意，中文的话最好关闭</span></span><br><span class="line">                                                 evaluator_type=<span class="string">&#x27;coco&#x27;</span>,  <span class="comment"># 指定评估方式</span></span><br><span class="line">                                                 json_file=self.TRAIN_JSON,</span><br><span class="line">                                                 image_root=self.TRAIN_PATH)</span><br><span class="line">        <span class="comment"># DatasetCatalog.register(&quot;coco_my_val&quot;, lambda: load_coco_json(VAL_JSON, VAL_PATH, &quot;coco_2017_val&quot;))</span></span><br><span class="line">        <span class="comment"># 验证/测试集</span></span><br><span class="line">        DatasetCatalog.register(<span class="string">&quot;coco_my_val&quot;</span>, <span class="keyword">lambda</span>: load_coco_json(self.VAL_JSON, self.VAL_PATH))</span><br><span class="line">        MetadataCatalog.get(<span class="string">&quot;coco_my_val&quot;</span>).<span class="built_in">set</span>(thing_classes=self.CLASS_NAMES,  <span class="comment"># 可以选择开启，但是不能显示中文，这里需要注意，中文的话最好关闭</span></span><br><span class="line">                                               evaluator_type=<span class="string">&#x27;coco&#x27;</span>,  <span class="comment"># 指定评估方式</span></span><br><span class="line">                                               json_file=self.VAL_JSON,</span><br><span class="line">                                               image_root=self.VAL_PATH)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">checkout_dataset_annotation</span>(<span class="params">self, name=<span class="string">&quot;coco_my_val&quot;</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        查看数据集标注，可视化检查数据集标注是否正确，</span></span><br><span class="line"><span class="string">        这个也可以自己写脚本判断，其实就是判断标注框是否超越图像边界</span></span><br><span class="line"><span class="string">        可选择使用此方法</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># dataset_dicts = load_coco_json(TRAIN_JSON, TRAIN_PATH, name)</span></span><br><span class="line">        dataset_dicts = load_coco_json(self.TRAIN_JSON, self.TRAIN_PATH)</span><br><span class="line">        <span class="built_in">print</span>(<span class="built_in">len</span>(dataset_dicts))</span><br><span class="line">        <span class="keyword">for</span> i, d <span class="keyword">in</span> <span class="built_in">enumerate</span>(dataset_dicts, <span class="number">0</span>):</span><br><span class="line">            <span class="comment"># print(d)</span></span><br><span class="line">            img = cv2.imread(d[<span class="string">&quot;file_name&quot;</span>])</span><br><span class="line">            visualizer = Visualizer(img[:, :, ::-<span class="number">1</span>], metadata=MetadataCatalog.get(name), scale=<span class="number">1.5</span>)</span><br><span class="line">            vis = visualizer.draw_dataset_dict(d)</span><br><span class="line">            <span class="comment"># cv2.imshow(&#x27;show&#x27;, vis.get_image()[:, :, ::-1])</span></span><br><span class="line">            cv2.imwrite(<span class="string">&#x27;out/&#x27;</span> + <span class="built_in">str</span>(i) + <span class="string">&#x27;.jpg&#x27;</span>, vis.get_image()[:, :, ::-<span class="number">1</span>])</span><br><span class="line">            <span class="comment"># cv2.waitKey(0)</span></span><br><span class="line">            <span class="keyword">if</span> i == <span class="number">200</span>:</span><br><span class="line">                <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+<p>同时在main函数中调用</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">main</span>(<span class="params">args</span>):</span><br><span class="line">    cfg = setup(args)</span><br><span class="line">    Register().register_dataset()  <span class="comment"># register my dataset</span></span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-2-编辑配置文件"><a href="#3-2-编辑配置文件" class="headerlink" title="3.2 编辑配置文件"></a>3.2 编辑配置文件</h2><p>为了更加清晰，选择不更改原始的依赖配置，而是新建一个my_config.yaml</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">_BASE_:</span> <span class="string">&quot;faster_rcnn_R_50_FPN_3x.yaml&quot;</span></span><br><span class="line"><span class="attr">DATASETS:</span></span><br><span class="line">  <span class="attr">TRAIN:</span> <span class="string">(&quot;coco_my_train&quot;,)</span></span><br><span class="line">  <span class="attr">TEST:</span> <span class="string">(&quot;coco_my_val&quot;,)</span></span><br><span class="line"><span class="attr">MODEL:</span></span><br><span class="line">  <span class="attr">RETINANET:</span></span><br><span class="line">    <span class="attr">NUM_CLASSES:</span> <span class="number">6</span>  <span class="comment"># 类别数+1, 因为有background</span></span><br><span class="line">  <span class="comment"># WEIGHTS: &quot;../tools/output/model_final.pth&quot;</span></span><br><span class="line"><span class="attr">SOLVER:</span></span><br><span class="line">  <span class="comment"># IMS_PER_BATCH: 16</span></span><br><span class="line">  <span class="comment"># 初始学习率</span></span><br><span class="line">  <span class="attr">BASE_LR:</span> <span class="number">0.00025</span></span><br><span class="line">  <span class="comment"># 迭代到指定次数，学习率进行衰减</span></span><br><span class="line">  <span class="comment"># STEPS: (210000, 250000)</span></span><br><span class="line">  <span class="comment"># MAX_ITER: 270000</span></span><br><span class="line">  <span class="attr">CHECKPOINT_PERIOD:</span> <span class="number">1000</span></span><br><span class="line"><span class="attr">TEST:</span></span><br><span class="line">  <span class="attr">EVAL_PERIOD:</span> <span class="number">3000</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-3-模型训练"><a href="#3-3-模型训练" class="headerlink" title="3.3 模型训练"></a>3.3 模型训练</h2><p> 为了方便进行模型训练，将对应的参数写好成sh，即可进行训练操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">############### train.sh ################</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Linux 下换行符为 CRLF 的需改为 LF</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">lr = 0.00025 * num_gpus</span></span><br><span class="line">python3 train_net.py \</span><br><span class="line">  --config-file ../configs/my_config.yaml \</span><br><span class="line">  --num-gpus 1 \</span><br><span class="line">  SOLVER.IMS_PER_BATCH 4 \</span><br><span class="line">  SOLVER.BASE_LR 0.01 \</span><br><span class="line">  SOLVER.MAX_ITER 3000 \</span><br><span class="line">  SOLVER.STEPS &#x27;(2400, 2900)&#x27;</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">############ train_resume.sh #############</span></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">断点续 train</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">--num-gpus 不能省略</span></span><br><span class="line">python3 train_net.py \</span><br><span class="line">  --config-file ../configs/my_config.yaml \</span><br><span class="line">  --num-gpus 1 \</span><br><span class="line">  --resume</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment">################ eval.sh #################</span></span></span><br><span class="line">python3 train_net.py \</span><br><span class="line">  --config-file ../configs/my_config.yaml \</span><br><span class="line">  --eval-only \</span><br><span class="line">  MODEL.WEIGHTS output/model_final.pth</span><br></pre></td></tr></table></figure>
+
+<p>值得注意的是，进行训练的时候，很容易出现cuda run out of memory错误。（参考Linux进行解决）同时建议在使用的时候<code>watch nvidia-smi</code>来检测cuda的使用，及时kill掉没有用的进程。</p>
+<p>开始训练：</p>
+<p><img src="https://i.loli.net/2020/11/01/i9jJTlcFAoE7ba1.png" alt="开始训练"></p>
+<p><img src="https://i.loli.net/2020/11/02/1y9b4w8ixHaEZNC.png" alt="数据统计结果"></p>
+<p>训练结果：输出output</p>
+<p><img src="https://i.loli.net/2020/11/01/ctHJlwhfuirUEo1.png" alt="模型"></p>
+<h1 id="4-模型使用"><a href="#4-模型使用" class="headerlink" title="4. 模型使用"></a>4. 模型使用</h1><h2 id="4-1-模型评价"><a href="#4-1-模型评价" class="headerlink" title="4.1 模型评价"></a>4.1 模型评价</h2><p>使用eval.sh对跑出来的模型进行评价：</p>
+<p><img src="https://i.loli.net/2020/11/01/936KvpJzmElakSe.png" alt="模型评价"></p>
+<p><img src="https://i.loli.net/2020/11/01/EHrbt4LeJK6ynv9.png" alt="模型评价2"></p>
+<p>发现结果非常不好，原因有一下几点：</p>
+<ol>
+<li>参数是随便输入的，batch数目也比较小，需要进行调整</li>
+<li>原始标注数据是斜框的，为了转成coco，转变成了正框，使得精度有一定的损失</li>
+</ol>
+<h2 id="4-2-检测新图片"><a href="#4-2-检测新图片" class="headerlink" title="4.2 检测新图片"></a>4.2 检测新图片</h2><p>这里参照原先跑demo用的代码进行某张图片的检测</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> os</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line"><span class="keyword">from</span> detectron2.utils.logger <span class="keyword">import</span> setup_logger</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> detectron2.engine <span class="keyword">import</span> DefaultPredictor</span><br><span class="line"><span class="keyword">from</span> detectron2.config <span class="keyword">import</span> get_cfg</span><br><span class="line"><span class="keyword">from</span> detectron2.utils.visualizer <span class="keyword">import</span> Visualizer</span><br><span class="line"><span class="keyword">from</span> detectron2.data <span class="keyword">import</span> MetadataCatalog</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">detect</span>(<span class="params">im, name</span>):</span><br><span class="line">    outputs = predictor(im)</span><br><span class="line">    pred_classes = outputs[<span class="string">&quot;instances&quot;</span>].pred_classes</span><br><span class="line">    pred_boxes = outputs[<span class="string">&quot;instances&quot;</span>].pred_boxes</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 在原图上画出检测结果</span></span><br><span class="line">    v = Visualizer(im[:, :, ::-<span class="number">1</span>], MetadataCatalog.get(cfg.DATASETS.TRAIN[<span class="number">0</span>]), scale=<span class="number">1.2</span>)</span><br><span class="line">    v = v.draw_instance_predictions(outputs[<span class="string">&quot;instances&quot;</span>].to(<span class="string">&quot;cpu&quot;</span>))</span><br><span class="line">    cv2.imwrite(name.split(<span class="string">&#x27;.&#x27;</span>)[<span class="number">0</span>] + <span class="string">&#x27;.jpg&#x27;</span>, v.get_image()[:, :, ::-<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    setup_logger()</span><br><span class="line"></span><br><span class="line">    cfg = get_cfg()</span><br><span class="line">    cfg.merge_from_file(<span class="string">&quot;output/config.yaml&quot;</span>)</span><br><span class="line">    <span class="comment"># cfg.MODEL.ROI_HEADS.SCORE_THRESH_TEST = 0.5  # 模型阈值</span></span><br><span class="line">    cfg.MODEL.WEIGHTS = <span class="string">&quot;output/model_final.pth&quot;</span></span><br><span class="line">    predictor = DefaultPredictor(cfg)</span><br><span class="line">    img = cv2.imread(<span class="string">&quot;../MyDataset/test/6.jpg&quot;</span>)</span><br><span class="line">    detect(img, <span class="string">&quot;6.jpg&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<p>特别值得注意的是，在使用的时候一开始出现了颜色通道错误的问题（左边为通道错误，检测结果，右边为原图），需要调整通道来进行输出。<a href="">detectron和颜色通道</a></p>
+<p><img src="https://i.loli.net/2020/11/01/dlAcoG2xRWVqEwZ.png" alt="颜色通道"></p>
+<p>结果为：</p>
+<img src="https://i.loli.net/2020/10/30/d2GgpQFt98WeRUK.png" alt="image-20201030151243461" style="zoom:80%;" />
+
+<h1 id="5-总结"><a href="#5-总结" class="headerlink" title="5. 总结"></a>5. 总结</h1><p>目前基本的使用操作已经基本掌握，但是效果还是不是很好，还有以下几点需要学习提高</p>
+<ol>
+<li>各种超参数的含义与使用</li>
+<li>coco数据格式斜框处理办法</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Dingqi Ye
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://dinghye.gitee.io/2020/10/30/detectron2guidance/" title="【Detectron2】Detectron2 用自己的数据训练使用Faster-RCNN">http://dinghye.gitee.io/2020/10/30/detectron2guidance/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Detectron2/" rel="tag"># Detectron2</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/10/30/LinuxGuidance/" rel="prev" title="【计算机操作】Linux实用指北">
+                  <i class="fa fa-chevron-left"></i> 【计算机操作】Linux实用指北
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/10/31/Detectron2Total/" rel="next" title="【Detectron2】简介：基本网络架构和Repo结构">
+                  【Detectron2】简介：基本网络架构和Repo结构 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dingqi Ye</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">181k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:44</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

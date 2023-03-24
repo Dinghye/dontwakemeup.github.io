@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dinghye.gitee.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="（唉，简介好难写啊）是一个讲深度学习优化器原理和笔记的东西，你将能看到：1. 什么是梯度和梯度下降？ 2. 什么是优化器？解决的问题是什么？ 3. 在深度学习中优化器有哪些困难？又是怎么克服的？ 以及 4. 常见的各种优化器的优缺点和原理">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【深度学习】深入浅出深度学习优化器">
+<meta property="og:url" content="http://dinghye.gitee.io/2020/11/05/DLOptimizer/index.html">
+<meta property="og:site_name" content="DontWakeMeUP">
+<meta property="og:description" content="（唉，简介好难写啊）是一个讲深度学习优化器原理和笔记的东西，你将能看到：1. 什么是梯度和梯度下降？ 2. 什么是优化器？解决的问题是什么？ 3. 在深度学习中优化器有哪些困难？又是怎么克服的？ 以及 4. 常见的各种优化器的优缺点和原理">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/11/05/CHMFxmQaWBbEhrp.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/11/05/NSmjn2hkfTbXqr1.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/11/05/hGdeKEZNv1bSm6g.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/05/AOhie3wUEXvuHBk.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/05/cJVeEXpQBm9z7uU.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/05/tZmO3wpSjko6dKA.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/05/7H5yEp1UXk8cKJS.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/05/OTb3i8qUXc2jBAd.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/05/LSaMpBjf2xw6bo1.gif">
+<meta property="article:published_time" content="2020-11-05T08:46:13.000Z">
+<meta property="article:modified_time" content="2021-08-02T07:49:16.000Z">
+<meta property="article:author" content="Dingqi Ye">
+<meta property="article:tag" content="优化器">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/05/CHMFxmQaWBbEhrp.jpg">
+
+
+<link rel="canonical" href="http://dinghye.gitee.io/2020/11/05/DLOptimizer/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://dinghye.gitee.io/2020/11/05/DLOptimizer/","path":"2020/11/05/DLOptimizer/","title":"【深度学习】深入浅出深度学习优化器"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【深度学习】深入浅出深度学习优化器 | DontWakeMeUP</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">DontWakeMeUP</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Curious</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0-%E6%A2%AF%E5%BA%A6%E5%92%8C%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D"><span class="nav-number">1.</span> <span class="nav-text">0. 梯度和梯度下降</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E6%B7%B1%E5%BA%A6%E5%AD%A6%E4%B9%A0%E4%B8%8E%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-number">2.</span> <span class="nav-text">1. 深度学习与优化器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E5%9F%BA%E6%9C%AC%E7%9A%84-BGD%E3%80%81SGD%E3%80%81MBGD"><span class="nav-number">3.</span> <span class="nav-text">2. 基本的 BGD、SGD、MBGD</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#2-1-%E6%89%B9%E9%87%8F%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8DBGD"><span class="nav-number">3.1.</span> <span class="nav-text">2.1 批量梯度下降BGD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-2-%E9%9A%8F%E6%9C%BA%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D-SGD"><span class="nav-number">3.2.</span> <span class="nav-text">2.2 随机梯度下降 SGD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-3-%E5%B0%8F%E6%89%B9%E9%87%8F%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E6%B3%95-MBGD"><span class="nav-number">3.3.</span> <span class="nav-text">2.3 小批量梯度下降法 MBGD</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-4-%E5%AD%98%E5%9C%A8%E7%9A%84%E9%97%AE%E9%A2%98"><span class="nav-number">3.4.</span> <span class="nav-text">2.4 存在的问题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E6%A2%AF%E5%BA%A6%E4%B8%8B%E9%99%8D%E7%9A%84%E6%94%B9%E8%BF%9B"><span class="nav-number">4.</span> <span class="nav-text">3. 梯度下降的改进</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E9%92%88%E5%AF%B9%E4%BA%8E%E6%94%B6%E6%95%9B%E6%80%A7%E2%80%94%E2%80%94%E5%8A%A8%E9%87%8F%E4%BC%98%E5%8C%96%E6%B4%BE"><span class="nav-number">4.1.</span> <span class="nav-text">3.1 针对于收敛性——动量优化派</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-1-Momentum-%E5%8A%A8%E9%87%8F%E6%B3%95"><span class="nav-number">4.1.1.</span> <span class="nav-text">3.1.1 Momentum 动量法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-2-%E7%89%9B%E9%A1%BF%E5%8A%A0%E9%80%9F%E6%A2%AF%E5%BA%A6-NAG"><span class="nav-number">4.1.2.</span> <span class="nav-text">3.1.2 牛顿加速梯度 NAG</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-2-%E9%92%88%E5%AF%B9%E4%BA%8E%E5%8F%82%E6%95%B0%E2%80%94%E2%80%94%E5%8F%82%E6%95%B0%E6%9B%B4%E6%96%B0%E6%B4%BE"><span class="nav-number">4.2.</span> <span class="nav-text">3.2 针对于参数——参数更新派</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-1-%E8%87%AA%E9%80%82%E5%BA%94%E6%A2%AF%E5%BA%A6%E7%AE%97%E6%B3%95%EF%BC%88Adagrad%EF%BC%89"><span class="nav-number">4.2.1.</span> <span class="nav-text">3.2.1 自适应梯度算法（Adagrad）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-2-Adadelta-amp-RMSprop"><span class="nav-number">4.2.2.</span> <span class="nav-text">3.2.2 Adadelta &amp; RMSprop</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-3-%E7%BB%BC%E5%90%88%E4%B8%94%E5%AE%9E%E7%94%A8%E7%9A%84%EF%BC%9AAdam%EF%BC%9AAdaptive-Moment-Estimation"><span class="nav-number">4.3.</span> <span class="nav-text">3.3 综合且实用的：Adam：Adaptive Moment Estimation</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E6%95%88%E6%9E%9C"><span class="nav-number">5.</span> <span class="nav-text">4. 效果</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#5-%E6%80%BB%E7%BB%93"><span class="nav-number">6.</span> <span class="nav-text">5. 总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">7.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dingqi Ye"
+      src="/images/laptop.jpg">
+  <p class="site-author-name" itemprop="name">Dingqi Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Dinghye" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Dinghye" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:dinghyye@163.com" title="E-Mail → mailto:dinghyye@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/11/05/DLOptimizer/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/laptop.jpg">
+      <meta itemprop="name" content="Dingqi Ye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【深度学习】深入浅出深度学习优化器 | DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【深度学习】深入浅出深度学习优化器
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-05 16:46:13" itemprop="dateCreated datePublished" datetime="2020-11-05T16:46:13+08:00">2020-11-05</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-08-02 15:49:16" itemprop="dateModified" datetime="2021-08-02T15:49:16+08:00">2021-08-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%8E%9F%E7%90%86/" itemprop="url" rel="index"><span itemprop="name">原理</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>6.3k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>6 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>（唉，简介好难写啊）是一个讲深度学习优化器原理和笔记的东西，你将能看到：1. 什么是梯度和梯度下降？ 2. 什么是优化器？解决的问题是什么？ 3. 在深度学习中优化器有哪些困难？又是怎么克服的？ 以及 4. 常见的各种优化器的优缺点和原理</p>
+<span id="more"></span>
+
+<h1 id="0-梯度和梯度下降"><a href="#0-梯度和梯度下降" class="headerlink" title="0. 梯度和梯度下降"></a>0. 梯度和梯度下降</h1><ol>
+<li><p>什么是梯度？</p>
+<p>在微积分里面，对多元函数的参数求∂ 偏导数，把求得的各个参数的<strong>偏导数以向量的形式写出来</strong>，就是梯度。比如函数f(x,y), 分别对x,y求偏导数，求得的梯度向量就是(∂f&#x2F;∂x, ∂f&#x2F;∂y)T,简称grad f(x,y)或者▽f(x,y)。对于在点(x0,y0)的具体梯度向量就是(∂f&#x2F;∂x0, ∂f&#x2F;∂y0)T.或者▽f(x0,y0)，如果是3个参数的向量梯度，就是(∂f&#x2F;∂x, ∂f&#x2F;∂y，∂f&#x2F;∂z)T,以此类推。</p>
+</li>
+<li><p>什么是梯度下降？</p>
+<p>梯度向量从几何意义上讲，就是<strong>函数变化增加最快的地方</strong>。沿着梯度向量的方向，<u>可以找到函数的最大值或者局部最大</u>值。同理，沿着梯度的反方向，梯度减少最快，可以找到局部最小值或者全局最小值。</p>
+</li>
+</ol>
+<h1 id="1-深度学习与优化器"><a href="#1-深度学习与优化器" class="headerlink" title="1. 深度学习与优化器"></a>1. 深度学习与优化器</h1><blockquote>
+<p><strong>什么是优化器？</strong></p>
+</blockquote>
+<p>​		深度学习可以归结为一个优化问题（一般还是一种非凸优化）最小化目标函数$J(\theta)$  ；最优化的求解过程，首先求解目标函数的梯度$ \bigtriangledown J(\theta) $ ，然后将参数$\theta $向负梯度方向更新，$\theta_t&#x3D; \theta_{t-1} -\eta \bigtriangledown J(\theta) $  , $\eta$ 为学习率，表明梯度更新的步伐大小。</p>
+<p>​		最优化的过程依赖的算法<strong>称为优化器</strong>，可以看出深度学习优化器的两个核心是<strong>梯度</strong>与学习率，前者决定参数<u>更新的方向</u>后者决定参数<u>更新程度</u>。深度学习优化器之所以采用梯度是因为，对于高维的函数其更高阶导的计算复杂度大，应用到深度学习的优化中不实际。故本篇主要就深度学习中常用到的<u>梯度优化器</u>进行讲解。</p>
+<blockquote>
+<p>*凸优化和非凸优化？</p>
+</blockquote>
+<p>​		非凸优化是和凸优化对应的，凸优化就像比如二次函数，它的最优解是可以公式的出来的，书面化一点的语言就是，<strong>任何局部最优解就是全局最优解</strong>（下图左）。对于这种情况，贪婪算法或者梯度下降法都可以收敛到全局最优解。</p>
+<img src="https://i.loli.net/2020/11/05/CHMFxmQaWBbEhrp.jpg" alt="图1. 凸优化和非凸优化" style="zoom: 50%;" />
+
+<p>​		然而非凸优化问题则可能存在无数个局部最优点，同时对于这种情况下还有容易出现一种”<strong>鞍点</strong>“，就是在某一些方向梯度下降，另一些方向梯度上升，形状似马鞍，<u>但是这一点的导数也为0，从某些维度看是极小值，另一些维度看又是极大值</u>。这就很令人讨厌了！如下图<strong>黑点所示</strong>。</p>
+<img src="https://i.loli.net/2020/11/05/NSmjn2hkfTbXqr1.jpg" alt="图2. 鞍点" style="zoom: 80%;" />
+
+
+
+
+
+<h1 id="2-基本的-BGD、SGD、MBGD"><a href="#2-基本的-BGD、SGD、MBGD" class="headerlink" title="2. 基本的 BGD、SGD、MBGD"></a>2. 基本的 BGD、SGD、MBGD</h1><p>这三者都是梯度下降的最常见的变形，区别在于我们用<strong>多少数据</strong>来计算目标函数的梯度。</p>
+<h2 id="2-1-批量梯度下降BGD"><a href="#2-1-批量梯度下降BGD" class="headerlink" title="2.1 批量梯度下降BGD"></a>2.1 批量梯度下降BGD</h2><p>首先是最基础的Batch Gradient Descent，采用<u>整个训练集的数据</u>来计算cost function对参数的梯度<br>$$<br>\theta &#x3D; \theta -\eta · \bigtriangledown_\theta J(\theta )<br>$$<br>这种方法对于凸函数来说可以收敛到全局极小值，对于非凸函数可以收敛到<u>局部极小值</u>。但是由于这种方法是在一次更新当中，对于整个数据集计算梯度，所以计算起来<strong>很慢</strong>，遇到大量的数据集很麻烦，并且不能投入新数据实时更新模型。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(nb_epochs):</span><br><span class="line">	params_grad = evaluate_gradient(loss_funtion,data,params)</span><br><span class="line">	params = params -learning_rate * params_grad</span><br></pre></td></tr></table></figure>
+
+<h2 id="2-2-随机梯度下降-SGD"><a href="#2-2-随机梯度下降-SGD" class="headerlink" title="2.2 随机梯度下降 SGD"></a>2.2 随机梯度下降 SGD</h2><p>相对于BGD，Stochastic Gradient Descent提出了更加科学的解决方案。SGD每次更新是先抽出一个随机样本$J(x_i)$，并对<strong>其中的每个样本进行梯度更新</strong>。<br>$$<br>\theta &#x3D; \theta -\eta ·\bigtriangledown_\theta J(\theta;x^{(i)};y^{(i)})<br>$$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(nb_epochs):</span><br><span class="line">	np.random.shuffle(data)      <span class="comment"># 随机采一个样本J(xi)来更新参数 </span></span><br><span class="line">	<span class="keyword">for</span> example <span class="keyword">in</span> data:         <span class="comment"># SGD对于每一个样本进行梯度更新</span></span><br><span class="line">		params_grad = evaluate_gradient(loss_function,example,params)</span><br><span class="line">		params = params - learning_rate * params_grad</span><br></pre></td></tr></table></figure>
+
+<p>这个方法的核心思想有点像<em>爬山算法</em>那样，选取部分样本，以达到$\theta$的最优解。同时对于大数据集来说，可能会有相似的样本，使用BGD会在最后的计算产生冗余。而SGD一次只进行一次更新，就<u>没有了冗余，且速度快，可新增样本。</u>除此之外，由于其随机性，相对于BGD，它有可能<u>跳到更好的局部极小值处</u>。</p>
+<p>但是同样，这种方法也会造成模型的<strong>不稳定性</strong>：SGD的噪音相对于BGD的要多，使得它的每一次迭代并不是都向着整体最优方向；且因为SGD更新频繁，造成其cost function有严重震荡；而且其准确度受到影响，结果并不是全局最优。</p>
+<img src="https://i.loli.net/2020/11/05/hGdeKEZNv1bSm6g.png" alt="图3. SGD梯度下降，可以看到这个过程是比较曲折的" style="zoom:50%;" />
+
+<h2 id="2-3-小批量梯度下降法-MBGD"><a href="#2-3-小批量梯度下降法-MBGD" class="headerlink" title="2.3 小批量梯度下降法 MBGD"></a>2.3 小批量梯度下降法 MBGD</h2><p>有没有一个折中的办法呢？Mini-Batch Gradient Descent小批量梯度下降法可能是一种选择。</p>
+<p>MBGD 每一次利用<strong>一小批样本</strong>，即 n 个样本进行计算，这样它可以降低参数更新时的方差，收敛更稳定，另一方面可以充分地利用深度学习库中高度优化的矩阵操作来进行更有效的梯度计算。<br>$$<br>\theta &#x3D; \theta - \eta · \bigtriangledown J(\theta;x^{(i:i+n)};y^{(i:i+n)})<br>$$</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(nb_epochs):</span><br><span class="line">	np.random.shuffle(data)</span><br><span class="line">	<span class="keyword">for</span> batch <span class="keyword">in</span> get_batches(data, batch_size=<span class="number">50</span>):</span><br><span class="line">		params_grad = evaluate_gradient(loss_function, batch, params)</span><br><span class="line">		params = params - learning_rate * params_grad</span><br></pre></td></tr></table></figure>
+
+<p>其中涉及到一”批“的定义问题，多少样本算是一批呢？一般来说这个超参数取值在50~256之间。</p>
+<h2 id="2-4-存在的问题"><a href="#2-4-存在的问题" class="headerlink" title="2.4 存在的问题"></a>2.4 存在的问题</h2><p>Mini-Batch Gradient Descent 看起来似乎已经是一个非常好的方法了，但是仍然存在一些问题（似乎是这样简单梯度下降的通病）：</p>
+<ul>
+<li><p><strong>收敛性问题</strong>：它不能保证很好的收敛性。learning rate太小，收敛速度很慢，太大，loss function就会在极小值处不停的震荡甚至偏离。对于非凸函数，还要避免陷于局部极小值处，或者鞍点处，因为鞍点周围的error是一样的，</p>
+</li>
+<li><p>所有维度的梯度都接近于0，SGD 很容易被困在这里。<strong>会在鞍点或者局部最小点震荡跳动，因为在此点处，如果是训练集全集带入即BGD，则优化会停止不动，如果是mini-batch或者SGD，每次找到的梯度都是不同的，就会发生震荡，来回跳动。</strong></p>
+</li>
+<li><p>此外，这种方法是对所有参数更新时应用<strong>同样的learning rate</strong>，如果我们的数据是稀疏的，我们更希望对<strong>出现频率低的特征进行大一点的更新</strong>。（比如下图出现的，当数据出现长尾分布的时候，则会造成模型对头部或者尾部类别数据的效果很差）</p>
+<img src="https://i.loli.net/2020/11/05/AOhie3wUEXvuHBk.png" alt="长尾数据分布下的SGD" style="zoom: 40%;" /></li>
+</ul>
+<h1 id="3-梯度下降的改进"><a href="#3-梯度下降的改进" class="headerlink" title="3. 梯度下降的改进"></a>3. 梯度下降的改进</h1><p>为了解决上述问题，一些研究在基础的梯度优化的基础上进行了提升。这一部分主要介绍几个典型的优化器：</p>
+<h2 id="3-1-针对于收敛性——动量优化派"><a href="#3-1-针对于收敛性——动量优化派" class="headerlink" title="3.1 针对于收敛性——动量优化派"></a>3.1 针对于收敛性——动量优化派</h2><h3 id="3-1-1-Momentum-动量法"><a href="#3-1-1-Momentum-动量法" class="headerlink" title="3.1.1 Momentum 动量法"></a>3.1.1 Momentum 动量法</h3><p>在前面的基础梯度下降算法中我们提到，决定方向的就是当前位置的梯度。但是<strong>刚开始的时候梯度是不稳定的，方向改变是很正常的</strong>，梯度就是抽疯了似的一下正一下反，导致做了很多无用的迭代。而动量法做的很简单，<strong>相信之前的梯度</strong>。如果梯度方向不变，就越发更新的快，反之减弱当前梯度。<br>$$<br>v_t &#x3D; \gamma v_{t-1}+\eta \bigtriangledown_\theta J(\theta)<br>$$</p>
+<p>$$<br>\theta &#x3D; \theta - v_t<br>$$</p>
+<p>其中$\gamma$是一个超参数，一般设置为0.9左右。这种方法就相当于给了一个加速度，让运动求解具有一个质量（惯性）。</p>
+<img src="https://i.loli.net/2020/11/05/cJVeEXpQBm9z7uU.png" alt="图4. 动量图示" style="zoom:40%;" />
+
+<p>而在实际情况中就变成这样子：</p>
+<img src="https://i.loli.net/2020/11/05/tZmO3wpSjko6dKA.png" alt="图5. 有无动量加入的下降过程对比" style="zoom: 67%;" />
+
+<p>这样一来，梯度方向不变的维度上速度变快，梯度方向有所改变的维度上的更新速度变慢，这样就可以加快收敛并减小震荡。</p>
+<h3 id="3-1-2-牛顿加速梯度-NAG"><a href="#3-1-2-牛顿加速梯度-NAG" class="headerlink" title="3.1.2 牛顿加速梯度 NAG"></a>3.1.2 牛顿加速梯度 NAG</h3><p>牛顿加速梯度（NAG, Nesterov accelerated gradient）算法，是Momentum动量算法的变种。更新模型参数表达式如下：<br>$$<br>v_t &#x3D;\gamma v_{t-1}+\eta \bigtriangledown_\theta J(\theta - \gamma v_{t-1})<br>$$</p>
+<p>$$<br>\theta &#x3D; \theta - v_t<br>$$</p>
+<p>其中$\gamma$是一个超参数，一般也设置为0.9左右。这种方法与Momentum 的差别在于：它用$\theta- \gamma v_{t-1}$的值来近似当作参数下一步会变成的值，意思是计算在未来的位置（对未来的预测）。</p>
+<img src="https://i.loli.net/2020/11/05/7H5yEp1UXk8cKJS.png" alt="图6. NAG示意图" style="zoom: 50%;" />
+
+<p>为什么要计算未来位置而不是当前位置的梯度呢？在前面的Momentum方法中，相当于是小球从山上滚下来是盲目的沿着坡滚。而NAG相当于是给了小球一双眼睛，让小球看清楚自己所在的地方的情况，当前方碰上上坡时，能够及时减速，从而保证它的适应性。</p>
+<p><img src="https://i.loli.net/2020/11/05/OTb3i8qUXc2jBAd.png" alt="图7. NAG优化原理解释"></p>
+<p>蓝色是 Momentum 的过程，会先计算当前的梯度，然后在更新后的累积梯度后会有一个大的跳跃。 而 NAG 会先在前一步的累积梯度上(brown vector)有一个大的跳跃，然后衡量一下梯度做一下修正(red vector)，这种预期的更新可以避免我们走的太快。NAG 可以使 RNN（循环神经网络，用于处理序列问题）在很多任务上有更好的表现。</p>
+<p>目前为止，我们可以做到，<strong>在更新梯度时顺应 loss function 的梯度来调整速度，并且对 SGD 进行加速</strong>。</p>
+<h2 id="3-2-针对于参数——参数更新派"><a href="#3-2-针对于参数——参数更新派" class="headerlink" title="3.2 针对于参数——参数更新派"></a>3.2 针对于参数——参数更新派</h2><p>前面的”动量“思想的引入，让我们更好的能把握前进的方向，避免了大幅度的震荡。而这一部分我们主要思考，我们希望模型能够根据参数的重要性而对不同的参数进行不同程度的更新。</p>
+<h3 id="3-2-1-自适应梯度算法（Adagrad）"><a href="#3-2-1-自适应梯度算法（Adagrad）" class="headerlink" title="3.2.1 自适应梯度算法（Adagrad）"></a>3.2.1 自适应梯度算法（Adagrad）</h3><p>$$<br>\theta_{t+1,i} &#x3D; \theta_{t,i}-\frac{\eta}{\sqrt{G_{t,ii}+\epsilon }}·g_{t,i}<br>$$<br>其中，$g$为t时刻参数$\theta_i$ 的梯度$g_{t,i}&#x3D;\bigtriangledown_{\theta}J(\theta_i)$。 </p>
+<p>而$G_t$是一个对角矩阵，$ii$是t实可参数$\theta_i$的梯度平方和。通过Gt的加入，使得学习率能够自动进行调节。一般来说超参数$\eta$选取0.01</p>
+<p>这个算法就<strong>可以对低频的参数做较大的更新</strong>，<strong>对高频的做较小的更新</strong>，也因此，<strong>对于稀疏的数据它的表现很好，很好地提高了 SGD 的鲁棒性</strong>，例如识别 Youtube 视频里面的猫，训练 GloVe word embeddings，因为它们都是需要在低频的特征上有更大的更新。</p>
+<p>但是它的缺点是分布会不断累积，使得学习率最终会收缩变得非常小。</p>
+<h3 id="3-2-2-Adadelta-amp-RMSprop"><a href="#3-2-2-Adadelta-amp-RMSprop" class="headerlink" title="3.2.2 Adadelta &amp; RMSprop"></a>3.2.2 Adadelta &amp; RMSprop</h3><p>两者都是在Adagrad 的基础上提出为了解决学习率急剧下降问题的。</p>
+<ol>
+<li><p>Adadelta</p>
+<p>有了Adagrad的基础思路（关联梯度与学习率实现自适应），Adadelta进行了新的假设，它将原来的G换成了梯度平方的衰减平均值——指数衰减平均值，以此来解决Adagrad的学习率急剧下降问题。</p>
+<p>其中：<br>$$<br>E[g^2]<em>t &#x3D; \gamma E[g^2]</em>{t-1}+(1-\gamma)g^2_t<br>$$<br>其中γ一般设定为0.9</p>
+</li>
+<li><p>RMSprop</p>
+<p>类似的，RMSprop 与 Adadelta 的第一种形式相同：（使用的是指数加权平均，旨在消除梯度下降中的摆动，与Momentum的效果一样，某一维度的导数比较大，则指数加权平均就大，某一维度的导数比较小，则其指数加权平均就小，这样就保证了各维度导数都在一个量级，进而减少了摆动。允许使用一个更大的学习率η）</p>
+</li>
+</ol>
+<h2 id="3-3-综合且实用的：Adam：Adaptive-Moment-Estimation"><a href="#3-3-综合且实用的：Adam：Adaptive-Moment-Estimation" class="headerlink" title="3.3 综合且实用的：Adam：Adaptive Moment Estimation"></a>3.3 综合且实用的：Adam：Adaptive Moment Estimation</h2><p>（终于……快要写完了……</p>
+<p>这个算法是另一种计算每个参数的自适应学习率的方法。<strong>相当于 RMSprop + Momentum</strong></p>
+<p>除了像 Adadelta 和 RMSprop 一样存储了过去梯度的平方 vt 的指数衰减平均值 ，也像 momentum 一样保持了过去梯度 mt 的<strong>指数衰减平均值</strong>：<br>$$<br>m_t &#x3D; \beta_1m_{t-1}+(1-\beta_1)g_t<br>$$</p>
+<p>$$<br>v_t &#x3D; \beta_2v_{t-1}+(1-\beta_2)g^2_t<br>$$</p>
+<p>如果 mt 和 vt 被初始化为 0 向量，那它们就会向 0 偏置，所以做了<strong>偏差校正</strong>，通过计算偏差校正后的 mt 和 vt 来抵消这些偏差：<br>$$<br>\hat{m}_t &#x3D;\frac{m_t}{1-\beta^t_2}<br>$$</p>
+<p>$$<br>\hat v_t&#x3D; \frac{v_t}{1-\beta^t_2}<br>$$</p>
+<p>即有梯度更新规则<br>$$<br>\theta_{t+1}&#x3D;\theta_t-\frac{\eta}{\sqrt{\hat v_t}+\epsilon }\hat m_t<br>$$<br>超参数设定值: 建议 β1 ＝ 0.9，β2 ＝ 0.999，ϵ ＝ 10e−8</p>
+<h1 id="4-效果"><a href="#4-效果" class="headerlink" title="4. 效果"></a>4. 效果</h1><p><img src="https://i.loli.net/2020/11/05/LSaMpBjf2xw6bo1.gif" alt="图8. 几种优化器效果比较"></p>
+<h1 id="5-总结"><a href="#5-总结" class="headerlink" title="5. 总结"></a>5. 总结</h1><p>一般来说，实际操作中Adam 是最好的选择。本文主要梳理了关于优化器的原理和其发展思路。</p>
+<p>一些地方将优化器分成”可以自适应参数“和”不可以自适应参数“两类，有些道理，但是感觉好像又不太恰当。实际上这些优化器是针对基本的梯度下降中出现的两个大问题进行发展的：</p>
+<ul>
+<li>其一为收敛性的问题，基础的梯度优化不够稳定，且容易陷入局部最优，效率低</li>
+<li>其二为学习率死板，而对于稀疏数据学习效果较差</li>
+</ul>
+<p>针对这两个问题，在基础的梯度下降下，发展出了针对于收敛性的Momentum及其变形，以及针对于参数的Adagrad及其变形，最终综合考虑结合出了效果较好的Adam。（所以这么讲似乎是一个基础类，两个发展的方向，最终综合到Adam这么个结构）</p>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a><em>参考</em></h1><ol>
+<li>从0开始机器学习：<a target="_blank" rel="noopener" href="https://lizhyun.github.io/2019/07/08/%E4%BB%8E%E9%9B%B6%E5%BC%80%E5%A7%8B%E7%9A%84%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0-%E4%B8%80/">https://lizhyun.github.io/2019/07/08/从零开始的机器学习-一/</a> </li>
+<li>【AI初识境】为了围剿SGD大家这些年想过的那十几招(从momentum到Adabound)：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/57860231">https://zhuanlan.zhihu.com/p/57860231</a></li>
+<li>机器之心-优化器：<a target="_blank" rel="noopener" href="https://www.jiqizhixin.com/graph/technologies/fa50298e-1a85-4af0-ae96-a82708f4b610">https://www.jiqizhixin.com/graph/technologies/fa50298e-1a85-4af0-ae96-a82708f4b610</a></li>
+<li>深度学习——优化器算法Optimizer详解（BGD、SGD、MBGD、Momentum、NAG、Adagrad、Adadelta、RMSprop、Adam）：<a target="_blank" rel="noopener" href="https://cloud.tencent.com/developer/article/1118673">https://cloud.tencent.com/developer/article/1118673</a></li>
+<li>机器学习：各种优化器Optimizer的总结与比较：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40170902/article/details/80092628">https://blog.csdn.net/weixin_40170902/article/details/80092628</a></li>
+<li>深度学习优化器总结：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/58236906">https://zhuanlan.zhihu.com/p/58236906</a></li>
+</ol>
+<blockquote>
+<p><strong>更多阅读：</strong></p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/28060786">如何理解梯度下降</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/28060786">为什么我们更宠爱”随机“梯度下降SGD</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/27012077/answer/122359602">为什么随机梯度下降方法能够收敛？</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Dingqi Ye
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://dinghye.gitee.io/2020/11/05/DLOptimizer/" title="【深度学习】深入浅出深度学习优化器">http://dinghye.gitee.io/2020/11/05/DLOptimizer/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E4%BC%98%E5%8C%96%E5%99%A8/" rel="tag"># 优化器</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/11/03/essay001/" rel="prev" title="【随笔】001：数学是一门欺骗自己的学科吗？回到2018">
+                  <i class="fa fa-chevron-left"></i> 【随笔】001：数学是一门欺骗自己的学科吗？回到2018
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/10/detectron2guidance2/" rel="next" title="【Detectron2】Rotated Faster RCNN 利用Detectron2 训练自己的数据集">
+                  【Detectron2】Rotated Faster RCNN 利用Detectron2 训练自己的数据集 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dingqi Ye</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">181k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:44</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

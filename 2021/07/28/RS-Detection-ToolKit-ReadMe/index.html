@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dinghye.gitee.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="一个基于Detectron2 和pytorch的斜框目标检测的模板">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【RS-Detection】RS-Detection-ToolKit-ReadMe">
+<meta property="og:url" content="http://dinghye.gitee.io/2021/07/28/RS-Detection-ToolKit-ReadMe/index.html">
+<meta property="og:site_name" content="DontWakeMeUP">
+<meta property="og:description" content="一个基于Detectron2 和pytorch的斜框目标检测的模板">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/08/02/6xKf5XDgHN1hYwW.png">
+<meta property="og:image" content="https://i.loli.net/2021/08/02/1awcJUbfhZKy5Bn.png">
+<meta property="og:image" content="https://i.loli.net/2021/08/02/TwhlbYpe4LKPjfa.png">
+<meta property="og:image" content="https://i.loli.net/2021/08/02/7dhD9yWwXPSjuIs.png">
+<meta property="og:image" content="https://i.loli.net/2021/08/02/7WsVo5erB6lEchd.png">
+<meta property="og:image" content="https://i.loli.net/2021/08/02/kFz7X6JATI5rCEO.png">
+<meta property="og:image" content="https://i.loli.net/2021/08/02/Po2kzAlcBdJaDTW.png">
+<meta property="og:image" content="https://i.loli.net/2021/08/02/1fnWcUaYjzMuP9s.png">
+<meta property="article:published_time" content="2021-07-28T01:53:57.000Z">
+<meta property="article:modified_time" content="2021-08-02T10:12:52.000Z">
+<meta property="article:author" content="Dingqi Ye">
+<meta property="article:tag" content="技巧">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/08/02/6xKf5XDgHN1hYwW.png">
+
+
+<link rel="canonical" href="http://dinghye.gitee.io/2021/07/28/RS-Detection-ToolKit-ReadMe/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://dinghye.gitee.io/2021/07/28/RS-Detection-ToolKit-ReadMe/","path":"2021/07/28/RS-Detection-ToolKit-ReadMe/","title":"【RS-Detection】RS-Detection-ToolKit-ReadMe"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【RS-Detection】RS-Detection-ToolKit-ReadMe | DontWakeMeUP</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">DontWakeMeUP</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Curious</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RS-Detection-ToolKit-%E5%8A%9F%E8%83%BD%E8%AF%B4%E6%98%8E"><span class="nav-number">1.</span> <span class="nav-text">RS-Detection-ToolKit 功能说明</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#0-Introduction"><span class="nav-number">2.</span> <span class="nav-text">0. Introduction</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#0-1-%E6%80%BB%E4%BD%93%E7%BB%93%E6%9E%84"><span class="nav-number">2.1.</span> <span class="nav-text">0.1 总体结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#0-2-%E6%95%B0%E6%8D%AE%E6%8E%A5%E5%8F%A3"><span class="nav-number">2.2.</span> <span class="nav-text">0.2 数据接口</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E6%95%B0%E6%8D%AE%E8%A3%81%E5%89%AA%EF%BC%88utils-ImageSplit%EF%BC%89"><span class="nav-number">3.</span> <span class="nav-text">1. 数据裁剪（utils.ImageSplit）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E6%95%B0%E6%8D%AE%E7%BB%9F%E8%AE%A1"><span class="nav-number">4.</span> <span class="nav-text">2.  数据统计</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E6%95%B0%E6%8D%AE%E9%A2%84%E8%A7%88"><span class="nav-number">5.</span> <span class="nav-text">3. 数据预览</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dingqi Ye"
+      src="/images/laptop.jpg">
+  <p class="site-author-name" itemprop="name">Dingqi Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Dinghye" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Dinghye" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:dinghyye@163.com" title="E-Mail → mailto:dinghyye@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2021/07/28/RS-Detection-ToolKit-ReadMe/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/laptop.jpg">
+      <meta itemprop="name" content="Dingqi Ye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【RS-Detection】RS-Detection-ToolKit-ReadMe | DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【RS-Detection】RS-Detection-ToolKit-ReadMe
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-28 09:53:57" itemprop="dateCreated datePublished" datetime="2021-07-28T09:53:57+08:00">2021-07-28</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-08-02 18:12:52" itemprop="dateModified" datetime="2021-08-02T18:12:52+08:00">2021-08-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E8%B7%B5%E6%93%8D%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">实践操作</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>2.2k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>2 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>一个基于Detectron2 和pytorch的斜框目标检测的模板</p>
+<span id="more"></span>
+
+<h1 id="RS-Detection-ToolKit-功能说明"><a href="#RS-Detection-ToolKit-功能说明" class="headerlink" title="RS-Detection-ToolKit 功能说明"></a>RS-Detection-ToolKit 功能说明</h1><blockquote>
+<p>github：<a target="_blank" rel="noopener" href="https://github.com/Dinghye/RS-Detection-ToolKit">https://github.com/Dinghye/RS-Detection-ToolKit</a></p>
+</blockquote>
+<h1 id="0-Introduction"><a href="#0-Introduction" class="headerlink" title="0. Introduction"></a>0. Introduction</h1><blockquote>
+<p>本模板主要是针对斜框目标检测，整理一套可以拿来就用的方法。</p>
+</blockquote>
+<h2 id="0-1-总体结构"><a href="#0-1-总体结构" class="headerlink" title="0.1 总体结构"></a>0.1 总体结构</h2><p>本模板的主体逻辑结构如下图所示。</p>
+<ul>
+<li>设计data_info的父类，子类json、txt等数据格式继承该类。可以使用DATA_INFO直接注册训练，也可也通过DATA_INFO内部方法：<code>self.info_to_rotated_coco</code>转换成coco数据格式，使用coco_Register()注册。coco格式数据集读写速度更快，能够一定程度上缩短训练时间。</li>
+<li>设计my_Visualization,能够对斜框标注数据进行预览查看。<code>load_data_viewer</code>即对注册的数据集进行查看，保证输入结果的正确。<code>origin_data_viewer</code>即对原始数据集进行查看，查看数据标注的规范性等。（参见：<a href="https://dinghye.gitee.io/2020/11/10/detectron2guidance2/%EF%BC%89">https://dinghye.gitee.io/2020/11/10/detectron2guidance2/）</a></li>
+<li>设计image_process：参考感谢：<a target="_blank" rel="noopener" href="https://github.com/CAPTAIN-WHU/DOTA_devkit%E3%80%82%E8%AF%A6%E8%A7%811">https://github.com/CAPTAIN-WHU/DOTA_devkit。详见1</a>.</li>
+<li>设计data_statistic：详见2.</li>
+</ul>
+<img src="https://i.loli.net/2021/08/02/6xKf5XDgHN1hYwW.png" alt="architecture (修改中)" style="zoom: 50%;" />
+
+<h2 id="0-2-数据接口"><a href="#0-2-数据接口" class="headerlink" title="0.2 数据接口"></a>0.2 数据接口</h2><figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">data=<span class="punctuation">&#123;</span></span><br><span class="line">    <span class="attr">&quot;file_name&quot;</span><span class="punctuation">:</span> filename<span class="punctuation">,</span>  # instance的位置，建议使用绝对路径</span><br><span class="line">    <span class="attr">&quot;image_id&quot;</span><span class="punctuation">:</span> idx<span class="punctuation">,</span>        # 对于每一个instance须有有一个唯一id</span><br><span class="line">    <span class="attr">&quot;height&quot;</span><span class="punctuation">:</span> height<span class="punctuation">,</span>		# image的高度</span><br><span class="line">    <span class="attr">&quot;width&quot;</span><span class="punctuation">:</span> width<span class="punctuation">,</span>			# image的宽度</span><br><span class="line">    <span class="attr">&quot;annotations&quot;</span><span class="punctuation">:</span><span class="punctuation">[</span>			# 对于这一张图片的标注<span class="punctuation">,</span>可以是多个</span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;bbox&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>cx<span class="punctuation">,</span>cy<span class="punctuation">,</span>w<span class="punctuation">,</span>h<span class="punctuation">,</span>a<span class="punctuation">]</span>	# 和bbox_mode相关联</span><br><span class="line">        	<span class="attr">&quot;bbox_mode&quot;</span><span class="punctuation">:</span> BoxMode.	</span><br><span class="line">        	<span class="attr">&quot;category_id&quot;</span><span class="punctuation">:</span> </span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">        <span class="punctuation">&#123;</span></span><br><span class="line">            <span class="attr">&quot;bbox&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span>cx<span class="punctuation">,</span>cy<span class="punctuation">,</span>w<span class="punctuation">,</span>h<span class="punctuation">,</span>a<span class="punctuation">]</span></span><br><span class="line">        	<span class="attr">&quot;bbox_mode&quot;</span><span class="punctuation">:</span> BoxMode.</span><br><span class="line">        	<span class="attr">&quot;category_id&quot;</span><span class="punctuation">:</span> </span><br><span class="line">        <span class="punctuation">&#125;</span></span><br><span class="line">    <span class="punctuation">]</span><span class="punctuation">,</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="1-数据裁剪（utils-ImageSplit）"><a href="#1-数据裁剪（utils-ImageSplit）" class="headerlink" title="1. 数据裁剪（utils.ImageSplit）"></a>1. 数据裁剪（utils.ImageSplit）</h1><blockquote>
+<p>本功能参考：<a target="_blank" rel="noopener" href="https://github.com/CAPTAIN-WHU/DOTA_devkit">https://github.com/CAPTAIN-WHU/DOTA_devkit</a></p>
+</blockquote>
+<ul>
+<li><p>Motivation：</p>
+<ul>
+<li>遥感单张数据尺寸较大，检测目标较小；这样的数据直接训练速度慢、难度高；</li>
+<li>遥感影像标注点的顺序（Sequential label points）关系到模型回归（详见【RS Detection】目标检测模型的选择（一个简单的overview）1.2.1（3））</li>
+</ul>
+</li>
+<li><p>处理方法：裁剪+标注点排序+规范名命：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> split image by given size</span><br><span class="line"><span class="number">2.</span> choose best point order to <span class="built_in">help</span> regression (optional)</span><br><span class="line"><span class="number">3.</span> image who was split will be renamed by <span class="string">&quot;originname__1__left x__left y&quot;</span>. </span><br></pre></td></tr></table></figure>
+</li>
+<li><p>API(utils&#x2F;ImageSplit.py)：<code>splitbase(json_info,outcome_dir)</code></p>
+</li>
+<li><p>example：</p>
+<img src="https://i.loli.net/2021/08/02/1awcJUbfhZKy5Bn.png" alt="待裁剪前" style="zoom: 50%;" /></li>
+</ul>
+<p><img src="https://i.loli.net/2021/08/02/TwhlbYpe4LKPjfa.png" alt="裁剪后1" style="zoom:25%;" /><img src="https://i.loli.net/2021/08/02/7dhD9yWwXPSjuIs.png" alt="裁剪后2" style="zoom:25%;" /></p>
+<blockquote>
+<p>裁剪之后部分框被damaged，针对这一类框，我们添加difficulty参数，当difficulty&#x3D;2时，即目标已经被严重裁剪坏，方便之后统一处理。</p>
+</blockquote>
+<h1 id="2-数据统计"><a href="#2-数据统计" class="headerlink" title="2.  数据统计"></a>2.  数据统计</h1><ul>
+<li><p>Motivation：通过对目标数据的统计，更好设计超参数和结构</p>
+</li>
+<li><p>API(utils&#x2F;data_statistic.py)：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span> the amount of data contained <span class="keyword">in</span> each graph</span><br><span class="line"><span class="number">2.</span> the aspect ratio distribution of the overall target</span><br><span class="line"><span class="number">3.</span> the area distribution of the overall target</span><br><span class="line"><span class="number">4.</span> bibliographic statistics of different categories of targets</span><br><span class="line"><span class="number">5.</span> distribution of aspect ratios within a single category</span><br><span class="line"><span class="number">6.</span> area distribution within a single category</span><br><span class="line">（NEW）<span class="number">7.</span> 旋转角度统计(info <span class="built_in">type</span> only)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>example：旋转角度统计结果（30°，60°）</p>
+<p><img src="https://i.loli.net/2021/08/02/7WsVo5erB6lEchd.png" alt="angle_30" style="zoom: 49%;" /><img src="https://i.loli.net/2021/08/02/kFz7X6JATI5rCEO.png" alt="angle_60" style="zoom:50%;" /></p>
+</li>
+</ul>
+<h1 id="3-数据预览"><a href="#3-数据预览" class="headerlink" title="3. 数据预览"></a>3. 数据预览</h1><ul>
+<li><p>Motivation：检查输入数据正确性，数据标注特点</p>
+</li>
+<li><p>API(utils&#x2F;load_data_viewer.py utils&#x2F;origin_data_viewer.py)</p>
+</li>
+<li><p>example：origin_data_viewer能检查标注点的顺序，load_data_viewer能够看到对象的类别信息</p>
+<p><img src="https://i.loli.net/2021/08/02/Po2kzAlcBdJaDTW.png" alt="origin_data_viewer" style="zoom:33%;" /><img src="https://i.loli.net/2021/08/02/1fnWcUaYjzMuP9s.png" alt="load_data_viewere" style="zoom: 33%;" /></p>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Dingqi Ye
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://dinghye.gitee.io/2021/07/28/RS-Detection-ToolKit-ReadMe/" title="【RS-Detection】RS-Detection-ToolKit-ReadMe">http://dinghye.gitee.io/2021/07/28/RS-Detection-ToolKit-ReadMe/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%8A%80%E5%B7%A7/" rel="tag"># 技巧</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/20/RS-Detection-1/" rel="prev" title="【RS Detection】目标检测模型的选择（一个简单的overview）">
+                  <i class="fa fa-chevron-left"></i> 【RS Detection】目标检测模型的选择（一个简单的overview）
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/08/02/AugTop/" rel="next" title="AugTop.ReadMe">
+                  AugTop.ReadMe <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dingqi Ye</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">181k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:44</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

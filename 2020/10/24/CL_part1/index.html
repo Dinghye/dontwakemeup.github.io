@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dinghye.gitee.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="当神经网络用于学习任务序列时，后面任务的学习可能会降低前面任务学习模型的性能。这种问题被称为灾难性遗忘。为了保持模型的可持续学习能力，实现终生学习，解决灾难性遗忘尤为重要。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【连续学习】灾难性遗忘">
+<meta property="og:url" content="http://dinghye.gitee.io/2020/10/24/CL_part1/index.html">
+<meta property="og:site_name" content="DontWakeMeUP">
+<meta property="og:description" content="当神经网络用于学习任务序列时，后面任务的学习可能会降低前面任务学习模型的性能。这种问题被称为灾难性遗忘。为了保持模型的可持续学习能力，实现终生学习，解决灾难性遗忘尤为重要。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-24T12:04:31.000Z">
+<meta property="article:modified_time" content="2021-08-02T07:47:24.000Z">
+<meta property="article:author" content="Dingqi Ye">
+<meta property="article:tag" content="Paper Reading">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://dinghye.gitee.io/2020/10/24/CL_part1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://dinghye.gitee.io/2020/10/24/CL_part1/","path":"2020/10/24/CL_part1/","title":"【连续学习】灾难性遗忘"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【连续学习】灾难性遗忘 | DontWakeMeUP</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">DontWakeMeUP</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Curious</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E7%81%BE%E9%9A%BE%E6%80%A7%E9%81%97%E5%BF%98-Catastrophic-Forgetting"><span class="nav-number">1.</span> <span class="nav-text">1. 灾难性遗忘 Catastrophic Forgetting</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E7%AE%80%E4%BB%8B"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%8F%8F%E8%BF%B0"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 描述</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E7%A5%9E%E7%BB%8F%E7%BD%91%E7%BB%9C%E4%B8%AD%E7%9A%84%E6%8C%81%E7%BB%AD%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.</span> <span class="nav-text">2. 神经网络中的持续学习</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 监督学习</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-1-%E5%AF%B9%E5%8F%82%E6%95%B0%E7%9A%84%E8%B0%83%E6%95%B4"><span class="nav-number">2.1.1.</span> <span class="nav-text">2.1.1 对参数的调整</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-2-%E9%87%8D%E6%96%B0%E5%BD%92%E7%BA%B3"><span class="nav-number">2.1.2.</span> <span class="nav-text">2.1.2 重新归纳</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-3-%E5%8F%8C%E8%AE%B0%E5%BF%86%E5%AD%A6%E4%B9%A0%E7%B3%BB%E7%BB%9F"><span class="nav-number">2.1.3.</span> <span class="nav-text">2.1.3 双记忆学习系统</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2-1-4-%E5%85%B6%E4%BB%96%E6%80%9D%E8%B7%AF"><span class="nav-number">2.1.4.</span> <span class="nav-text">2.1.4 其他思路</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%97%A0%E7%9B%91%E7%9D%A3%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 无监督学习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-3-%E5%BC%BA%E5%8C%96%E5%AD%A6%E4%B9%A0"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 强化学习</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-4-%E5%AD%A6%E4%B9%A0%E8%AF%84%E4%BC%B0%E6%A1%86%E6%9E%B6"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 学习评估框架</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dingqi Ye"
+      src="/images/laptop.jpg">
+  <p class="site-author-name" itemprop="name">Dingqi Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Dinghye" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Dinghye" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:dinghyye@163.com" title="E-Mail → mailto:dinghyye@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/10/24/CL_part1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/laptop.jpg">
+      <meta itemprop="name" content="Dingqi Ye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【连续学习】灾难性遗忘 | DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【连续学习】灾难性遗忘
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-10-24 20:04:31" itemprop="dateCreated datePublished" datetime="2020-10-24T20:04:31+08:00">2020-10-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-08-02 15:47:24" itemprop="dateModified" datetime="2021-08-02T15:47:24+08:00">2021-08-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E8%BF%9E%E7%BB%AD%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">连续学习</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.8k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>当神经网络用于学习任务序列时，后面任务的学习可能会降低前面任务学习模型的性能。这种问题被称为<em>灾难性遗忘</em>。为了保持模型的可持续学习能力，实现终生学习，解决灾难性遗忘尤为重要。</p>
+<span id="more"></span>
+
+<h2 id="1-灾难性遗忘-Catastrophic-Forgetting"><a href="#1-灾难性遗忘-Catastrophic-Forgetting" class="headerlink" title="1. 灾难性遗忘 Catastrophic Forgetting"></a>1. 灾难性遗忘 Catastrophic Forgetting</h2><h3 id="1-1-简介"><a href="#1-1-简介" class="headerlink" title="1.1 简介"></a>1.1 简介</h3><p>​		<em>灾难性遗忘</em>或<em>灾难性干扰</em>最早由McCloskey和Cohen[1989]认识到。他们发现，当对新的任务或类别进行训练时，神经网络往往可能会覆盖过去所学的权重，从而降低模型对过去任务的性能。如果不解决这个问题，单个神经网络将无法自己适应LL场景，因为在学习新的东西时，会<em>忘记</em>现有的信息&#x2F;知识。这在Abraham和Robins[2005]中也被称为稳定性-可塑性困境。一方面，如果一个模型过于稳定，他将无法从未来的训练数据中消化新的信息。另一方面，一个模型如果因权重的大幅度变化而有具有极高的可塑性，那么它则更加容易忘记以前的学习表征。我们应该注意到，灾难性遗忘发生在传统的多层感知器以及DNN上。影子单层模型，如自组织特征图，也被证明有灾难性干扰[Richardson 和 Thomas, 2008]。</p>
+<p>​	灾难性遗忘的一个具体例子是使用深度神经网络进行转移学习。在点行的转移学习环境中，源域有大量的标签数据，而目标域的标签数据很少，<em>fine-turnning</em>在DNN中被广泛使用[Dauphin等, 2012]，以使得源域的模型适应目标域。在<em>fine-turning</em>之前，源域的标签数据被用来预训练神经网络。然后给定目标域数据，对该神经网络的输出层进行再训练。基于反向传播的<em>fine-turning</em>则被应用于使源模型适应目标域，然而，这样的方法仍然收到灾难性遗忘的负面影响，因为对目标域的适应通常会破坏源域学习的权重，导致源域的推理效果不佳。</p>
+<h3 id="1-2-描述"><a href="#1-2-描述" class="headerlink" title="1.2 描述"></a>1.2 描述</h3><p>Li和Hoiem[2016]对处理灾难性遗忘的传统方法进行了很好的概述。他们对典型方法中的三组参数进行了描述：</p>
+<p>•     <em>θs</em>：所有任务共享的参数集合</p>
+<p>•     <em>θo</em>： 为以前文物专门学习的参数集</p>
+<p>•     <em>θn</em>：随机初始化新任务的任务规格参数</p>
+<p>Li和Hoiem[2016]在图像分类的背景下给出了一个例子，其中<em>θs</em>由AlexNet架构中的五个卷积层和两个完全连接的层组成[Krizhevsky等, 2012]，<em>θo</em>是分类的输出层[Russakovsky等, 2015]及其相应的权重，<em>θ**n</em>是新任务的输出层，例如场景分类器。</p>
+<p>​    传统由<em>θs</em>知识转移到<em>θn</em>的学习方法有三种：</p>
+<p>•     <strong>特征提取</strong>（如Donahue等[2014]）：<em>θs</em>和<em>θo</em>都保持不变，而一些层的输出被用作新任务训练<em>θn</em>的特征</p>
+<p>•     <strong>微调</strong>（如Dauphin等[2012]）：<em>θs</em>和<em>θn</em>被优化并针对新任务进行更新，而θo保持不变。为了防止<em>θn</em>的大转变，通常采用拉低学习率。此外，对于类似的目的，网络为每个新的任务可以<em>重复**fine-turned</em>，使<em>N</em>个网络对应<em>N</em>个任务。另一种变化是对<em>θs</em>的部分进行重新调优，例如，顶层。这可以被看作是特征提取和<em>fine-turning</em>的这种。</p>
+<p>•     <strong>联合训练</strong>（如Caruana[1997]）：所有的参数<em>θ<strong>s</strong>，θo，θn</em>在所有任务中联合优化。这需要存储所有任务的所有训练数据。多任务学习（MTL）通常采用这种方法。</p>
+<p>这些方法的优缺点总结在表4.1中。根据这些优缺点，Li和Hoiem[2016]提出了一种“Learning without Forgetting”的算法，明确处理这些方法的弱点（见4.3节）</p>
+<p>表4.1：处理灾难性遗忘的传统方法摘要。改编自Li 和Hoiem[2016]</p>
+<table>
+<thead>
+<tr>
+<th>种类</th>
+<th>特征提取</th>
+<th>微调</th>
+<th>复制和微调</th>
+<th>联合训练</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>学习新任务效果</td>
+<td>中等</td>
+<td>好</td>
+<td>好</td>
+<td>好</td>
+</tr>
+<tr>
+<td>旧任务效果</td>
+<td>好</td>
+<td>差</td>
+<td>好</td>
+<td>好</td>
+</tr>
+<tr>
+<td>训练效率</td>
+<td>快速</td>
+<td>快速</td>
+<td>快速</td>
+<td>慢</td>
+</tr>
+<tr>
+<td>测试效率</td>
+<td>快速</td>
+<td>快速</td>
+<td>慢</td>
+<td>快速</td>
+</tr>
+<tr>
+<td>存储要求</td>
+<td>中等</td>
+<td>中等</td>
+<td>高</td>
+<td>高</td>
+</tr>
+<tr>
+<td>是否需要以前任务数据</td>
+<td>否</td>
+<td>否</td>
+<td>否</td>
+<td>是</td>
+</tr>
+</tbody></table>
+<h2 id="2-神经网络中的持续学习"><a href="#2-神经网络中的持续学习" class="headerlink" title="2. 神经网络中的持续学习"></a>2. 神经网络中的持续学习</h2><p>​    最近的一些研究提出了一些持续学习的方法来减少灾难性遗忘。本节主要为这些较新的发展做一个概述。Parisi等[2018a]中也给出了关于同一主题的全面调查。</p>
+<h3 id="2-1-监督学习"><a href="#2-1-监督学习" class="headerlink" title="2.1 监督学习"></a>2.1 监督学习</h3><h4 id="2-1-1-对参数的调整"><a href="#2-1-1-对参数的调整" class="headerlink" title="2.1.1 对参数的调整"></a>2.1.1 对参数的调整</h4><p>​    现有的大部份工作都集中在<em>监督学习</em>上[Parisi等，2018a]。受到<em>fine-turning</em>的启发，Rusu等[2016]提出了一种渐进式神经网络，它保留了一个预先训练好的模型池，并学习他们之间的横向链接。Kirkpatick等[2017]提出了一个名为弹性权重巩固（EWC）模型，量化权重对之前任务的重要性，并选择地调整权重的可塑性。Rebuffi 等[2017]通过保留一个最接近之前任务的示例集来解决LL问题。Alijundi等[2016]提出了一种专家网络来衡量处理灾难性遗忘的任务相关度。Rannen EpTriki等[2017]利用自动编码器的思想对“Learning without Forgetting”[Li和Hoiem,2016]中的方法进行了扩展。Shin等[2017]遵循生成对抗网络（GANs）框架[Goodfellow, 2016]，为之前的任务保留一组生成器，然后学习参数，以适应新任务的真实数据和之前任务的重返数据的混合集合。所有的这些工作将会在接下来的几节中详细介绍。</p>
+<h4 id="2-1-2-重新归纳"><a href="#2-1-2-重新归纳" class="headerlink" title="2.1.2 重新归纳"></a>2.1.2 重新归纳</h4><p>Jung等[2016]没有像“Learing without Forgetting”（LwF）[Li 和 Hoiem, 2016]模型那样使用知识提炼，而是提出了一种少遗忘的学习，将优先的隐藏激活重新归纳。Rosenfeld和Tsotsos[2017]提出了控制器模块，以优化新任务上的损失域从前任务中学习的表征。他们发现的参数，同时相对于<em>fine-turnning</em>方法22%的参数，就可以达到令人满意的性能。Ans等[2004]设计了一种双网络的架构来生成伪项，用来自我刷新之前的任务。Jin和Sendho[2006]将灾难性以往问题建模为一个多目标学习问题，并提出了一个多目标的伪演练框架，以在optimization过程中交错使用基础模式和新模式。Nguyen等[2017]结合神经网络的在线变异推理（VI）和蒙特卡洛VI，提出了编译持续学习。在EWC[Kirkpatrick 等，2017]的激励下，Zenke等[2017]以在线方式测量突触巩固强度，并将其作为神经网络的正则化。Seff等[2017]提出结合GANs[Goodfellow，2016]和EWC[Kirkpatrick等,2017]的思想来解决持续生成模型。</p>
+<h4 id="2-1-3-双记忆学习系统"><a href="#2-1-3-双记忆学习系统" class="headerlink" title="2.1.3 双记忆学习系统"></a>2.1.3 双记忆学习系统</h4><p>​    除了上面提到的基于正则化的方法（例如LwF[Li 和 Hoiem, 2016]，EWC[Kirkpatrick等,2017]），基于双记忆的学习系统也被提出来用于LL。它们的灵感来自于互补学习系统（CLS）理论[Kumaran等，2016，McClelland等，1995]，其中及以巩固和减速域哺乳动物海马（短期记忆）和新皮质（长期记忆）的相互作用有关。Gepperth和Karaoguz[2016]提出使用修改后的自主之地图（SOM）作为长期记忆。作为补充，增加了一个短期记忆（STM）来存储新颖的例子。在睡眠阶段STM的全部内容被重放给系统。这个过程被称为内在重放或伪演练[Robins, 1995]。它用新的数据（如来自STM的数据集）和以前看到的类或分布的重放样本来训练网络中的所有节点，网络已经在这些数据上进行了训练。重新播放的样本可以防止网络遗忘，Kemker和Kanan[2018]提出了一个类似的双记忆系统，称为FearNet。它使用一个海马网络用于STM，一个内侧前额叶皮层（mPFC）网络用于长期记忆，以及第三个神经网络来检测使用哪种记忆进行预测，最近在这个方向上的发展包括深度生成重放[Shin等，2017]、DGDMN[Kamra等，2017]和双内存循环自组织[Parisi等，2018b].</p>
+<h4 id="2-1-4-其他思路"><a href="#2-1-4-其他思路" class="headerlink" title="2.1.4 其他思路"></a>2.1.4 其他思路</h4><p>​    其他一些人的相关工作包括Lean++[Polikar等，2001]、梯度偶发记忆（Gradient Episodic Memory）[LopezPaz等,2017]、Pathnet[Fernando等，2017]、记忆感知突触[Aljundi等，2017]、万物一体网络（One Big Net For Everything）[Schmidhuber,2018]、Phantom Sampling[Vebkatesan等, 2017]、主动长期网络（Active Long Term Memory Networks） [Furlanello等，2016]、概念器辅助的Backprop（Conceptor-Aided Backprop）[He and Jaeger, 2018]、门控网络（Gating Networks[Masse等,2018,Serra等, 2017]，PackNet[Mallya and Lazebnik,2017]，Diffusion-based Neuromodulation[Velez and Clune, 2017]，增量矩匹配（Incremental Moment Matching）[Lee等,2017b]，动态可扩展网络（Dynamically Expandable Networks）[Lee 等, 2017a]和增量正则化最小二乘（Incremental Regularized Least Squares）[Camoriano等, 2017]。</p>
+<h3 id="2-2-无监督学习"><a href="#2-2-无监督学习" class="headerlink" title="2.2 无监督学习"></a>2.2 无监督学习</h3><p> 同样，也有一些<em>无监督学习</em>的工作研究。Goodrich和Areel[2014]研究了神经网络中的无监督在线聚类，以帮助减轻灾难性遗忘。它们提出了在前馈传递过程中，通过神经网络建立一条路径来选择神经元。每个神经元除了常规的权重外，还被分配了一个簇中心点。在新的任务中，当样本到达时，只选择簇中心点和样本接近的神经元。这可以看作是一种特殊的dropout training[Hinton等，2012]。Parisi等[2017]通过学习无监督的视觉表征来解决动作表征的LL。这种表征是基于发生频率域动作标签递增关联的。所提出的模型域用预先定义的动作类数量训练的模型相比，取得了具有竞争力的性能。</p>
+<h3 id="2-3-强化学习"><a href="#2-3-强化学习" class="headerlink" title="2.3 强化学习"></a>2.3 强化学习</h3><p>​    在<em>强化学习</em>的应用中[Ring，1994]，除了上述的工作外（如Kirkpatrick等[2017]、Rusu等[2016]），Mankowirz等[2018]提出了一种名为Unicorn的持续学习代理架构。Unicorn代理被设计成具有同时学习包括新任务在内的多个任务的能力。该代理可以重用器积累的知识来有效的解决任务。最后，也是最重要的是，该架构旨在帮助代理解决具有深度依赖性的任务。其基本思想是离策略的（off-policy）学习多个任务，即当针对一个任务按照政策行事时，它可以利用这些经验来更新相关的任务。Kaplanis等[2018]从生物突触中获得灵感，并融入了不同时间尺度的可塑性。以减轻多时间尺度的灾难性遗忘。其突出巩固的思路与EWC的思路一直[Kirkpatrick等, 2017]。Lipton等[2016]提出了一种新的反馈塑造函数，可以学习当前产生灾难的可能性。它们称之为<em>内在恐惧（<strong>intrinsic fear</strong>）</em>，用于惩罚Q-learning目标。</p>
+<h3 id="2-4-学习评估框架"><a href="#2-4-学习评估框架" class="headerlink" title="2.4 学习评估框架"></a>2.4 学习评估框架</h3><p>​    在灾难性遗忘的背景下，一些工作还提出了<strong>评价框架</strong>。Goodfellow等[2013a]评估了传统的方法，包括dropout training[Hinton等, 2012]和各种激活函数。Kemker等[2018]评估了更近的持续学习模型。Kemker等[2018]使用了大规模的数据集，并在LL环境下评估了模型在旧人物和新任务上的准确性。详见4.9节。在接下来的几节当中，我们将讨论一些有代表性的持续学习方法。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Dingqi Ye
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://dinghye.gitee.io/2020/10/24/CL_part1/" title="【连续学习】灾难性遗忘">http://dinghye.gitee.io/2020/10/24/CL_part1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Paper-Reading/" rel="tag"># Paper Reading</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/10/24/CL_part2/" rel="next" title="【连续学习】Learning without Forgetting(LwF)">
+                  【连续学习】Learning without Forgetting(LwF) <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dingqi Ye</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">181k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:44</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

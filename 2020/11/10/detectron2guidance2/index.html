@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dinghye.gitee.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="本文将提到：1. 如何利用Detectron2 定义训练自己格式的数据集 2. Faster RCNN相关知识 3. Rotated Faster RCNN 的实现 4. 相关参数的设置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【Detectron2】Rotated Faster RCNN 利用Detectron2 训练自己的数据集">
+<meta property="og:url" content="http://dinghye.gitee.io/2020/11/10/detectron2guidance2/index.html">
+<meta property="og:site_name" content="DontWakeMeUP">
+<meta property="og:description" content="本文将提到：1. 如何利用Detectron2 定义训练自己格式的数据集 2. Faster RCNN相关知识 3. Rotated Faster RCNN 的实现 4. 相关参数的设置">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/nzXHmKLasj7guwb.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/mvD3egFkz9w51In.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/2bRyVp64ANstcXk.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/PO438hme9sVyroH.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/E1fwedqFJD9OBc3.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/30/d2GgpQFt98WeRUK.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/ztN5jxQ2H3rYcAa.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/rzf2YImKTMbEVHa.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/LxKsWOS3Q8IN9VM.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/tEldm7uUJnGeaKP.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/10/E6KlGodIHaSMcVA.png">
+<meta property="article:published_time" content="2020-11-10T11:42:59.000Z">
+<meta property="article:modified_time" content="2021-07-26T02:24:48.000Z">
+<meta property="article:author" content="Dingqi Ye">
+<meta property="article:tag" content="Detectron2">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/10/nzXHmKLasj7guwb.png">
+
+
+<link rel="canonical" href="http://dinghye.gitee.io/2020/11/10/detectron2guidance2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://dinghye.gitee.io/2020/11/10/detectron2guidance2/","path":"2020/11/10/detectron2guidance2/","title":"【Detectron2】Rotated Faster RCNN 利用Detectron2 训练自己的数据集"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【Detectron2】Rotated Faster RCNN 利用Detectron2 训练自己的数据集 | DontWakeMeUP</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">DontWakeMeUP</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Curious</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0-%E8%AF%B4%E6%98%8E-amp-%E5%85%88%E4%BF%AE%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">0. 说明&amp;先修知识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E8%87%AA%E5%AE%9A%E4%B9%89%E6%95%B0%E6%8D%AE%E6%B3%A8%E5%86%8C"><span class="nav-number">2.</span> <span class="nav-text">1. 自定义数据注册</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E6%89%80%E9%9C%80%E6%95%B0%E6%8D%AE%E5%86%85%E5%AE%B9"><span class="nav-number">2.1.</span> <span class="nav-text">1.1 所需数据内容</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E6%96%9C%E6%A1%86%EF%BC%88XYWHA-ABS%EF%BC%89BBOX%E8%AE%A1%E7%AE%97"><span class="nav-number">2.2.</span> <span class="nav-text">1.2 斜框（XYWHA_ABS）BBOX计算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-%E6%96%9C%E6%A1%86%E6%95%B0%E6%8D%AE%E6%B3%A8%E5%86%8C"><span class="nav-number">2.3.</span> <span class="nav-text">1.3 斜框数据注册</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-%E6%96%9C%E6%A1%86%E6%95%B0%E6%8D%AE%E9%A2%84%E8%A7%88"><span class="nav-number">2.4.</span> <span class="nav-text">1.4 斜框数据预览</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E5%8F%82%E6%95%B0%E8%AE%BE%E7%BD%AE"><span class="nav-number">3.</span> <span class="nav-text">3. 参数设置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#3-1-%E8%AE%BE%E7%BD%AE%E5%AF%B9%E5%BA%94%E5%8F%82%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 设置对应参数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#4-%E5%BC%80%E5%A7%8B%E8%AE%AD%E7%BB%83"><span class="nav-number">4.</span> <span class="nav-text">4. 开始训练</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#4-1-%E8%AE%AD%E7%BB%83%E8%BF%87%E7%A8%8B"><span class="nav-number">4.1.</span> <span class="nav-text">4.1 训练过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-2-%E8%AE%AD%E7%BB%83%E7%BB%93%E6%9E%9C"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 训练结果</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dingqi Ye"
+      src="/images/laptop.jpg">
+  <p class="site-author-name" itemprop="name">Dingqi Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Dinghye" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Dinghye" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:dinghyye@163.com" title="E-Mail → mailto:dinghyye@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/11/10/detectron2guidance2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/laptop.jpg">
+      <meta itemprop="name" content="Dingqi Ye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【Detectron2】Rotated Faster RCNN 利用Detectron2 训练自己的数据集 | DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【Detectron2】Rotated Faster RCNN 利用Detectron2 训练自己的数据集
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-10 19:42:59" itemprop="dateCreated datePublished" datetime="2020-11-10T19:42:59+08:00">2020-11-10</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-07-26 10:24:48" itemprop="dateModified" datetime="2021-07-26T10:24:48+08:00">2021-07-26</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E8%B7%B5%E6%93%8D%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">实践操作</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>11k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>10 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>本文将提到：1. 如何利用Detectron2 定义训练自己格式的数据集 2. Faster RCNN相关知识 3. Rotated Faster RCNN 的实现 4. 相关参数的设置</p>
+<span id="more"></span>
+
+<h1 id="0-说明-amp-先修知识"><a href="#0-说明-amp-先修知识" class="headerlink" title="0. 说明&amp;先修知识"></a>0. 说明&amp;先修知识</h1><p>在前面的已经介绍过关于如何使用coco数据集来使用Detectron2进行训练<a href="https://dinghye.gitee.io/2020/10/30/detectron2guidance/">Detectron2 用自己的数据训练使用Faster-RCNN</a></p>
+<p>同时也学习了关于FasterRCNN的结构知识<a href="https://dinghye.gitee.io/2020/11/02/Detectron2Index/">Detectron2&amp; Faster-RCNN指北</a></p>
+<p>但是在实际使用的时候我们发现简单的这样训练效果并不是很好，原因有：</p>
+<ol>
+<li>本来是斜框数据，为了转成coco训练转成了正框，造成了精度损失</li>
+<li>参数没有进行调整</li>
+</ol>
+<p>故本文主要用以介绍，如何使用Detectron2进行斜框数据的训练以及FasterRCNN的相关参数调整</p>
+<p>本文项目目录结构如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Project</span><br><span class="line">--COCO-Detection</span><br><span class="line">    faster_rcnn_R_50_FPN_3x.yaml  # 官方代码库 copy</span><br><span class="line">    Base-RCNN-FPN.yaml  # 同上</span><br><span class="line">    my_config.yaml  # 自己的训练配置文件</span><br><span class="line">--tools</span><br><span class="line">	data_loader.py </span><br><span class="line">    train_net.py  # 官方代码库 copy 并自行修改</span><br><span class="line">    predictor.py  # 模型预测</span><br><span class="line">    train.sh</span><br><span class="line">    train_resume.sh</span><br><span class="line">    eval.sh</span><br><span class="line">--utils</span><br><span class="line">    dataReview.py  # 训练数据展示</span><br></pre></td></tr></table></figure>
+
+<p><em><strong>参考：</strong></em></p>
+<p><a target="_blank" rel="noopener" href="https://detectron2.readthedocs.io/tutorials/datasets.html">官方文档 Use Custom Datasets</a></p>
+<p><a target="_blank" rel="noopener" href="https://colab.research.google.com/drive/16jcaJoc6bCFAQ96jDe2HwtXj7BMD_-m5#scrollTo=HUjkwRsOn1O0">官方文档：Detectron2 Tutorial.ipynb</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/issues/21#issuecomment-607951599">Example for rotated Faster RCNN</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/panchuangai/p/13875644.html">使用Detectron2分6步进行目标检测</a></p>
+<h1 id="1-自定义数据注册"><a href="#1-自定义数据注册" class="headerlink" title="1. 自定义数据注册"></a>1. 自定义数据注册</h1><h2 id="1-1-所需数据内容"><a href="#1-1-所需数据内容" class="headerlink" title="1.1 所需数据内容"></a>1.1 所需数据内容</h2><p>Detectron2 中定义有标准数据集字典，这些字段能够帮助进行检测，分割等任务</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Field</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Common</td>
+<td>file_name,height,width,image_id</td>
+</tr>
+<tr>
+<td>Instance detection&#x2F;segmentation</td>
+<td>annotations</td>
+</tr>
+<tr>
+<td>Semantic segmentation</td>
+<td>sem_seg_file_name</td>
+</tr>
+<tr>
+<td>Panoptic segmentation</td>
+<td>pan_seg_file_name,segments_info</td>
+</tr>
+</tbody></table>
+<p>详细的字典定义解释参见<a target="_blank" rel="noopener" href="https://detectron2.readthedocs.io/tutorials/datasets.html">官方文档</a>。以FasterRCNN为例，其训练时所需要的主要用到的数据有：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">data=&#123;</span><br><span class="line">    <span class="string">&quot;file_name&quot;</span>: filename,  <span class="comment"># instance的位置，建议使用绝对路径</span></span><br><span class="line">    <span class="string">&quot;image_id&quot;</span>: idx,        <span class="comment"># 对于每一个instance须有有一个唯一id</span></span><br><span class="line">    <span class="string">&quot;height&quot;</span>: height,		<span class="comment"># image的高度</span></span><br><span class="line">    <span class="string">&quot;width&quot;</span>: width,			<span class="comment"># image的宽度</span></span><br><span class="line">    <span class="string">&quot;annotations&quot;</span>:[			<span class="comment"># 对于这一张图片的标注,可以是多个</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;bbox&quot;</span>: [cx,cy,w,h,a]	<span class="comment"># 和bbox_mode相关联</span></span><br><span class="line">        	<span class="string">&quot;bbox_mode&quot;</span>: BoxMode.	</span><br><span class="line">        	<span class="string">&quot;category_id&quot;</span>: </span><br><span class="line">        &#125;</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="string">&quot;bbox&quot;</span>: [cx,cy,w,h,a]</span><br><span class="line">        	<span class="string">&quot;bbox_mode&quot;</span>: BoxMode.</span><br><span class="line">        	<span class="string">&quot;category_id&quot;</span>: </span><br><span class="line">        &#125;</span><br><span class="line">    ],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>bboxMode，可以在detectron2.structure.boxes中看到，一共是有四种类型的box（XYXY_ABS、XYWH_ABS、XYXY_REL(not supported yet)、XYXY_REL(not supported yet)、XYWHA_ABS），每一种对应不同的数据格式。</p>
+<h2 id="1-2-斜框（XYWHA-ABS）BBOX计算"><a href="#1-2-斜框（XYWHA-ABS）BBOX计算" class="headerlink" title="1.2 斜框（XYWHA_ABS）BBOX计算"></a>1.2 斜框（XYWHA_ABS）BBOX计算</h2><p>可以看到，如果我们需要进行斜框的数据集训练的话，那就需要使用<strong>XYWHA_ABS</strong>的数据格式。其bbox的格式即为[cx,cy,w,h,a]，其中cx，cy，为中心坐标，a为旋转角度（角度制）。所以我们需要将目前四个点格式转换成旋转角度的坐标，大概是这个样子：</p>
+<p><img src="https://i.loli.net/2020/11/10/nzXHmKLasj7guwb.png" alt="旋转计算示意图"></p>
+<p>其中的数学转换可以参见<a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/13002979/how-to-calculate-rotation-angle-from-rectangle-points">How to calculate rotation angle from rectangle points?</a> 值得注意的是：</p>
+<ul>
+<li>需要使用atan2（而不是atan）函数来计算，以免出现角度计算不出来的问题</li>
+<li>需要转换成角度，而不是弧度制</li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_abbox</span>(<span class="params">self, annotation</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    purpose: 用于返回对应的bbox数据</span></span><br><span class="line"><span class="string">    :param annotation: 输入的数组，其格式为：[label,x1,y1,x2,y2,x3,y3,x4,y4]</span></span><br><span class="line"><span class="string">    :return: 输出XYWHA_ABS格式的bbox，其格式为：[centerX, centerY, w, h, a]（a为旋转角度）</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    centerx = (annotation[<span class="number">1</span>] + annotation[<span class="number">3</span>] + annotation[<span class="number">5</span>] + annotation[<span class="number">7</span>]) / <span class="number">4</span></span><br><span class="line">    centery = (annotation[<span class="number">2</span>] + annotation[<span class="number">4</span>] + annotation[<span class="number">6</span>] + annotation[<span class="number">8</span>]) / <span class="number">4</span></span><br><span class="line">    h = math.sqrt(math.<span class="built_in">pow</span>((annotation[<span class="number">1</span>] - annotation[<span class="number">3</span>]), <span class="number">2</span>) + math.<span class="built_in">pow</span>(</span><br><span class="line">        (annotation[<span class="number">2</span>] - annotation[<span class="number">4</span>]), <span class="number">2</span>))</span><br><span class="line">    w = math.sqrt(math.<span class="built_in">pow</span>((annotation[<span class="number">1</span>] - annotation[<span class="number">7</span>]), <span class="number">2</span>) + math.<span class="built_in">pow</span>(</span><br><span class="line">        (annotation[<span class="number">2</span>] - annotation[<span class="number">8</span>]), <span class="number">2</span>))</span><br><span class="line">    a = - math.degrees(math.atan2((annotation[<span class="number">8</span>] - annotation[<span class="number">2</span>]), (annotation[<span class="number">7</span>] - annotation[<span class="number">1</span>])))</span><br><span class="line">    <span class="keyword">return</span> [centerx, centery, w, h, a]</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="1-3-斜框数据注册"><a href="#1-3-斜框数据注册" class="headerlink" title="1.3 斜框数据注册"></a>1.3 斜框数据注册</h2><p>在数据注册的时候，我们使用到的是<code>DatasetCatalog.register(name:str,func:Any)</code>以及<code>MetadataCatalog.get(name:str).set(**kwargs:Any)</code>。</p>
+<p>其中的name即为我们给自己数据名称取的名字，而func要求我们对数据进行一个返回处理。于是我们设置一个<code>get_dict</code>函数来定义我们自己的数据集，如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_dicts</span>(<span class="params">self, ids</span>):</span><br><span class="line">   <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">   purpose: 用于定义自己的数据集格式，返回指定对象的数据</span></span><br><span class="line"><span class="string">   :param ids: 需要返回数据的名称（id）号</span></span><br><span class="line"><span class="string">   :return: 指定格式的数据字典</span></span><br><span class="line"><span class="string">   &quot;&quot;&quot;</span></span><br><span class="line">   dataset_dicts = []</span><br><span class="line">   data = &#123;&#125;</span><br><span class="line">   count = <span class="number">0</span></span><br><span class="line">   <span class="keyword">for</span> i <span class="keyword">in</span> ids:</span><br><span class="line">       count += <span class="number">1</span></span><br><span class="line">       <span class="comment"># 构建图！</span></span><br><span class="line">       img = self.read_labels(self.DATA_PATH, i)   <span class="comment"># read_label为读取txt的函数，返回的是关于这张图的标注数组</span></span><br><span class="line">       data[<span class="string">&quot;ids&quot;</span>] = count</span><br><span class="line">       data[<span class="string">&quot;image_id&quot;</span>] = <span class="built_in">int</span>(i)</span><br><span class="line">       data[<span class="string">&quot;height&quot;</span>] = <span class="number">1024</span></span><br><span class="line">       data[<span class="string">&quot;width&quot;</span>] = <span class="number">1024</span></span><br><span class="line">       data[<span class="string">&quot;file_name&quot;</span>] = self.DATA_PATH + <span class="string">&quot;images/&quot;</span> + <span class="built_in">str</span>(i) + <span class="string">&quot;.tif&quot;</span></span><br><span class="line">       <span class="comment"># 对于每一个图里面的annotation来说</span></span><br><span class="line">       annotations = []</span><br><span class="line">       <span class="keyword">for</span> j <span class="keyword">in</span> img:</span><br><span class="line">           ann = &#123;&#125;</span><br><span class="line">           ann[<span class="string">&quot;bbox_mode&quot;</span>] = BoxMode.XYWHA_ABS</span><br><span class="line">           ann[<span class="string">&quot;category_id&quot;</span>] = <span class="built_in">int</span>(j[<span class="number">0</span>])  <span class="comment"># 根据给出来的数据格式，0</span></span><br><span class="line">           ann[<span class="string">&quot;bbox&quot;</span>] = self.get_abbox(j)</span><br><span class="line">           annotations.append(ann)</span><br><span class="line">           ann = &#123;&#125;</span><br><span class="line">       data[<span class="string">&quot;annotations&quot;</span>] = annotations</span><br><span class="line">       dataset_dicts.append(data)</span><br><span class="line">       data = &#123;&#125;</span><br><span class="line">   <span class="keyword">return</span> dataset_dicts</span><br></pre></td></tr></table></figure>
+
+<p>这时，我们就可以把所有的数据都读入注册。但是在训练的过程中，我们往往还需要进行训练集和验证集的划分，这里我们参考前面csv2coco使用的，sklearn包中的<code>train_test_split</code>函数，这个函数可以随机按照比例来进行训练验证集的划分。我们这里选用0.2的比例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">register_dataset</span>(<span class="params">self</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    purpose: register all splits of datasets with PREDEFINED_SPLITS_DATASET</span></span><br><span class="line"><span class="string">    注册数据集（这一步就是将自定义数据集注册进Detectron2）</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 这里利用train_test_split函数（sklearn包）进行测试集和训练集的划分</span></span><br><span class="line">    total_csv_annotations = <span class="built_in">range</span>(<span class="number">1</span>, <span class="number">2009</span>)</span><br><span class="line">    total_keys = <span class="built_in">list</span>(total_csv_annotations)</span><br><span class="line">    train_keys, val_keys = train_test_split(total_keys, test_size=<span class="number">0.2</span>)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;train_n:&quot;</span>, <span class="built_in">len</span>(train_keys), <span class="string">&#x27;val_n:&#x27;</span>, <span class="built_in">len</span>(val_keys))</span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 注册进去数据</span></span><br><span class="line">    self.plain_register_dataset(train_keys, val_keys)</span><br></pre></td></tr></table></figure>
+
+<p><code>plain_register_dataset</code>用以直接这样来注册数据</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">plain_register_dataset</span>(<span class="params">self, train_key, val_key</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;注册数据集和元数据&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># 训练集</span></span><br><span class="line">    DatasetCatalog.register(<span class="string">&quot;ship_train&quot;</span>, <span class="keyword">lambda</span>: self.get_dicts(train_key))</span><br><span class="line">    MetadataCatalog.get(<span class="string">&quot;ship_train&quot;</span>).<span class="built_in">set</span>(thing_classes=self.CLASS_NAMES)  <span class="comment"># 可以选择开启，但是不能显示中文，这里需要注意，中文的话最好关闭</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment"># 验证/测试集</span></span><br><span class="line">    DatasetCatalog.register(<span class="string">&quot;ship_val&quot;</span>, <span class="keyword">lambda</span>: self.get_dicts(val_key))</span><br><span class="line">    MetadataCatalog.get(<span class="string">&quot;ship_val&quot;</span>).<span class="built_in">set</span>(thing_classes=self.CLASS_NAMES)  <span class="comment"># 可以选择开启，但是不能显示中文，这里需要注意，中文的话最好关闭</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>所有以上的函数内容均放在了class Register中，与前面的方式一样，我们只需要在train_net的main中第二行加入<code>Register().register_dataset()</code>就可以了。</p>
+</blockquote>
+<h2 id="1-4-斜框数据预览"><a href="#1-4-斜框数据预览" class="headerlink" title="1.4 斜框数据预览"></a>1.4 斜框数据预览</h2><p>注册完数据之后，我们希望能对斜框数据进行一个预览检查，看是否正确。斜框数据不同于正框数据，我们需要Visualizer 类进行继承重写一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">myVisualization</span>(<span class="title class_ inherited__">Visualizer</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;用于显示旋转过后的数据（继承Visualizer）&quot;&quot;&quot;</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">draw_dataset_dict</span>(<span class="params">self, dic</span>):</span><br><span class="line">        annos = dic.get(<span class="string">&quot;annotations&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">        <span class="keyword">if</span> annos:</span><br><span class="line">            <span class="keyword">if</span> <span class="string">&quot;segmentation&quot;</span> <span class="keyword">in</span> annos[<span class="number">0</span>]:</span><br><span class="line">                masks = [x[<span class="string">&quot;segmentation&quot;</span>] <span class="keyword">for</span> x <span class="keyword">in</span> annos]</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                masks = <span class="literal">None</span></span><br><span class="line">            <span class="keyword">if</span> <span class="string">&quot;keypoints&quot;</span> <span class="keyword">in</span> annos[<span class="number">0</span>]:</span><br><span class="line">                keypts = [x[<span class="string">&quot;keypoints&quot;</span>] <span class="keyword">for</span> x <span class="keyword">in</span> annos]</span><br><span class="line">                keypts = np.array(keypts).reshape(<span class="built_in">len</span>(annos), -<span class="number">1</span>, <span class="number">3</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                keypts = <span class="literal">None</span></span><br><span class="line"></span><br><span class="line">            boxes = [BoxMode.convert(x[<span class="string">&quot;bbox&quot;</span>], x[<span class="string">&quot;bbox_mode&quot;</span>], BoxMode.XYWHA_ABS) <span class="keyword">for</span> x <span class="keyword">in</span> annos]</span><br><span class="line"></span><br><span class="line">            labels = [x[<span class="string">&quot;category_id&quot;</span>] <span class="keyword">for</span> x <span class="keyword">in</span> annos]</span><br><span class="line">            names = self.metadata.get(<span class="string">&quot;thing_classes&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">            <span class="keyword">if</span> names:</span><br><span class="line">                labels = [names[i] <span class="keyword">for</span> i <span class="keyword">in</span> labels]</span><br><span class="line">            labels = [</span><br><span class="line">                <span class="string">&quot;&#123;&#125;&quot;</span>.<span class="built_in">format</span>(i) + (<span class="string">&quot;|crowd&quot;</span> <span class="keyword">if</span> a.get(<span class="string">&quot;iscrowd&quot;</span>, <span class="number">0</span>) <span class="keyword">else</span> <span class="string">&quot;&quot;</span>)</span><br><span class="line">                <span class="keyword">for</span> i, a <span class="keyword">in</span> <span class="built_in">zip</span>(labels, annos)</span><br><span class="line">            ]</span><br><span class="line">            self.overlay_instances(labels=labels, boxes=boxes, masks=masks, keypoints=keypts)</span><br><span class="line"></span><br><span class="line">        sem_seg = dic.get(<span class="string">&quot;sem_seg&quot;</span>, <span class="literal">None</span>)</span><br><span class="line">        <span class="keyword">if</span> sem_seg <span class="keyword">is</span> <span class="literal">None</span> <span class="keyword">and</span> <span class="string">&quot;sem_seg_file_name&quot;</span> <span class="keyword">in</span> dic:</span><br><span class="line">            sem_seg = cv2.imread(dic[<span class="string">&quot;sem_seg_file_name&quot;</span>], cv2.IMREAD_GRAYSCALE)</span><br><span class="line">        <span class="keyword">if</span> sem_seg <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:</span><br><span class="line">            self.draw_sem_seg(sem_seg, area_threshold=<span class="number">0</span>, alpha=<span class="number">0.5</span>)</span><br><span class="line">        <span class="keyword">return</span> self.output</span><br></pre></td></tr></table></figure>
+
+<p>再进行一下测试预览：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">dataset_dicts = get_dicts(<span class="built_in">range</span>(<span class="number">1</span>,<span class="number">11</span>)) <span class="comment"># 获取编号1-10的图片信息</span></span><br><span class="line"><span class="keyword">for</span> d <span class="keyword">in</span> dataset_dicts:</span><br><span class="line">	e = <span class="built_in">dict</span>(d)</span><br><span class="line">	name = e.get(<span class="string">&quot;file_name&quot;</span>)</span><br><span class="line">	<span class="built_in">print</span>(name)</span><br><span class="line">	<span class="built_in">print</span>(e.items())</span><br><span class="line">	img = cv2.imread(name)</span><br><span class="line">    visualizer = myVisualizer(img[:,:,::-<span class="number">1</span>],metadata=&#123;&#125;,scale=<span class="number">1</span>)</span><br><span class="line">    vis = visualizer.draw_dataset_dic(e,)</span><br><span class="line">    cv2.imshow(<span class="string">&quot;hi&quot;</span>,vis.get_image()[:,:,::-<span class="number">1</span>])</span><br><span class="line">    cv2.waitkey(<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://i.loli.net/2020/11/10/mvD3egFkz9w51In.png" alt="成功标注"></p>
+<p>可以看到标注是成功的，但是偶尔也有一些奇怪的东西（下图红色部分）：</p>
+<img src="https://i.loli.net/2020/11/10/2bRyVp64ANstcXk.png" alt="标注" style="zoom:50%;" />
+
+<p>就很迷惑，出现概率较低。一开始以为是公式前面有问腿或者怎么的，但是无论怎么调整都非常奇怪。所以怀疑有一部分的数据可能本身就存在问题。这一种情况可能需要进行讨论。</p>
+<hr>
+<p>至此，即完成自己数据集的注册。在这里已经可以进行模型的训练和测试了（保留基础设置）。预测结果如下：</p>
+<p><img src="https://i.loli.net/2020/11/10/PO438hme9sVyroH.png" alt="检测结果1"></p>
+<p><img src="https://i.loli.net/2020/11/10/E1fwedqFJD9OBc3.png" alt="检测结果2"></p>
+<p>我们可以看到，效果要比上一次正框的要好一些</p>
+<img src="https://i.loli.net/2020/10/30/d2GgpQFt98WeRUK.png" alt="正框训练结果，能检测但是比较乱" style="zoom: 80%;" />
+
+<blockquote>
+<p>同时，还有一个疑问，即为什么<strong>输入的是斜框</strong>，而输出预测的<strong>结果却是正框</strong>呢？</p>
+</blockquote>
+<p>这个问题其实很简单，在前面的<a href="https://dinghye.gitee.io/2020/11/01/Detectron2DataLoader/">核心Region Proposal Network</a>我们就学习到，FasterRCNN，实际上是生成对应形状的单元锚，和我们的ground truth data 进行计算loU来指导模型训练。而我们知道，在原来基本模型中，我们生成的是一票大大小小形状各异的<strong>正框</strong>。因此，我们的结果也是正框。</p>
+<blockquote>
+<p>那为什么效果有提升了呢？在哪里有提升了？</p>
+</blockquote>
+<p>在计算loU的时候，原本正框中有一部分实际上是不属于船身的，这一部分不属于船身的东西进入计算loU时，被当作船来算。这个过程产生了误差。而斜框数据保证了，标注数据内部都是船，从而使得loU计算更加精确，造成最后结果的提高。</p>
+<h1 id="3-参数设置"><a href="#3-参数设置" class="headerlink" title="3. 参数设置"></a>3. 参数设置</h1><p>那我们是否能够进行斜框训练，斜框的检测呢，也是有办法的。只不过需要对原始的模型进行微调整。github 上@st7ma784 等讨论关于Rotated FasterRCNN的训练以及参数配置<a target="_blank" rel="noopener" href="https://github.com/facebookresearch/detectron2/issues/21">Example for rotated faster rcnn</a></p>
+<h2 id="3-1-设置对应参数"><a href="#3-1-设置对应参数" class="headerlink" title="3.1 设置对应参数"></a>3.1 设置对应参数</h2><p>在原先my_config.yml上，我们添加更多关于模型的设置。包括将anchor生成器换成了<code>RotatedAnchorGenerator</code>，并给出了其生成的几个角度（30°为差），ROI_HEADS换成<code>RROIHeads</code>等。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Model:</span></span><br><span class="line"> <span class="attr">RPN:</span></span><br><span class="line">   <span class="attr">HEAD_NAME:</span> <span class="string">&quot;StandardRPNHead&quot;</span></span><br><span class="line">   <span class="attr">BBOX_REG_WEIGHTS:</span> <span class="string">(10,10,5,5,1)</span></span><br><span class="line"> <span class="attr">ANCHOR_GENERATOR:</span></span><br><span class="line">   <span class="attr">NAME:</span> <span class="string">&quot;RotatedAnchorGenerator&quot;</span></span><br><span class="line">   <span class="attr">ANGLES:</span> [ [ <span class="number">-60</span>,<span class="number">-30</span>,<span class="number">0</span>,<span class="number">30</span>,<span class="number">60</span>,<span class="number">90</span> ] ]</span><br><span class="line"> <span class="attr">ROI_HEADS:</span></span><br><span class="line">   <span class="attr">NAME:</span> <span class="string">&quot;RROIHeads&quot;</span></span><br><span class="line">   <span class="attr">BATCH_SIZE_PER_IMAGE:</span> <span class="number">256</span>   <span class="comment"># faster, and good enough for this toy dataset (default: 512)</span></span><br><span class="line">   <span class="attr">NUM_CLASSES:</span> <span class="number">6</span></span><br><span class="line">   <span class="attr">SCORE_THRESH_TEST:</span> <span class="number">0.5</span>  <span class="comment"># set threshold for this model</span></span><br><span class="line"> <span class="attr">PROPOSAL_GENERATOR:</span></span><br><span class="line">   <span class="attr">NAME:</span> <span class="string">&quot;RRPN&quot;</span></span><br><span class="line"> <span class="attr">ROI_BOX_HEAD:</span></span><br><span class="line">   <span class="attr">POOLER_TYPE:</span> <span class="string">&quot;ROIAlignRotated&quot;</span></span><br><span class="line">   <span class="attr">BBOX_REG_WEIGHTS:</span> <span class="string">(10.0,</span> <span class="number">10.0</span><span class="string">,</span> <span class="number">5.0</span><span class="string">,</span> <span class="number">5.0</span><span class="string">,</span> <span class="number">1.0</span><span class="string">)</span></span><br></pre></td></tr></table></figure>
+
+<p>当然，不要忘记把Train和Test的名称修改（根据前面注册的数据）</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">DATASETS:</span></span><br><span class="line">  <span class="attr">TRAIN:</span> <span class="string">(&quot;ship_train&quot;,)</span></span><br><span class="line">  <span class="attr">TEST:</span> <span class="string">(&quot;ship_val&quot;,)</span></span><br></pre></td></tr></table></figure>
+
+
+
+<h1 id="4-开始训练"><a href="#4-开始训练" class="headerlink" title="4. 开始训练"></a>4. 开始训练</h1><h2 id="4-1-训练过程"><a href="#4-1-训练过程" class="headerlink" title="4.1 训练过程"></a>4.1 训练过程</h2><p>对部分mapper进行重写修改</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">mapper</span>(<span class="params">dataset_dict</span>):</span><br><span class="line">    <span class="comment"># Implement a mapper, similar to the default DatasetMapper, but with your own customizations</span></span><br><span class="line">    dataset_dict = copy.deepcopy(dataset_dict)  <span class="comment"># it will be modified by code below</span></span><br><span class="line">    image = utils.read_image(dataset_dict[<span class="string">&quot;file_name&quot;</span>], <span class="built_in">format</span>=<span class="string">&quot;BGR&quot;</span>)</span><br><span class="line">    image, transforms = T.apply_transform_gens([T.Resize((<span class="number">800</span>, <span class="number">800</span>))], image)</span><br><span class="line">    dataset_dict[<span class="string">&quot;image&quot;</span>] = torch.as_tensor(image.transpose(<span class="number">2</span>, <span class="number">0</span>, <span class="number">1</span>).astype(<span class="string">&quot;float32&quot;</span>))</span><br><span class="line"></span><br><span class="line">    annos = [</span><br><span class="line">        my_transform_instance_annotations(obj, transforms, image.shape[:<span class="number">2</span>])</span><br><span class="line">        <span class="comment">############################################</span></span><br><span class="line">        <span class="keyword">for</span> obj <span class="keyword">in</span> dataset_dict.pop(<span class="string">&quot;annotations&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> obj.get(<span class="string">&quot;iscrowd&quot;</span>, <span class="number">0</span>) == <span class="number">0</span></span><br><span class="line">    ]</span><br><span class="line">    instances = utils.annotations_to_instances_rotated(annos, image.shape[:<span class="number">2</span>])</span><br><span class="line">    dataset_dict[<span class="string">&quot;instances&quot;</span>] = utils.filter_empty_instances(instances)</span><br><span class="line">    <span class="keyword">return</span> dataset_dict</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">Trainer</span>(<span class="title class_ inherited__">DefaultTrainer</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    We use the &quot;DefaultTrainer&quot; which contains pre-defined default logic for</span></span><br><span class="line"><span class="string">    standard training workflow. They may not work for you, especially if you</span></span><br><span class="line"><span class="string">    are working on a new research project. In that case you can write your</span></span><br><span class="line"><span class="string">    own training loop. You can use &quot;tools/plain_train_net.py&quot; as an example.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">    @classmethod</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">build_train_loader</span>(<span class="params">cls, cfg</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        Returns:</span></span><br><span class="line"><span class="string">            iterable</span></span><br><span class="line"><span class="string">        It now calls :func:`detectron2.data.build_detection_train_loader`.</span></span><br><span class="line"><span class="string">        Overwrite it if you&#x27;d like a different data loader.</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> build_detection_train_loader(cfg, mapper=mapper)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">my_transform_instance_annotations</span>(<span class="params">annotation, transforms, image_size, *, keypoint_hflip_indices=<span class="literal">None</span></span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    Apply transforms to box, segmentation and keypoints annotations of a single instance.</span></span><br><span class="line"><span class="string">    It will use `transforms.apply_box` for the box, and</span></span><br><span class="line"><span class="string">    `transforms.apply_coords` for segmentation polygons &amp; keypoints.</span></span><br><span class="line"><span class="string">    If you need anything more specially designed for each data structure,</span></span><br><span class="line"><span class="string">    you&#x27;ll need to implement your own version of this function or the transforms.</span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        annotation (dict): dict of instance annotations for a single instance.</span></span><br><span class="line"><span class="string">            It will be modified in-place.</span></span><br><span class="line"><span class="string">        transforms (TransformList):</span></span><br><span class="line"><span class="string">        image_size (tuple): the height, width of the transformed image</span></span><br><span class="line"><span class="string">        keypoint_hflip_indices (ndarray[int]): see `create_keypoint_hflip_indices`.</span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        dict:</span></span><br><span class="line"><span class="string">            the same input dict with fields &quot;bbox&quot;, &quot;segmentation&quot;, &quot;keypoints&quot;</span></span><br><span class="line"><span class="string">            transformed according to `transforms`.</span></span><br><span class="line"><span class="string">            The &quot;bbox_mode&quot; field will be set to XYXY_ABS.</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment"># Note that bbox is 1d (per-instance bounding box)</span></span><br><span class="line">    annotation[<span class="string">&quot;bbox&quot;</span>] = transforms.apply_rotated_box(np.asarray([annotation[<span class="string">&#x27;bbox&#x27;</span>]]))[<span class="number">0</span>]</span><br><span class="line">    annotation[<span class="string">&quot;bbox_mode&quot;</span>] = BoxMode.XYWHA_ABS  <span class="comment">#######change back to xyxy</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> annotation</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="4-2-训练结果"><a href="#4-2-训练结果" class="headerlink" title="4.2 训练结果"></a>4.2 训练结果</h2><p>最开始的时候训练使用的<code>BATCH_SIZE_PER_IMAGE</code>是512，以为会有更好的效果，但是实际使用的时候发现非常难收敛，total_loss训练了大概一天多之后，total_loss一直在0.4~0.8之间盘旋。停止训练测试当前模型效果如下：</p>
+<p><img src="https://i.loli.net/2020/11/10/ztN5jxQ2H3rYcAa.png" alt="检测结果1"></p>
+<p>可以看到，的确检测框开始旋转了，但是它的效果并没有直接用正框效果好，出现了很多重叠检测的东西：</p>
+<p><img src="https://i.loli.net/2020/11/10/rzf2YImKTMbEVHa.png" alt="检测结果2"></p>
+<p><img src="https://i.loli.net/2020/11/10/LxKsWOS3Q8IN9VM.png" alt="检测结果3"></p>
+<p>有的结果都看上去有些鬼畜了。但是仔细看这些结果容易发现，这个略带一些偏的anchor非常像我们前面数据中还存在的一些莫名其妙的地方比如：</p>
+<p><img src="https://i.loli.net/2020/11/10/tEldm7uUJnGeaKP.png" alt="标记数据显示"></p>
+<p>原始数据中就有一些框是微微倾斜的（并且没有办法矫正）。所以结果是这样可能与这个有很大的关系。介于此，尝试直接读取原标记数据看看问题出在哪里：（cv2，polyline函数绘出）</p>
+<p><img src="https://i.loli.net/2020/11/10/E6KlGodIHaSMcVA.png" alt="原始标记数据,明显非矩形"></p>
+<p>可以看到！原来的标记数据就不是一个方正的矩形，而是一个polyline。而在训练当中我们转换角度的时候，出现这样的角度微倾斜是有道理的（这也意味着两边长和宽都不是相等的）。</p>
+<p>这个时候我们需要解决的不仅仅是旋转问题，非矩形也需要加入考虑。（这一篇先写到这里！）</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Dingqi Ye
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://dinghye.gitee.io/2020/11/10/detectron2guidance2/" title="【Detectron2】Rotated Faster RCNN 利用Detectron2 训练自己的数据集">http://dinghye.gitee.io/2020/11/10/detectron2guidance2/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Detectron2/" rel="tag"># Detectron2</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/11/05/DLOptimizer/" rel="prev" title="【深度学习】深入浅出深度学习优化器">
+                  <i class="fa fa-chevron-left"></i> 【深度学习】深入浅出深度学习优化器
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/11/Heidegger/" rel="next" title="【存在论】海德格尔早期存在论思想：存在、存在者、此在">
+                  【存在论】海德格尔早期存在论思想：存在、存在者、此在 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dingqi Ye</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">181k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:44</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

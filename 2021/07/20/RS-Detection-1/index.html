@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dinghye.gitee.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="针对目前的一些冠军方法和策略进行分析。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【RS Detection】目标检测模型的选择（一个简单的overview）">
+<meta property="og:url" content="http://dinghye.gitee.io/2021/07/20/RS-Detection-1/index.html">
+<meta property="og:site_name" content="DontWakeMeUP">
+<meta property="og:description" content="针对目前的一些冠军方法和策略进行分析。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/07/20/Cn1lT2Mo3Wyatf7.png">
+<meta property="og:image" content="https://pic4.zhimg.com/v2-deb5da8837c84b973a3e9c708bf0d8d7_b.jpg">
+<meta property="og:image" content="https://i.loli.net/2021/07/20/2BjMATIUEHP7CWQ.png">
+<meta property="og:image" content="https://i.loli.net/2021/07/20/lJbBmfUc2dCzhqr.png">
+<meta property="og:image" content="https://i.loli.net/2021/07/20/A6qEjS3UsDdBtca.png">
+<meta property="article:published_time" content="2021-07-20T08:10:27.000Z">
+<meta property="article:modified_time" content="2021-08-02T10:13:14.000Z">
+<meta property="article:author" content="Dingqi Ye">
+<meta property="article:tag" content="技巧">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/07/20/Cn1lT2Mo3Wyatf7.png">
+
+
+<link rel="canonical" href="http://dinghye.gitee.io/2021/07/20/RS-Detection-1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://dinghye.gitee.io/2021/07/20/RS-Detection-1/","path":"2021/07/20/RS-Detection-1/","title":"【RS Detection】目标检测模型的选择（一个简单的overview）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【RS Detection】目标检测模型的选择（一个简单的overview） | DontWakeMeUP</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">DontWakeMeUP</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Curious</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%9B%B8%E5%85%B3%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">1. 相关目标检测模型</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-%E6%99%AE%E9%80%9A%E7%9A%84%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B%E5%86%A0%E5%86%9B%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 普通的目标检测冠军方法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E6%96%9C%E6%A1%86%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B-amp-%E9%81%A5%E6%84%9F%E5%BD%B1%E5%83%8F"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 斜框目标检测&amp;遥感影像</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-1-%E4%BB%8E%E6%A0%B9%E6%9C%AC%E5%87%BA%E5%8F%91%E5%9E%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">1.2.1 从根本出发型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-2-%E4%BB%8E%E6%95%B0%E6%8D%AE%E5%87%BA%E5%8F%91%E5%9E%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">1.2.2 从数据出发型</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E6%80%9D%E8%80%83%E6%95%B4%E4%B8%AA%E6%B5%81%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">2. 思考整个流程</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dingqi Ye"
+      src="/images/laptop.jpg">
+  <p class="site-author-name" itemprop="name">Dingqi Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Dinghye" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Dinghye" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:dinghyye@163.com" title="E-Mail → mailto:dinghyye@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2021/07/20/RS-Detection-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/laptop.jpg">
+      <meta itemprop="name" content="Dingqi Ye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【RS Detection】目标检测模型的选择（一个简单的overview） | DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【RS Detection】目标检测模型的选择（一个简单的overview）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-07-20 16:10:27" itemprop="dateCreated datePublished" datetime="2021-07-20T16:10:27+08:00">2021-07-20</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-08-02 18:13:14" itemprop="dateModified" datetime="2021-08-02T18:13:14+08:00">2021-08-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/" itemprop="url" rel="index"><span itemprop="name">机器学习</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0/%E5%AE%9E%E8%B7%B5%E6%93%8D%E4%BD%9C/" itemprop="url" rel="index"><span itemprop="name">实践操作</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>4.9k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>4 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>针对目前的一些冠军方法和策略进行分析。</p>
+<span id="more"></span>
+
+<blockquote>
+<p>啊写在前面：这是一个比赛的记录blog，主要还是面向遥感的目标检测竞赛进行记录和梳理的。由于之前使用的框架的缘故，本篇可能会更倾向于使用pytorch（然而在倾斜框检测很多方法都是用的tensorflow，头疼）</p>
+</blockquote>
+<h1 id="1-相关目标检测模型"><a href="#1-相关目标检测模型" class="headerlink" title="1. 相关目标检测模型"></a>1. 相关目标检测模型</h1><h2 id="1-1-普通的目标检测冠军方法"><a href="#1-1-普通的目标检测冠军方法" class="headerlink" title="1.1 普通的目标检测冠军方法"></a>1.1 普通的目标检测冠军方法</h2><p>​	在CV领域有很多的目标检测竞赛，下表主要展示了我搜索到的在2019-2020年的竞赛的一些冠军队伍的策略。</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>任务类型</th>
+<th>模型名称</th>
+<th>策略</th>
+<th>链接</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CVPR&#x2F;商汤2020</td>
+<td>Open Images&#x2F;</td>
+<td>Faster-RCNN</td>
+<td>任务间空间自适应解耦：有效地减弱通用物体检测中分类任务和回归任务之间的潜在冲突，可以灵活插入大多检测器中。</td>
+<td><a target="_blank" rel="noopener" href="https://www.sohu.com/a/391981080_500659">https://www.sohu.com/a/391981080_500659</a>     <a target="_blank" rel="noopener" href="https://arxiv.org/abs/2003.07540">https://arxiv.org/abs/2003.07540</a></td>
+</tr>
+<tr>
+<td>CVPR EPIC-Kitchens&#x2F;浙江大华2020</td>
+<td>厨房目标检测&#x2F;</td>
+<td>Cascade-RCNN</td>
+<td>1. 骨干网：ResNet101 with FPN and  deformable convolution （DCN）；2. 数据增强：Duck filling、mix-up，显著提高所提出方法的鲁棒性    ；3. 特征增强：使用 GRE-FPN 和 Hard IoU-imbalance Sampler 提取更具代表性的全局目标特征。   ；4. 解决样本类别不平衡：Class Balance Sampling  ；5. 训练策略：随机权值平均(Stochastic Weight Averaging）    ；6. 测试策略：多尺度测试</td>
+<td><a target="_blank" rel="noopener" href="https://arxiv.org/abs/2006.15553">https://arxiv.org/abs/2006.15553</a></td>
+</tr>
+<tr>
+<td>CVPR &#x2F;深兰科技 2020</td>
+<td>挑战赛雾天条件下的（半）监督目标检测任务</td>
+<td>Cascade-RCNN</td>
+<td>Baseline＝Backbone＋DCN［1］＋FPN［2］＋CascadeRCNN［3］；1．我们将Cascadercnn＋DCN＋FPN作为我们的baseline；2. 将原有head改为Double head；3．将<strong>FFA－Net</strong>处理过的数据集与原数据集合并训练；4．Augmentation；5．Testingtricks</td>
+<td><a target="_blank" rel="noopener" href="https://mp.ofweek.com/ai/a445693724976">https://mp.ofweek.com/ai/a445693724976</a></td>
+</tr>
+<tr>
+<td>CVPR NightOwls&#x2F;深兰科技 2020</td>
+<td>夜间目标检测&#x2F;运动模糊图像噪点、色彩信息少、数据分布笑</td>
+<td>Cascade-RCNN</td>
+<td>Baseline &#x3D; Backbone + DCN + FPN +  Cascade + anchor ratio (2.44)     ；1. 将 Cascade rcnn + DCN + FPN 作为 baseline；     2. 将原有 head 改为 Double head；     3. 将 CBNet 作为 backbone；     4. 使用 cascade rcnn COCO-Pretrained weight；    5. 数据增强；    6. 多尺度训练 + Testing tricks</td>
+<td><a target="_blank" rel="noopener" href="https://bbs.cvmart.net/articles/3326">https://bbs.cvmart.net/articles/3326</a></td>
+</tr>
+<tr>
+<td>ECCV Google AI&#x2F;百度视觉 2019</td>
+<td>Open Images&#x2F;数据没有完全精细标注，属于弱监督任务，框选类别数目不均衡且有非常广泛的类别分布</td>
+<td>Cascade, Deformable, FPN,  Faster-RCNN</td>
+<td></td>
+<td><a target="_blank" rel="noopener" href="https://bbs.cvmart.net/articles/664">https://bbs.cvmart.net/articles/664</a></td>
+</tr>
+</tbody></table>
+<p>值得注意的是：</p>
+<ul>
+<li><strong>模型使用类别上</strong>：基本上大家都会几乎都用到Cascade，并且未见到使用One stage的方法；反而是YOLO这种很少用到。感觉可能one stage的方法可能在<u>精度</u>上整体跟 two stage还是有差距，而竞赛中主要是看精度。此外，个人感觉two stage的这种<u>可魔改性</u>要稍微强一些。</li>
+<li><strong>竞赛主题上：</strong>不同的竞赛，有不同的数据集和特点。特别值得注意的是CVPR 深兰科技在雾天竞赛当中，用到了<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_42096202/article/details/103277598">FFA除雾</a>。这个其实有点类似于那种遥感云层，之后也许可以用上。</li>
+<li><strong>任务上：</strong>几乎所有的这样的cv目标检测都是正框，而遥感领域更多的可能是斜框检测。中间可能还有一些不太一样的地方（比如数据朝向，提案框选择等等），也因此下面我找到一些遥感斜框的一些方法，详见1.2</li>
+</ul>
+<h2 id="1-2-斜框目标检测-amp-遥感影像"><a href="#1-2-斜框目标检测-amp-遥感影像" class="headerlink" title="1.2 斜框目标检测&amp;遥感影像"></a>1.2 斜框目标检测&amp;遥感影像</h2><blockquote>
+<p>这一部分主要讲遥感领域斜框做的公认比较好的方法和思路。但是遗憾的是，似乎很多斜框的方法框架都不开源，而且大都使用到的Tensorflow的框架，而我们以后可能都会使用pytorch……（哭</p>
+</blockquote>
+<h3 id="1-2-1-从根本出发型"><a href="#1-2-1-从根本出发型" class="headerlink" title="1.2.1 从根本出发型"></a>1.2.1 从根本出发型</h3><p>针对斜框！它斜着的！这一部分提出了一些思考和方法。</p>
+<ol>
+<li><p>**更科学的提案框：CVPR2019 dingjian 武大夏桂松 **</p>
+<p>baseline：Faster R-CNN OBB + RoI Transformer</p>
+<blockquote>
+<p>考虑到了在旋转的时候提案框的问题，更科学的提案（ROI Transformer）使用的mmdetection的框架。</p>
+</blockquote>
+<p>论文：<a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content_CVPR_2019/papers/Ding_Learning_RoI_Transformer_for_Oriented_Object_Detection_in_Aerial_Images_CVPR_2019_paper.pdf">https://openaccess.thecvf.com/content_CVPR_2019&#x2F;papers&#x2F;Ding_Learning_RoI_Transformer_for_Oriented_Object_Detection_in_Aerial_Images_CVPR_2019_paper.pdf</a><br>代码：<a target="_blank" rel="noopener" href="https://github.com/dingjiansw101/AerialDetection">https://github.com/dingjiansw101/AerialDetection</a></p>
+</li>
+<li><p><strong>旋转不变性：ReDet CVPR 2021\武大夏桂松: 用于遥感目标检测的旋转等边检测器</strong></p>
+<blockquote>
+<p>提出了一个旋转等变检测器（ReDet）来解决这些问题，它明确地编码了旋转等变和旋转不变性。基于AerialDetection &amp; mmdetection</p>
+</blockquote>
+<img src="https://i.loli.net/2021/07/20/Cn1lT2Mo3Wyatf7.png" alt="架构" style="zoom: 10%;" />
+
+<p>博客：<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/358303556">https://zhuanlan.zhihu.com/p/358303556</a></p>
+<p>论文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/2103.07733">https://arxiv.org/abs/2103.07733</a></p>
+<p>代码：<a target="_blank" rel="noopener" href="https://github.com/csuhan/ReDet">https://github.com/csuhan/ReDet</a></p>
+</li>
+<li><p><strong>顺序标签点问题：Gliding Vertex 2020、RSDet</strong> </p>
+<blockquote>
+<p>考虑到的是顺序标签点（Sequential label points）的问题：举一个简单的例子，如果一个四边形的ground-truth是（x1,y1,x2,y2,x3,y3,x4,y4）并且所有的ground-truth并不是按一定规则顺序标注的，那么检测器有可能给出的预测结果是（x2,y2,x3,y3,x4,y4,x1,y1）。其实这两个是框是完全重合的，但是网络训练算损失的时候并不知道，它会按对应位置计算损失，此时的损失值并不为0甚至很大。</p>
+</blockquote>
+<img src="https://pic4.zhimg.com/v2-deb5da8837c84b973a3e9c708bf0d8d7_b.jpg" alt="顺序标签问题" style="zoom: 67%;" />
+
+<ul>
+<li><p>Gliding Vertex 2020：这篇文章发现，直接就是通过<strong>改变框的表达方式</strong> 避免了排序的麻烦。先检测水平框，这个是没有序列问题的，然后学习水平框四个角点的偏移量来达到四边形检测的目的，其实这里的（偏移量，对应的水平框的点）配对就有排序的意思了。</p>
+<p>论文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.09358">https://arxiv.org/abs/1911.09358</a></p>
+</li>
+<li><p>RSDet：给点排序！直接粗暴</p>
+<p>论文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1911.08299">https://arxiv.org/abs/1911.08299</a></p>
+<p>野生代码by yangxue（但他妈的还是tensorflow啊，但是这是一个很好的框架）：<a target="_blank" rel="noopener" href="https://github.com/yangxue0827/RotationDetection">https://github.com/yangxue0827/RotationDetection</a></p>
+</li>
+</ul>
+<p>本部分参考：<a target="_blank" rel="noopener" href="https://www.zhihu.com/search?type=content&q=%E9%81%A5%E6%84%9F%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B">https://www.zhihu.com/search?type=content&amp;q=%E9%81%A5%E6%84%9F%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B</a></p>
+</li>
+</ol>
+<h3 id="1-2-2-从数据出发型"><a href="#1-2-2-从数据出发型" class="headerlink" title="1.2.2 从数据出发型"></a>1.2.2 从数据出发型</h3><ol>
+<li><p><strong>我们是专门搞舰船的！：R3Det CVPR 2020</strong></p>
+<blockquote>
+<p>⚠用的是tensorflow哈。<strong>大纵横比、密集分布和类别极不平衡的旋转物体</strong>仍然存在挑战。在本文中，提出了一种端到端的精细单级旋转检测器，用于快速准确定位物体。特征精炼模块的关键思想是通过<u>特征插值将当前精炼的边界框位置信息重新编码为对应的特征点</u>，以实现特征重构和对齐</p>
+</blockquote>
+<p>论文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1908.05612v1">https://arxiv.org/abs/1908.05612v1</a></p>
+<p>代码：<a target="_blank" rel="noopener" href="https://github.com/DetectionTeamUCAS/RetinaNet_Tensorflow_Rotation">https://github.com/DetectionTeamUCAS/RetinaNet_Tensorflow_Rotation</a></p>
+</li>
+<li><p><strong>旋转多尺度特征：Rotation-aware and multi-scale convolutional neural network for object detection in remote sensing images 2020</strong></p>
+<blockquote>
+<p>faster r-cnn发展而来，一种考虑了多尺度特征，不开源</p>
+</blockquote>
+<p><img src="https://i.loli.net/2021/07/20/2BjMATIUEHP7CWQ.png" alt="整体架构"></p>
+<p>论文：<a target="_blank" rel="noopener" href="https://www.sciencedirect.com/science/article/pii/S0924271620300319?via=ihub">https://www.sciencedirect.com/science/article/pii/S0924271620300319?via%3Dihub</a></p>
+</li>
+<li><p><strong>我们的数据不太行之不平衡：YOLT 针对遥感卫星目标检测</strong></p>
+<blockquote>
+<p>针对「机场目标」和「其它目标」分别训练了一个检测模型，这两个检测模型的输入图像尺度也不一样，测试图像时同理，最后将不同检测模型、不同chip的检测结果合并在一起就得到最终一张卫星图像的输出。也即是说这篇文章的核心操作就是这个「不同尺度的模型融合」以及「针对机场单独训练一个模型」，这样确实是从数据出发能够很好的解决实际场景（卫星图像）中机场目标数据太少带来的问题。</p>
+</blockquote>
+<img src="https://i.loli.net/2021/07/20/lJbBmfUc2dCzhqr.png" alt="我们遇上哪些问题啦" style="zoom: 50%;" />
+
+<ul>
+<li><p>卫星图目标的<strong>「尺寸，方向多样」</strong>。卫星图是从空中拍摄的，因此角度不固定，像船、汽车的方向都可能和常规目标检测算法中的差别较大，因此检测难度大。针对这一点的解决方案是对数据做<strong>「尺度变换，旋转等数据增强操作」</strong>。</p>
+</li>
+<li><p><strong>「小目标的检测难度大」</strong>。针对这一点解决方案有下面三点。</p>
+<p>a) 修改网络结构，使得YOLOV2的 stride 16,而不是32，这样有利于检测出大小在16x16→32x32</p>
+<p>b) 沿用YOLOV2中的passthrough layer，融合不同尺度的特征（52x52和26x26大小的特征），这种特征融合做法在目前大部分通用目标检测算法中被用来提升对小目标的检测效果。</p>
+<p>c) 不同尺度的检测模型融合，即Ensemble，原因是例如飞机和机场的尺度差异很大，因此采用不同尺度的输入训练检测模型，然后再融合检测结果得到最终输出。</p>
+</li>
+<li><p><strong>「卫星图像尺寸太大」</strong>。解决方案有将原始图像切块，然后分别输入模型进行检测以及将不同尺度的检测模型进行融合。</p>
+</li>
+</ul>
+<p>代码：<a target="_blank" rel="noopener" href="https://http//github.com/CosmiQ/yolt">https://http://github.com/CosmiQ/yolt</a></p>
+<p>论文：<a target="_blank" rel="noopener" href="https://arxiv.org/abs/1805.09512">https://arxiv.org/abs/1805.09512</a></p>
+</li>
+<li><p><strong>我们的数据不太行之框框在瞎标注：CVPR 2019\旷视</strong></p>
+<blockquote>
+<p>案例中的基本 ground truth 边界框原本就是模糊的，导致回归函数的学习更困难：定位更精准的损失函数（KL）！</p>
+</blockquote>
+<img src="https://i.loli.net/2021/07/20/A6qEjS3UsDdBtca.png" alt="这个框画的不行" style="zoom: 67%;" />
+
+<p>链接：<a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzIwMTE1NjQxMQ==&mid=2247486607&idx=1&sn=17554987819b343e1f1bb066ea3e21ad&chksm=96f37edba184f7cdffe461edb2a89eb72bd493061cfc9b841ca5043c003a611a8855326d039d&mpshare=1&scene=22&srcid=0828kphGGoXwZThz28xhSUR7&sharer_sharetime=1567004558685&sharer_shareid=5c55e87df338791d997e8905ad2ebfe0#rd">https://mp.weixin.qq.com/s?__biz&#x3D;MzIwMTE1NjQxMQ&#x3D;&#x3D;&amp;mid&#x3D;2247486607&amp;idx&#x3D;1&amp;sn&#x3D;17554987819b343e1f1bb066ea3e21ad&amp;chksm&#x3D;96f37edba184f7cdffe461edb2a89eb72bd493061cfc9b841ca5043c003a611a8855326d039d&amp;mpshare&#x3D;1&amp;scene&#x3D;22&amp;srcid&#x3D;0828kphGGoXwZThz28xhSUR7&amp;sharer_sharetime&#x3D;1567004558685&amp;sharer_shareid&#x3D;5c55e87df338791d997e8905ad2ebfe0#rd</a></p>
+</li>
+</ol>
+<h1 id="2-思考整个流程"><a href="#2-思考整个流程" class="headerlink" title="2. 思考整个流程"></a>2. 思考整个流程</h1><ol>
+<li><p>首先敲定主体框架</p>
+</li>
+<li><p>数据扩增：遥感图像有一个很大的特点，就是多方向性。</p>
+<ul>
+<li><p>旋转、水平翻转、随机亮度、随机对比</p>
+</li>
+<li><p>TTA单图多测</p>
+</li>
+</ul>
+</li>
+<li><p>数据集制作：⚠值得注意的是！有关提交要求</p>
+</li>
+<li><p>模型训练：⚠docker容器？</p>
+</li>
+<li><p>问题分析及解决</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Dingqi Ye
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://dinghye.gitee.io/2021/07/20/RS-Detection-1/" title="【RS Detection】目标检测模型的选择（一个简单的overview）">http://dinghye.gitee.io/2021/07/20/RS-Detection-1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E6%8A%80%E5%B7%A7/" rel="tag"># 技巧</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2021/07/10/noteofWestPhilosphy/" rel="prev" title="【西方哲学史十五讲】C1：智慧的痛苦">
+                  <i class="fa fa-chevron-left"></i> 【西方哲学史十五讲】C1：智慧的痛苦
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2021/07/28/RS-Detection-ToolKit-ReadMe/" rel="next" title="【RS-Detection】RS-Detection-ToolKit-ReadMe">
+                  【RS-Detection】RS-Detection-ToolKit-ReadMe <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dingqi Ye</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">181k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:44</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

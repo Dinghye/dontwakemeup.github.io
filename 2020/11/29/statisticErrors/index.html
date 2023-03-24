@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dinghye.gitee.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="统计学的一些">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【统计学】统计学当中的第一类错误、第二类错误、P值危机">
+<meta property="og:url" content="http://dinghye.gitee.io/2020/11/29/statisticErrors/index.html">
+<meta property="og:site_name" content="DontWakeMeUP">
+<meta property="og:description" content="统计学的一些">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:\Users\DELL\Desktop\%E4%B8%A4%E7%A7%8D%E9%94%99%E8%AF%AF.jpg">
+<meta property="og:image" content="https://n.sinaimg.cn/tech/crawl/142/w550h392/20191108/aa06-ihyxcrq5824071.jpg">
+<meta property="og:image" content="https://i.loli.net/2020/11/29/QvkxTVMsOGX1aCe.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/29/dQGBPtqlpyhfzAK.png">
+<meta property="article:published_time" content="2020-11-29T04:06:44.000Z">
+<meta property="article:modified_time" content="2021-08-02T07:56:18.000Z">
+<meta property="article:author" content="Dingqi Ye">
+<meta property="article:tag" content="统计学">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:\Users\DELL\Desktop\%E4%B8%A4%E7%A7%8D%E9%94%99%E8%AF%AF.jpg">
+
+
+<link rel="canonical" href="http://dinghye.gitee.io/2020/11/29/statisticErrors/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://dinghye.gitee.io/2020/11/29/statisticErrors/","path":"2020/11/29/statisticErrors/","title":"【统计学】统计学当中的第一类错误、第二类错误、P值危机"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【统计学】统计学当中的第一类错误、第二类错误、P值危机 | DontWakeMeUP</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">DontWakeMeUP</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Curious</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#1-%E7%AC%AC%E4%B8%80%E7%B1%BB%E9%94%99%E8%AF%AF%E4%B8%8E%E7%AC%AC%E4%BA%8C%E7%B1%BB%E9%94%99%E8%AF%AF"><span class="nav-number">1.</span> <span class="nav-text">1. 第一类错误与第二类错误</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#2-%E4%B8%A4%E7%B1%BB%E9%94%99%E8%AF%AF%E7%9A%84%E5%85%B3%E7%B3%BB"><span class="nav-number">2.</span> <span class="nav-text">2. 两类错误的关系</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#3-%E6%98%BE%E8%91%97%E6%80%A7%E6%A3%80%E9%AA%8C%E4%B8%8EP%E5%80%BC%E5%8D%B1%E6%9C%BA"><span class="nav-number">3.</span> <span class="nav-text">3. 显著性检验与P值危机</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#p%E5%80%BC%E7%9C%9F%E7%9A%84%E6%9C%89%E7%94%A8%E5%90%97"><span class="nav-number">3.0.1.</span> <span class="nav-text">p值真的有用吗</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%97%AE%E9%A2%98%E5%9C%A8%E5%93%AA-amp-%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95"><span class="nav-number">3.0.2.</span> <span class="nav-text">问题在哪&amp;解决方法</span></a></li></ol></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dingqi Ye"
+      src="/images/laptop.jpg">
+  <p class="site-author-name" itemprop="name">Dingqi Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">60</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">35</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Dinghye" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Dinghye" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:dinghyye@163.com" title="E-Mail → mailto:dinghyye@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/11/29/statisticErrors/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/laptop.jpg">
+      <meta itemprop="name" content="Dingqi Ye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【统计学】统计学当中的第一类错误、第二类错误、P值危机 | DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【统计学】统计学当中的第一类错误、第二类错误、P值危机
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-29 12:06:44" itemprop="dateCreated datePublished" datetime="2020-11-29T12:06:44+08:00">2020-11-29</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2021-08-02 15:56:18" itemprop="dateModified" datetime="2021-08-02T15:56:18+08:00">2021-08-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" itemprop="url" rel="index"><span itemprop="name">统计学</span></a>
+        </span>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>3.4k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>3 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>统计学的一些</p>
+<span id="more"></span>
+
+<h1 id="1-第一类错误与第二类错误"><a href="#1-第一类错误与第二类错误" class="headerlink" title="1. 第一类错误与第二类错误"></a>1. 第一类错误与第二类错误</h1><p>两者的概念都非常简单，可以通过下表理解</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>H0 True</th>
+<th>H0 False</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Reject H0</td>
+<td>Type One Error</td>
+<td>√</td>
+</tr>
+<tr>
+<td>Fail to reject H0</td>
+<td>√</td>
+<td>Type Two Error</td>
+</tr>
+</tbody></table>
+<p>简单来说，第一类错误即<strong>抓错了好人</strong>，第二类错误即<strong>放走了坏人</strong>。</p>
+<p>哈哈哈哈哈哈哈哈哈哈哈网上的沙雕例子很多啊，什么古董鉴定思聪选妃什么的。这里说一个比较好理解的例子。小明和朋友摇骰子，摇到单数小明赢，摇到双数小明输。理论上小明胜利的概率应该在50%左右，然而小明玩了100把，结果只胜了4把。小明不服气觉得对方对骰子做了手脚。但是经过专业人员检查，发现骰子一切正常。小明赢了4把纯属运气背。这个时候，小明就犯了<strong>第一类错误</strong>。</p>
+<p>第二类错误则是反过来的。比如，在一次产品检验中，H0是：所有货物都是好的产品。在单次抽样中，发现产品果然是好产品，并接受了H0。但实际上这批货物有5%的损坏率，即产生了<strong>第二类错误</strong>。同时可以发现，发生第二类错误的概率，达到了95%。</p>
+<h1 id="2-两类错误的关系"><a href="#2-两类错误的关系" class="headerlink" title="2. 两类错误的关系"></a>2. 两类错误的关系</h1><img src="C:\Users\DELL\Desktop\两种错误.jpg" alt="两种错误，关注α和β交界的线" style="zoom: 25%;" />
+
+<p>​	在统计学上，我们通常会把样本称为样本点，如果你结合样本均数来理解就会很清楚为什么要加一个“点”字。首先，每一个样本都会计算出一个样本均数，每一个样本均数其实都是X轴上的一个点，有的样本均数离总体均数近，而有的离总体均数远。当我们抽中的样本计算出来的样本均数离总体均数远的时候，即两者差异较大时，我们就会倾向拒绝两者相等的假设。所以，即便实际上H0假设正确，数轴上依然会有一些点<strong>与总体均数的距离较远</strong>，当这些点对应的样本被我们抽中时，我们就会做出拒绝H0的决定，从而我们就会犯错了，这便是第一类错误的发生逻辑。</p>
+<p>​	那第二类错误怎么理解呢？要犯第二类错误，那么意味着H0是假的。这其中会出现一个比较绕的点是，由于H0和事实不一致，所以<strong>H0所代表的总体和实际研究的总体也不一样</strong>。我们用假设检验进行判断时用的是第一个总体，即依据第一个总体的均数来计算检验统计量并判断是否要拒绝原假设，因为我们假设所获得的这个样本是来自于第一个总体的。但我们计算犯错概率时，用的是第二个实际总体，即我们这个样本并不是来自第一个总体，而是来自第二个实际的总体，在这个实际的总体中，会有多少样本点导致在前一步计算检验统计量时不拒绝H0。</p>
+<p>​	通过上述说明，对照图你可能就能理解，为什么我们会说<strong>减少第一类错误的发生概率就会增加第二类错误的概率</strong>：</p>
+<blockquote>
+<p>因为，第一类错误的概率是我们根据检验水准人为设定的，当我们把检验水准从0.05提高到0.01时，我们减少了α的面积，但增大了图中第二类错误发生概率。</p>
+</blockquote>
+<p>另一个常见的问题是为什么只有增加样本量才能同时<del>减少这两类错误的犯错概率</del>，简单理解，就是由<strong>于样本量的增加</strong>会降低标准误的大小（标准误&#x3D;S&#x2F;根号N），样本本量N越大，标准误越小，反映在图形中就是两个总体（假设总体和实际总体）变得更“细瘦”，所以重合的部分越少，由此代表犯错概率的图形的面积也会变小。</p>
+<h1 id="3-显著性检验与P值危机"><a href="#3-显著性检验与P值危机" class="headerlink" title="3. 显著性检验与P值危机"></a>3. 显著性检验与P值危机</h1><p>​	“显著性检验”的英文名称是“significance test”。在统计学中，显著性检验是“统计假设检验”(Statistical hypothesis tesing)的一种，显著性检验是<strong>检测科学实验中的实验组与对照组之间是否存在差异以及差异是否显著的办法。</strong>“统计假设检验”指出了“显著性检验”的前提条件是“统计假设”，换言之“无假设，不检验”。<strong>任何人在使用显著性检验之前必须知道假设是什么。</strong>一般而言，把要检验的假设称之为原假设，记为H0，把与H0相对应的假设称之为备择假设，记为H1。</p>
+<p>​	假设检验是推断统计中的一项重要内容，在假设检验中常见到P值(P-value,Pr)，P值是进行检验决策的一个重要依据。P值即概率，是反映某一事件发生的可能性大小。在统计学中根据显著性检验得到的P值，一般以P&lt;0.05为有统计学差异，P&lt;0.01为有显著统计学差异，P&lt;0.001为有极其显著统计学差异。其含义是样本间的差异由抽样误差所致的概率小于0.05、0.01、0.001。计算出P值后，将给定的α与P 值比较，就可作出检验的结论：</p>
+<img src="https://n.sinaimg.cn/tech/crawl/142/w550h392/20191108/aa06-ihyxcrq5824071.jpg" alt="图片来源：slate" style="zoom:50%;" />
+
+<ul>
+<li>如果α &gt; P值，则在显著性水平α下拒绝原假设。</li>
+<li>如果α ≤ P值，则在显著性水平α下不拒绝原假设。</li>
+</ul>
+<hr>
+<h3 id="p值真的有用吗"><a href="#p值真的有用吗" class="headerlink" title="p值真的有用吗"></a>p值真的有用吗</h3><p>​	以统计方法为中心，实验结果的检验被称为零假设显著性检验，这个过程会产生一个p值。P值只是对事情有一个模糊的描述。“当我们进行实验时，我们想知道的是——我们的假设是真的吗？”本杰明说，“但是，显著性检验回答了一个令人费解的替代问题，那就是，如果我的假设是错误的，我的数据有多大的概率导致错误的结论？”		</p>
+<p>​	在过去十年里，关于统计重要性的争论以不寻常的强度爆发。援引两篇论文的观点：一篇文章称统计分析的薄弱基础导致了“科学最肮脏的秘密”；另一篇则提到，在检验某些假设时，存在“许多深层次的缺陷”。在争议声中，实验经济学、生物医学研究，特别是心理学被卷入了一场科学实验可重复性的危机之中。在这场危机中，科学家发现相当一部分研究是不可重复的。</p>
+<h3 id="问题在哪-amp-解决方法"><a href="#问题在哪-amp-解决方法" class="headerlink" title="问题在哪&amp;解决方法"></a>问题在哪&amp;解决方法</h3><p>​		另一些人则认为，重新定义统计显著性没有好处，<u>因为真正的问题是阈值始终存在</u>。今年3月份，瑞士巴塞尔大学的流行病学家、动物学家瓦伦丁·阿姆莱因（Valentin Amrhein）与美国西北大学的统计学家、市场营销专家布莱克利·麦克沙恩（Blakeley McShane）在《自然》杂志上发表了一篇评论文章，主张放弃统计学显著性的概念。他们建议将p值作为一个连续变量，并将置信区间（confidence intervals）重命名为“<strong>相容性区间</strong>”（compatibility intervals），以反映它们彰显的实际意义：评估数据的相容性，而不是置信度。</p>
+<p>　　显然，有更好的（至少是更直接的）统计方法可以用。格尔曼经常批评其他人的统计方法，他在工作中根本没有使用零假设显著性检验。他更喜欢贝叶斯方法，这是一种基于初始信念的、更为直接的统计方法，在这种方法中，研究人员接受最初的信念，添加新的证据并更新信念。</p>
+<ul>
+<li><p><strong>贝叶斯方法：</strong></p>
+<p>在贝叶斯推理方法中,一个人对未知参数的不确定性状态可以用概率分布来表示。贝叶斯定理会把个人的初始信念(即他们在查看数据之前所认为的数据分布模式)与他们从数据中获得的信息相结合,从而让个人对数据分别产生新的信念。而根据一项研究更新的信念,会成为下一项研究的初始信念,依此类推。目前,讨论最多的地方是，如何找到初始信念的“客观”标准。这样做的目的是找到构建初始信念的方法,而这样的初始信念能得到研究人员的广泛认可。</p>
+</li>
+</ul>
+<img src="https://i.loli.net/2020/11/29/QvkxTVMsOGX1aCe.png" alt="贝叶斯方法" style="zoom: 67%;" />
+
+<p>​	格林兰德正在推广使用一种叫做稀奇程度（surprisal）的新数学量，可以调整p值以产生信息位（如计算机比特位）。为了检验原假设，0.05的p值仅有4.3比特的信息熵（假设有一枚均匀的硬币，抛硬币出现正面设为0、出现反面设为1，则抛一个硬币事件的信息熵就是1个比特。独立地抛256次硬币的信息熵就是256个比特。那么求解方程0.5x&#x3D;0.05，解得0.05的概率约为抛掷x&#x3D;-log20.05&#x3D;4.3次，于是0.05的p值约为空值的4.3比特的信息熵。</p>
+<p>　　所谓信息熵就是某个概率分布所包含的信息量的多少，这是信息论的基础知识。在信息论中，如果你对一件事情的发生百分之百确定，那么这件事情对你来说的信息熵等于0比特。反过来说，如果你对一件事情是不确定的，那么这件事情对你来说是包含信息熵的。格林兰德认为，如果研究人员不得不在每一个p值旁边加上一个稀奇程度，那么他们将被置于更高的标准之下。强调效应量（effect size），即发现差异的大小，也将有所帮助。</p>
+<ul>
+<li><p><strong>稀奇程度</strong></p>
+<p>假设在现实中,施肥对南瓜的生长没有影响，那么p值则表示我们对南瓜数据的惊讶程度。一些研究者认为,p值表示惊讶程度的方式，其实很难被大多数人都感觉到奇。所以，我们在这里不说概率,而是用一个我们在日常生活中很熟悉的概念:抛硬币。对结果的惊讶程度，我们可以硬币正面连续朝上的次数来表示，而正面朝上的概率就等于p值。</p>
+<img src="https://i.loli.net/2020/11/29/dQGBPtqlpyhfzAK.png" alt="稀奇程度" style="zoom: 80%;" /></li>
+</ul>
+<p><em>参考</em></p>
+<ol>
+<li><p>Brick何：<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/20993864/answer/958223021">https://www.zhihu.com/question/20993864/answer/958223021</a></p>
+</li>
+<li><p>GQRstar ：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/11f91c292bd1">https://www.jianshu.com/p/11f91c292bd1</a></p>
+</li>
+<li><p>《环球科学》2019&#x2F;11月刊的文章</p>
+</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Dingqi Ye
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://dinghye.gitee.io/2020/11/29/statisticErrors/" title="【统计学】统计学当中的第一类错误、第二类错误、P值危机">http://dinghye.gitee.io/2020/11/29/statisticErrors/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/%E7%BB%9F%E8%AE%A1%E5%AD%A6/" rel="tag"># 统计学</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/11/26/Kierkegaard/" rel="prev" title="【存在主义】克尔凯郭尔-恐惧与战栗">
+                  <i class="fa fa-chevron-left"></i> 【存在主义】克尔凯郭尔-恐惧与战栗
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/12/05/2-layer-network/" rel="next" title="【机器学习】python&numpy 两层神经网络小实验">
+                  【机器学习】python&numpy 两层神经网络小实验 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dingqi Ye</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">181k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:44</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
