@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" integrity="sha256-/4UQcSmErDzPCMAiuOiWPVVsNN2s3ZY/NsmXNcj0IFc=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" integrity="sha256-Vzbj7sDDS/woiFS3uNKo8eIuni59rjyNGtXfstRzStA=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"dinghye.gitee.io","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.15.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0. Linear Discriminant Analysis 线性判别分析什么是是LDA？​	LDA是一种监督学习的降维技术，其核心思想为“投影后类内方差最小，类间方差最大”——即，寻找能够将类别进行极致区分的投影。   ​	如上图所示，可以直观看到，右图的效果要优于左图，左图在边界出混杂。 ​	而找出投影ω的方法是利用类内方差与类间方差的比值，构建广义瑞利商，再利用其性质求解。详细说明参见：线">
+<meta property="og:type" content="article">
+<meta property="og:title" content="【连续学习】Life Long Machine Learning with Deep Streaming Linear Discriminant Analysis">
+<meta property="og:url" content="http://dinghye.gitee.io/2020/11/18/StreamingLinearDiscriminant/index.html">
+<meta property="og:site_name" content="DontWakeMeUP">
+<meta property="og:description" content="0. Linear Discriminant Analysis 线性判别分析什么是是LDA？​	LDA是一种监督学习的降维技术，其核心思想为“投影后类内方差最小，类间方差最大”——即，寻找能够将类别进行极致区分的投影。   ​	如上图所示，可以直观看到，右图的效果要优于左图，左图在边界出混杂。 ​	而找出投影ω的方法是利用类内方差与类间方差的比值，构建广义瑞利商，再利用其性质求解。详细说明参见：线">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/11/18/daqr51nlsvzgGZA.png">
+<meta property="article:published_time" content="2020-11-18T12:32:16.000Z">
+<meta property="article:modified_time" content="2020-11-18T12:32:16.000Z">
+<meta property="article:author" content="Dingqi Ye">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/18/daqr51nlsvzgGZA.png">
+
+
+<link rel="canonical" href="http://dinghye.gitee.io/2020/11/18/StreamingLinearDiscriminant/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://dinghye.gitee.io/2020/11/18/StreamingLinearDiscriminant/","path":"2020/11/18/StreamingLinearDiscriminant/","title":"【连续学习】Life Long Machine Learning with Deep Streaming Linear Discriminant Analysis"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>【连续学习】Life Long Machine Learning with Deep Streaming Linear Discriminant Analysis | DontWakeMeUP</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">DontWakeMeUP</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Stay Curious</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#0-Linear-Discriminant-Analysis-%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90"><span class="nav-number">1.</span> <span class="nav-text">0. Linear Discriminant Analysis 线性判别分析</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF%E6%98%AFLDA%EF%BC%9F"><span class="nav-number">1.0.1.</span> <span class="nav-text">什么是是LDA？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">1.1.</span> <span class="nav-text">问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.2.</span> <span class="nav-text">流学习</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#DNN"><span class="nav-number">1.3.</span> <span class="nav-text">DNN</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%81%E7%BA%BF%E6%80%A7%E5%88%A4%E5%88%AB%E5%88%86%E6%9E%90"><span class="nav-number">1.4.</span> <span class="nav-text">流线性判别分析</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Dingqi Ye"
+      src="/images/laptop.jpg">
+  <p class="site-author-name" itemprop="name">Dingqi Ye</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">63</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">12</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">37</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/Dinghye" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;Dinghye" rel="noopener me" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:dinghyye@163.com" title="E-Mail → mailto:dinghyye@163.com" rel="noopener me" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdnjs.cloudflare.com/ajax/libs/creativecommons-vocabulary/2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://dinghye.gitee.io/2020/11/18/StreamingLinearDiscriminant/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/laptop.jpg">
+      <meta itemprop="name" content="Dingqi Ye">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="【连续学习】Life Long Machine Learning with Deep Streaming Linear Discriminant Analysis | DontWakeMeUP">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          【连续学习】Life Long Machine Learning with Deep Streaming Linear Discriminant Analysis
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-18 20:32:16" itemprop="dateCreated datePublished" datetime="2020-11-18T20:32:16+08:00">2020-11-18</time>
+    </span>
+
+  
+    <span class="post-meta-break"></span>
+    <span class="post-meta-item" title="本文字数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-file-word"></i>
+      </span>
+      <span class="post-meta-item-text">本文字数：</span>
+      <span>1.6k</span>
+    </span>
+    <span class="post-meta-item" title="阅读时长">
+      <span class="post-meta-item-icon">
+        <i class="far fa-clock"></i>
+      </span>
+      <span class="post-meta-item-text">阅读时长 &asymp;</span>
+      <span>1 分钟</span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="0-Linear-Discriminant-Analysis-线性判别分析"><a href="#0-Linear-Discriminant-Analysis-线性判别分析" class="headerlink" title="0. Linear Discriminant Analysis 线性判别分析"></a>0. Linear Discriminant Analysis 线性判别分析</h1><h3 id="什么是是LDA？"><a href="#什么是是LDA？" class="headerlink" title="什么是是LDA？"></a>什么是是LDA？</h3><p>​	LDA是一种监督学习的降维技术，其核心思想为“投影<strong>后类内方差最小，类间方差最大</strong>”——即，寻找能够将类别进行极致区分的投影。</p>
+<img src="https://i.loli.net/2020/11/18/daqr51nlsvzgGZA.png" alt="LDA示意图" style="zoom: 67%;" />
+
+<p>​	如上图所示，可以直观看到，右图的效果要优于左图，左图在边界出混杂。</p>
+<p>​	而找出投影ω的方法是利用类内方差与类间方差的比值，构建广义瑞利商，再利用其性质求解。详细说明参见：<a target="_blank" rel="noopener" href="https://www.cnblogs.com/pinard/p/6244265.html">线性判别分析LDA原理总结</a></p>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><ol>
+<li><p>原有解决方案需要进行批处理，限制了很多引用</p>
+<blockquote>
+<p>However , in this setting, inference is only possible after a batch has been accumulated, which prohibits many applications.</p>
+</blockquote>
+</li>
+</ol>
+<hr>
+<p>Life Long Learning : 在线学习每个训练实例，不能遍历整个数据集，又要收到严格的资源约束</p>
+<h2 id="流学习"><a href="#流学习" class="headerlink" title="流学习"></a>流学习</h2><blockquote>
+<p>单次通过非固定数据流进行在线学习的能力成为流学习</p>
+</blockquote>
+<ul>
+<li>有限的内存和计算资源</li>
+<li>在训练期间随时能够执行</li>
+</ul>
+<h2 id="DNN"><a href="#DNN" class="headerlink" title="DNN"></a>DNN</h2><p>权重的改变导致灾难性遗忘</p>
+<p>现有解决方案，参数增多造成了计算成本和资源的问题。</p>
+<p>至少从1980年就开始研究流学习[38]，许多流行的流分类器来自数据挖掘领域。</p>
+<p> Hoeffding决策树[4，16，21，27，28]在Hoeffding界理论保证下随着时间的推移<strong>逐渐增长决策树</strong>。另一种广泛使用的方法是集合多个分类器[5，6，48]。但是，Hoeffding决策树和集成方法都<strong>训练较慢</strong>[19]，这使其成为许多实时运行的嵌入式应用程序的不合适选择。已经有专为流学习而设计的浅层神经网络，包括ARTMAP网络[7、8、49]。但是，ARTMAP对呈现训练数据的顺序很敏感，并且不能代表学习。</p>
+<p>近来，有两种将流学习与DNN相结合的显着尝试：1）梯度情节记忆（GEM）系列算法[11，36]和2）ExStream [23]。</p>
+<p>GEM系列模型使用正则化约束新任务的权重更新，以使先前存储的训练样本所造成的损失可以减少但不会增加。尽管它们很流行，但由于在推理过程中<strong>需要任务标签</strong>，因此不能轻易用于嵌入式应用程序。如果在测试过程中未向这些模型提供任务标签，则模型性能将显着下降，认为这些模型不可用[10、17、31]。</p>
+<p>在流设置中更新DNN的第二种方法是ExStream算法[23]。与深度SLDA相似，ExStream只能更新CNN的全连接的层。 ExStream通过为每个类<strong>维护原型缓冲区</strong>来使用部分排练来消除遗忘。当它收到要学习的新实例时，会将其存储在关联的特定于类的缓冲区中，然后，如果缓冲区已满，它将在其缓冲区中合并两个最接近的示例。然后，整个缓冲区用于通过随机梯度下降的单次迭代来更新完全连接的层。尽管ExStream是唯一的深度流分类器之一，但由于其排练机制，在内存和计算方面仍然存在瓶颈。</p>
+<p>与本文特别相关的是SLDA [40]和流式二次判别分析（SQDA）。 SLDA为每个类维护一个运行平均值和一个共享的协方差矩阵，该矩阵可以固定不变，也可以使用在线更新进行更新。为了进行预测，SLDA将标签分配给使用运行类均值和协方差矩阵计算出的最接近的高斯输入。与SLDA相似，SQDA假定每个类都是正态分布的。但是，SQDA假定每个类别都有自己的协方差，而不必使用每个协方差都相同的协方差，可以使用在线估计对其进行更新。由于每个类维护一个协方差矩阵，因此与SLDA相比，SQDA需要更多的内存和计算资源，因此不适用于设备上的学习。例如，将SQDA与ResNet-18 [24]体系结构中的嵌入内容一起使用在1000类数据集（如ImageNet）上，将需要存储1000个尺寸为512×512的协方差矩阵，而SLDA仅需要存储单个512×512协方差矩阵。此外，在[33]中显示，估计的LDA后验分布等效于现代神经网络中经常使用的softmax分类器，从而激发了SLDA的使用。</p>
+<h2 id="流线性判别分析"><a href="#流线性判别分析" class="headerlink" title="流线性判别分析"></a>流线性判别分析</h2>
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Dingqi Ye
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://dinghye.gitee.io/2020/11/18/StreamingLinearDiscriminant/" title="【连续学习】Life Long Machine Learning with Deep Streaming Linear Discriminant Analysis">http://dinghye.gitee.io/2020/11/18/StreamingLinearDiscriminant/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/zh-CN" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2020/11/11/Heidegger/" rel="prev" title="【存在论】海德格尔早期存在论思想：存在、存在者、此在">
+                  <i class="fa fa-chevron-left"></i> 【存在论】海德格尔早期存在论思想：存在、存在者、此在
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2020/11/23/improveOfRemoteSensingDetection/" rel="next" title="【机器学习】提升模型效果的小方法">
+                  【机器学习】提升模型效果的小方法 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Dingqi Ye</span>
+</div>
+<div class="wordcount">
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-chart-line"></i>
+    </span>
+    <span title="站点总字数">187k</span>
+  </span>
+  <span class="post-meta-item">
+    <span class="post-meta-item-icon">
+      <i class="fa fa-coffee"></i>
+    </span>
+    <span title="站点阅读时长">2:50</span>
+  </span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.3/jquery.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js" integrity="sha256-yt2kYMy0w8AbtF89WXb2P1rfjcP/HTHLT7097U8Y5b8=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+  <script src="/js/third-party/fancybox.js"></script>
+
+
+  
+
+
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
